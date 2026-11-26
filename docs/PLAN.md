@@ -11,6 +11,18 @@ This is the master task list. Each task has an ID, who does it, what "done" look
 - Firmware: ESP-IDF v6.1, C. Skeleton = headers (the contract) + build files + empty `.c` files.
 - `docs/CDIO/CONCEIVE.txt` drafted. The rest of `docs/CDIO/` is outlines.
 
+## Work order until the kit arrives (Joe, 26/11)
+
+The phases below are grouped by type, not by when to do them. Until the kit arrives, work in this order:
+
+1. **S2** scene simulator (feeds S3 and S4).
+2. **S3** lock-on logic on the laptop (the main simulation activity).
+3. **D1, D4, D5, D7**: block diagrams, schematic, case → circuit, evaluation plan. Design and case → circuit carry extra marks and must not be left until kit week.
+4. **S4** display prototype, if there is time before the kit; otherwise once B4 shows what the kit screen is.
+5. Then D2, D3, D8, D9, S6 and C3, C4 as time allows.
+
+Why: S1 is done and simulation is on track, but no Design task had started. The kit arrives at session 3, so the paper design has to be done before then.
+
 ## What the brief is really marking
 
 The brief and the Week 9 slides say: **more emphasis on design**, **a simulation or modelling activity that answers a design question**, and **case design and its impact on the circuit**. The emphasis is "on your engineering process, understanding, contribution and development, as well as the final prototype". A simple, well-tested system beats a fancy one you can't explain, and an animation that isn't driven by real measurements doesn't count.
