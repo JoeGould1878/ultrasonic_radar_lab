@@ -10,6 +10,9 @@
  * status = OK | NOECHO | FAIL. Format is fixed in docs/PLAN.md — change
  * both ends together.
  *
+ * dist_cm (D-PROTO-NULL): OK -> 1 decimal place, e.g. "52.3"; NOECHO and
+ * FAIL -> "-", never a number, so a reader can't draw a fake 0 cm object.
+ *
  * Design: Joe Gould, drafted with Claude (Anthropic)
  */
 #pragma once

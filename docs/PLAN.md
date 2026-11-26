@@ -194,6 +194,8 @@ M,<t_ms>,<mode>,<paused 0/1>,<fault 0/1>             mode: SWEEP | LOCK | MANUAL
 T,<t_ms>,<state>,<centre_deg>,<left_deg>,<right_deg>,<dist_cm>   state: SEARCH | CAND | LOCK
 ```
 
+`dist_cm` in `R` lines (D-PROTO-NULL): OK readings send the distance with 1 decimal place (`R,1234,SWEEP,90.0,52.3,OK`); NOECHO and FAIL send `-` (`R,1294,SWEEP,92.0,-,NOECHO`), never a number, so no reader can mistake them for an object at 0 cm.
+
 Anything else (ESP-IDF log lines) is ignored by the viewer, so normal logging still works.
 
 ## Decision log
@@ -209,6 +211,8 @@ Only decisions actually made go here, each with its reason/evidence. Everything 
 | D-ANGLE-TAG | 26/11 | Tag each reading with the settled angle at ping time | Angle at send time; interpolated | Follows from D-SCAN: once settled, the commanded angle is the real one (S1 assumption A2; B1 measures the settle). The previous prototype could be ~2.5° off. Evidence: `docs/evidence/sim/s1_summary.txt`; T-MATCH confirms |
 | D-GAP | 26/11 | 60 ms between pings (`APP_US_PING_GAP_MS`) | 30 / 40 ms | S1: 60 ms already meets SC4 (4.5 s at 2°); echoes from up to 10.3 m can't land in the next ping (6.9 m at 40 ms, 5.2 m at 30 ms); 30 ms is shorter than the assumed 38 ms no-echo hold, so triggers may be ignored. Dropping to 40 ms needs all three: I7 shows the pass is over 5 s, B2 and T-XTALK show no ghosts or cross-talk, and the CONCEIVE stakeholder row ("ping gap >= 60 ms") is changed to match. Evidence: `docs/evidence/sim/s1_summary.txt` |
 | D-FADE | 26/11 | Points fade out over 3 passes (`APP_FADE_SWEEPS` 2 → 3); expiry also 3 passes (`APP_EXPIRE_SWEEPS`, wired up in I1) | Fade over 2 passes | S1: the bounce sweep re-measures the end bins only every 2 passes, so a 2-pass fade reaches zero just as they're refreshed. With 3: 67 % brightness when redrawn in the middle, 33 % at the ends. O2 judges whether this meets SC6. Evidence: `docs/evidence/sim/s1_summary.txt` |
+| D-PROTO-NULL | 26/11 | In `R` lines, `dist_cm` is `-` for NOECHO and FAIL; OK readings use 1 decimal place | `0.0`; empty field; `-1` | `0.0` could be read as an object at 0 cm: the dishonest-display failure B2 already guards against ("must log FAILED, not 0 cm"). `-` is not a number, so a reader that ignores the status fails visibly instead of drawing a fake point. S2 scene logs use it. |
+| D-EDGE | 26/11 | (a) Flag objects at the arc ends: a cluster touching `APP_SWEEP_MIN_DEG` or `APP_SWEEP_MAX_DEG` gets an "edge" flag and its bearing is reported as low confidence, not held to ±5°; the display shows the flag (S4) | (b) overscan ~8° past each end (pass ~5.0 s, SC4 on the limit); (c) narrow SC3 to 30–150° | S2: at 15° and 165° only ~4.5 bins are seen and the edge midpoint is pulled ~4.5° inward (worst 5.0°). (a) costs no sweep time and fits the honest-display goal; SC1 and SC3 unchanged. Evidence: `docs/evidence/sim/s2_summary.txt` |
 | | | | | |
 
 ## Options under consideration (not decided)

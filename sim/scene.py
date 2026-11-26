@@ -89,10 +89,10 @@ SERIAL PROTOCOL (matched against main/serial_out.h lines 6-10 and docs/PLAN.md)
       M,<t_ms>,<mode>,<paused>,<fault>
     Only R and M are emitted (T lines come from target_track, S3). The first
     line is a "# ..." provenance comment, which the viewer ignores like any
-    non-R/M/T line. PROVISIONAL, not fixed by the protocol: angle and distance
-    with 1 decimal; dist_cm written as 0.0 when status is not OK (app_types.h:
-    dist is "valid only if status == READING_OK", so readers must check status).
-    All formatting is in format_r()/format_m().
+    non-R/M/T line. dist_cm follows D-PROTO-NULL (docs/PLAN.md): 1 decimal
+    place when OK, "-" for NOECHO and FAIL. The angle is written with 1
+    decimal place (not fixed by the protocol). All formatting is in
+    format_r()/format_m().
 
 TRUTH FILES  (<scene>.truth.csv, next to <scene>.txt)
     CSV with a header row; one row per object per ping, with the SAME t_ms as
@@ -458,8 +458,9 @@ def format_m(t_ms, mode="SWEEP", paused=0, fault=0) -> str:
 
 
 def format_r(t_ms, angle, dist, status, mode="SWEEP") -> str:
-    # PROVISIONAL formatting, see docstring: 1 decimal; 0.0 when not OK
-    return f"R,{t_ms},{mode},{angle:.1f},{dist if status == 'OK' else 0.0:.1f},{status}"
+    # D-PROTO-NULL: 1 decimal place when OK, "-" for NOECHO / FAIL
+    d = f"{dist:.1f}" if status == "OK" else "-"
+    return f"R,{t_ms},{mode},{angle:.1f},{d},{status}"
 
 
 def provenance(scene: Scene, sensor: Sensor, seed: int) -> str:

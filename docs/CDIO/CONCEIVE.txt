@@ -214,6 +214,15 @@ Limitations we expect, which we will demonstrate and measure:
     timing model (PLAN task S1) gives these numbers. This is one reason for
     LOCK mode: sweeping only a narrow sector around a target revisits it
     much more often.
+  - Objects at the ends of the arc (15 and 165 degrees): only half the object
+    is seen, so its bearing is pulled about 4.5 degrees inward. The display
+    marks these bearings as low confidence (S2).
+    Evidence: docs/evidence/sim/s2_summary.txt.
+  - Two thin objects closer than about 17 degrees apart show as one (S2;
+    T-TWO checks). Evidence: docs/evidence/sim/s2_summary.txt.
+  - A flat board tilted more than about 35 to 40 degrees from the sensor gives
+    no echo, so "no echo" does not mean "clear" (S2; T-MAT checks).
+    Evidence: docs/evidence/sim/s2_summary.txt.
   - Every HC-SR04 uses 40 kHz, so a nearby team's sensor can cause false echoes.
   - Speed of sound changes with temperature (about 0.17 % per degree C), which
     shifts distances slightly.
