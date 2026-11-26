@@ -33,7 +33,8 @@ Kept by Claude so any new chat or Claude Code session can pick up where we left 
 ## Progress
 
 - [x] 26 Nov: brief + Week 9a slides + previous prototype blog read; repo skeleton (headers, build files, stubs, host-test Makefile); `docs/PLAN.md`; `docs/CDIO/CONCEIVE.txt` drafted.
-- [ ] **Next:** P0.1 push to GitHub → P0.2 first build → C2 Joe reviews CONCEIVE → S1 timing model.
+- [x] 26 Nov: P0.1–P0.3 done (repo pushed, first ESP-IDF build clean, Python venv + `requirements.txt`).
+- [ ] **Next:** C2 Joe reviews CONCEIVE → S1 timing model.
 
 ## Open questions
 
@@ -42,3 +43,4 @@ See `docs/PLAN.md` → Open questions.
 ## Log
 
 - **26 Nov:** skeleton + plan + Conceive draft (Claude, in chat). Not yet built with ESP-IDF; pure components syntax-checked with gcc (`host_tests: make check-headers`).
+- **26 Nov:** P0.2 first build with ESP-IDF v6.1 (`~/esp/esp-idf-v6.1`, the `get_idf` alias), target esp32s3: builds clean, no errors or warnings in project code, no source or header changes needed. Image 169,856 B; DIRAM 14.1 % used. `host_tests: make` passes (header check only; 0 test suites yet). P0.3 `.venv` + pinned `requirements.txt` (numpy 2.5.5, matplotlib 3.11.2, pyserial 3.5); checked it installs into a fresh venv.

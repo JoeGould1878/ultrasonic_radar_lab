@@ -45,9 +45,9 @@ An **"honest" desk-scale sonar for a teaching lab**. It scans a 150° arc out to
 
 ## Phase 0: setup (this week)
 
-- [ ] **P0.1** [JOE] Create the empty GitHub repo `ultrasonic_radar_lab` and push this skeleton (`git remote add origin …; git push -u origin main`).
-- [ ] **P0.2** First `idf.py set-target esp32s3 && idf.py build` of the skeleton; fix any build errors. *Done when:* it builds clean and `cd host_tests && make` passes.
-- [ ] **P0.3** Python env for the sims: `python3 -m venv .venv && . .venv/bin/activate && pip install numpy matplotlib pyserial`. Add `requirements.txt`.
+- [x] **P0.1** [JOE] Create the empty GitHub repo `ultrasonic_radar_lab` and push this skeleton (`git remote add origin …; git push -u origin main`).
+- [x] **P0.2** First `idf.py set-target esp32s3 && idf.py build` of the skeleton; fix any build errors. *Done when:* it builds clean and `cd host_tests && make` passes.
+- [x] **P0.3** Python env for the sims: `python3 -m venv .venv && . .venv/bin/activate && pip install numpy matplotlib pyserial`. Add `requirements.txt`.
 
 ## Phase C: Conceive (this week)
 
