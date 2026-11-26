@@ -1,0 +1,6 @@
+idf_component_register(
+    SRCS "hcsr04.c"
+    INCLUDE_DIRS "include"
+    REQUIRES scan_map
+    PRIV_REQUIRES esp_driver_gpio esp_timer
+)

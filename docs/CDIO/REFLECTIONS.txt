@@ -1,0 +1,15 @@
+SESSION REFLECTIONS (notes for the Canvas quiz after each session)
+
+Per session: what I did | one decision and its evidence | what surprised me |
+what I'd change | next step | evidence kept (file/photo name).
+
+Session 1 (Thu 26 Nov 2026)
+  - Did: read the brief and Week 9a slides; looked at the previous Lab-in-a-Box
+    radar prototype; set up the repo, plan and Conceive draft; proposed three
+    modes (sweep, lock-on, joystick).
+  - Decision: tag each reading with the servo angle at ping time, after
+    settling. Evidence: the previous prototype moved the servo every 20 ms but
+    pinged every 50 ms, so readings could be drawn at the wrong angle.
+  - Surprised by: [fill in]
+  - Next: GitHub repo, timing model (S1), review Conceive with the team.
+  - Evidence: docs/CDIO/CONCEIVE.txt, docs/PLAN.md, git log.

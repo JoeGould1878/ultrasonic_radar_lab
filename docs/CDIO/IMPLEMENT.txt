@@ -1,0 +1,20 @@
+MINI-CHALLENGE 3: SCANNING ULTRASONIC SONAR
+IMPLEMENT (outline; filled in by PLAN tasks B1-B4 and I1-I11)
+
+1. BUILD ORDER AND MILESTONES
+   Bring-ups B1-B4 -> M1 (real scans on PC viewer) -> M2 (chosen display working)
+   -> M3 (all three modes). Git tags and dates.
+
+2. WHAT WE MEASURED AT BRING-UP AND WHAT IT CHANGED
+   Servo calibration and settle time, sensor accuracy, joystick centre, screen
+   speed: each with the config value it set and the evidence file.
+
+3. PROBLEMS FOUND AND HOW EVIDENCE GUIDED THE FIX
+   Problem | how we noticed | evidence | change | result.
+
+4. MODEL VS REALITY (I7)
+   Sweep time vs S1; beam smear vs S2; lock-on on recorded scans vs S3.
+   Which assumptions held, which didn't, what we changed.
+
+5. CREDITS
+   External code/ideas used and where.

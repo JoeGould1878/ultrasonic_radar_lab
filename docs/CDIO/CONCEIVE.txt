@@ -1,0 +1,303 @@
+MINI-CHALLENGE 3: SCANNING ULTRASONIC SONAR
+CONCEIVE
+Draft 1, Thu 26 Nov 2026. Written by Joe Gould with Claude (Anthropic) as a drafting aid.
+
+Items marked [CHECK] need Joe to confirm. Items marked [TEAM] need the team to agree.
+Numbers marked PROPOSED are targets we set now and test later (docs/LAB_TESTS.md).
+
+
+1. PURPOSE
+----------
+
+We are building a desk-scale scanning sonar for a teaching lab. An ultrasonic
+sensor on a servo sweeps a 150 degree arc, measures the distance to whatever is
+in front of it, and draws each echo on a radar-style screen at the angle the
+sensor was pointing.
+
+The one thing it must get right is honesty. A student should be able to trust
+where a point is drawn, and the display must make clear what it does NOT know:
+how old each point is, when nothing echoed back, and when the sensor has failed.
+A radar-looking screen invites people to trust it more than an ultrasonic sensor
+deserves, so the display should show the sensor's limits rather than hide them.
+
+Proposed: three modes, switched by pressing the joystick [TEAM] (the button
+choice is still open):
+  SWEEP  - automatic back-and-forth scan (the core product)
+  LOCK   - scans until it confirms an object, then sweeps a narrow sector
+           around it and follows it, with a full re-scan every few seconds
+  MANUAL - the joystick points the sensor like a torch, with a live distance
+
+[TEAM] Alternative framing we considered: obstacle awareness for a small robot
+or a blind spot. We chose the teaching-lab framing because the brief rewards
+evidence and explained limits, and because ultrasonic sensing is not reliable
+enough for safety-critical obstacle detection (see section 7).
+
+
+2. USERS AND STAKEHOLDERS
+-------------------------
+
+Stakeholder            | What they need                         | What it means for the design
+-----------------------|----------------------------------------|-----------------------------------------
+Students (main user)   | See where objects are; learn what      | Clear range rings with cm labels; points
+                       | sonar can and cannot detect            | fade with age; limits shown, not hidden
+Lab staff /            | Reliable demo, quick to set up, safe,  | Runs from USB; works without a PC; no
+demonstrators          | robust on a bench                      | loose wires on the moving head
+Our team               | Something we can build, test and       | Simple core first; every number from a
+                       | explain in 6 sessions                  | test; decision log
+People being scanned   | Not to be monitored without knowing    | No recording by default; local only
+                       |                                        | (see section 9)
+Other teams nearby     | Their scanners not disturbed by ours   | Same 40 kHz sensors can cross-talk: test
+                       | (and the other way round)              | it (T-XTALK); ping gap >= 60 ms
+Users with colour      | Read the display without relying on    | Every status has its own shape and text,
+blindness / low vision | colour                                 | not just a colour; large text option
+
+Barriers to use: needing to install software on a lab PC, needing a phone or
+PC at all if there is no screen on the device, a cluttered display, servo noise in a quiet room, and
+not knowing that "no point drawn" can mean "nothing there" or "sensor can't see
+that kind of object".
+
+
+3. SIMILAR PRODUCTS AND PROJECTS
+--------------------------------
+
+Real products that sense the surroundings:
+
+Product                     | How it senses               | What we take from it
+----------------------------|-----------------------------|--------------------------------------
+Car parking sensors         | Several fixed ultrasonic    | Ultrasound is used commercially at
+                            | sensors in the bumper;      | short range. They use several fixed
+                            | beeps faster as you get     | sensors, not one scanning sensor: no
+                            | closer                      | moving parts and faster updates
+Air-traffic / weather radar | Rotating radio antenna;     | The display style we copy (the "PPI"
+                            | sweep display with fading   | sweep). Fading old returns is standard
+                            | returns                     | practice: we do the same
+Car radar (adaptive cruise, | Radio waves, electronically | Real radar measures speed directly
+blind-spot)                 | steered beams, no motor     | (Doppler) and works in rain/fog
+Robot vacuums               | Spinning LiDAR (light) plus | Shows why light is preferred for
+                            | bump and cliff sensors      | detailed maps: narrow beam, fast
+Marine sonar / fish finders | Sound in water              | Sonar works far better in water than
+                            |                             | in air
+
+Previous student projects (from the brief's resources):
+
+- CDIO Lab-in-a-Box ESP32 Wi-Fi Ultrasonic Radar (Jiachen Wang, Jul 2026).
+  ESP32 + HC-SR04 + SG90, swept 30 to 120 degrees in 1 degree steps, drawn on a
+  phone web page. Useful lessons:
+    * Points lingered for about 5 s, so they switched to 500 ms fading. Old
+      data is a real problem; we plan fading from the start.
+    * The servo moved every 20 ms but the sensor pinged every 50 ms, so a
+      distance could be drawn at an angle the sensor had already left.
+      We plan to tag every reading with the angle it was taken at, after
+      the servo has settled, and to test that this fixes it.
+    * The 30 ms echo timeout blocked everything, so they cut it to 8 ms
+      (about 1.4 m). We set the timeout from our chosen range (150 cm, 10 ms).
+    * No distance accuracy tests, no mount, no labels on the display. These
+      are the gaps we can fill: measured accuracy, a mount, a labelled display.
+- Arduino Project Hub radar (Arduino Uno + Processing on a PC) and the How To
+  Mechatronics demo: the classic green sweep display drawn on a PC from serial
+  data. [CHECK] still to read in detail (PLAN task C3).
+
+What could be new in ours: extra modes (including lock-on), measured accuracy
+and limits, and an honest display (age + three statuses).
+
+
+4. SETTING AND CONSTRAINTS
+--------------------------
+
+- Indoors, on a lab bench, objects 5 to 150 cm away, still air, about 20 C.
+- A noisy room with other teams running the same sensors.
+- Parts: only what is in the component box (expected: HC-SR04, SG90 servo,
+  joystick, and a screen of unknown type) plus our ESP32-S3 board.
+  [CHECK] when the box arrives.
+- Display: NOT decided. The kit screen may be a long character LCD (16x2
+  style), which cannot show positions. Other options: a PC over USB, or a web
+  page served by the ESP32 that a PC and a phone can both open. We will
+  prototype the display on simulated data and decide once we know the screen.
+- Time: 6 lab sessions. The box arrives at session 3, so sessions 1 to 2 are
+  for design and simulation.
+- Powered from USB (5 V).
+
+
+5. SUCCESS CRITERIA
+-------------------
+
+All PROPOSED. [TEAM] to confirm. Each one has a test in docs/LAB_TESTS.md.
+
+ID   | Criterion                                                      | Test
+-----|----------------------------------------------------------------|---------
+SC1  | Range: detects a 5 cm wide upright tube anywhere in the 150    | T-DIST,
+     | degree arc from 5 to 150 cm                                    | T-MAT
+SC2  | Distance accuracy: within +/-2 cm or 3 % (whichever is larger) | T-DIST
+     | for a flat target facing the sensor, 10 to 150 cm              |
+SC3  | Direction: displayed bearing of a thin tube within +/-5        | T-ANG
+     | degrees of its real bearing (after edge-midpoint processing)   |
+SC4  | Speed: one full 150 degree pass in 5 s or less                 | T-SWEEP
+SC5  | Updates: a new object appears within 1 pass; a removed object  | T-REMOVE,
+     | disappears within 2 passes                                     | T-MOVE
+SC6  | Honest display: echo / no echo / failed told apart without     | T-FAULT,
+     | colour; points older than one pass visibly faded; STALE warning| T-STALE
+     | within 1.5 s if readings stop                                  |
+SC7  | Latency: a reading is on screen within 200 ms of the ping      | T-LAT
+SC8  | LOCK (extension): locks onto a single tube within 2 passes;    | T-LOCK
+     | keeps the lock while it is moved by hand at about 10 cm/s at   |
+     | 50 cm; back to full sweep within 2 s after it is removed; no   |
+     | false lock in an empty scene over 2 minutes                    |
+SC9  | MANUAL (extension): sensor follows the stick within 0.3 s and  | T-JOY
+     | does not creep when the stick is let go                        |
+SC10 | Usability: someone outside the team, with no explanation,      | O2 user
+     | places 2 objects within +/-10 cm and +/-10 degrees and can say | test
+     | which points are old                                           |
+
+Why these numbers: the HC-SR04 datasheet gives a 2 to 400 cm range and about
+a 15 degree beam. We chose 150 cm because the system is desk-scale and a
+shorter echo timeout makes each ping, and so each sweep, faster. +/-5 degrees
+is a third of the beam width, and needs the edge-midpoint method rather than
+the nearest bin. 5 s per pass follows from the 60 ms ping gap the datasheet
+recommends (our timing model, PLAN task S1, will confirm it).
+
+
+6. ESSENTIAL VS DESIRABLE
+-------------------------
+
+ESSENTIAL (must work and be tested before anything else):
+  - SWEEP mode on real measurements, SC1 to SC7.
+  - One working radar display. A PC is enough, since the brief allows the
+    core display to run on a lab computer (which one: see section 4).
+  - The three statuses and age fading.
+
+DESIRABLE (extensions, in this order):
+  - MANUAL joystick mode (simple, reuses the sweep code)
+  - LOCK mode (most interesting, most to test)
+  - A stable mount/enclosure (also needed for repeatable tests)
+  - Smoothing that removes flicker without hiding real changes
+  - A display that needs no PC software (kit screen if it is graphic, or
+    a web page)
+  [TEAM] order to be agreed.
+
+STRETCH (only if all of the above is tested):
+  - A phone view (live view, connection status, warning when data is no
+    longer current). If the web-page display option is chosen, this comes
+    almost for free.
+
+We keep a working, tagged version of SWEEP before starting each extension.
+
+
+7. IS ULTRASONIC SENSING APPROPRIATE?
+-------------------------------------
+
+For a desk-scale teaching demo: yes. For anything safety-critical: no.
+
+Good for:
+  - Cheap, safe, simple to time with a microcontroller (about 58 us per cm of
+    distance, round trip).
+  - Works in the dark, and sees glass and clear plastic, which light-based
+    sensors can miss.
+
+Limitations we expect, which we will demonstrate and measure:
+  - Wide beam (about 15 degrees). At 1 m it is about 26 cm wide, so a thin
+    object is smeared across several angles, and two objects close together
+    merge into one.
+  - Specular reflection: a smooth surface at an angle bounces the sound away,
+    so a wall or box can be invisible when angled.
+  - Soft materials (cloth, foam, clothing) absorb sound and may not echo.
+  - Slow: about 60 ms per ping, so a full scan takes seconds. Fast-moving
+    objects are in the wrong place by the time the sweep comes back.
+  - Every HC-SR04 uses 40 kHz, so a nearby team's sensor can cause false echoes.
+  - Speed of sound changes with temperature (about 0.17 % per degree C), which
+    shifts distances slightly.
+  - 40 kHz is above human hearing but within the hearing range of cats and
+    some dogs.
+
+Consequences of a missed or misleading detection:
+  - Missed object (soft, thin or angled): the user thinks the space is empty.
+    In a teaching lab that means a wrong conclusion; in an obstacle-avoidance
+    product it would be a collision. So we never claim "clear": the display
+    shows "no echo", not "nothing there".
+  - Old point shown as current: the user thinks an object is still there,
+    or misses that it moved. So points fade, and a STALE warning appears.
+  - Wrong angle (beam smear, servo not settled): an object is drawn where it
+    is not. So we plan to tag readings with the settled angle and try an
+    edge-midpoint method in LOCK, and measure angle accuracy (T-ANG).
+  - Crosstalk or a late echo: a phantom object appears. So pings are spaced
+    at least 60 ms apart, and we test with a neighbour's scanner on (T-XTALK).
+
+
+8. SONAR VS RADAR
+-----------------
+
+Our display looks like a radar screen, but the system is a sonar: it uses
+sound, not radio waves.
+
+                     | Our sonar (HC-SR04)          | Radar
+---------------------|------------------------------|------------------------------
+Wave                 | Sound (pressure wave in air) | Radio (electromagnetic)
+Speed                | ~343 m/s                     | ~300,000,000 m/s
+Time for 1 cm        | ~58 us round trip            | ~67 ps round trip
+Needs a medium?      | Yes (air, water)             | No (works in a vacuum)
+Beam                 | ~15 deg, fixed by transducer | Set by the antenna; can be
+                     |                              | steered electronically
+Scanning here        | Servo turns the sensor       | Rotating dish or phased array
+Weather / air        | Affected by wind, temperature| Works through fog and rain
+Speed of target      | Not measured (we only have   | Measured directly from the
+                     | distance)                    | Doppler shift
+Range                | Metres in air                | Up to hundreds of km
+
+What they have in common: both send a pulse, time the echo, and calculate distance =
+speed x time / 2. Both show results on a sweep display.
+
+What would need to change beyond the display to make this a radar: a radio
+transmitter and receiver, an antenna, and timing electronics about a million
+times faster (picoseconds instead of microseconds). A microcontroller timer
+can measure sound echoes directly but cannot time radio echoes, so real radars
+use special techniques (for example FMCW, which measures a frequency difference
+instead of a time).
+
+
+9. ETHICS, PRIVACY, SAFETY, ACCESSIBILITY, SUSTAINABILITY
+---------------------------------------------------------
+
+Privacy and ethics
+  - The scanner cannot identify anyone, but it can detect when someone is
+    present and moving. Combined with logging or a phone link, that becomes
+    monitoring.
+  - Our choices: no logging unless the user starts it, data stays on the
+    device / USB link, and if the phone stretch is built it runs on a
+    password-protected local network. If it were used where people are
+    present, they should be told (a sign).
+  - Over-trust: a radar-style display looks authoritative. We show its limits
+    (age, no-echo, failed) so people don't trust it more than it deserves.
+
+Safety
+  - Low voltage (USB 5 V). The moving head is slow and weak, so the pinch
+    risk is minimal, but the mount keeps fingers and wires away from the servo
+    horn. Animals may hear 40 kHz, so we don't leave it running near pets.
+
+Accessibility
+  - Every status has a shape and text as well as a colour. Large distance
+    readout. The display does not rely on sound.
+
+Sustainability (Week 8 lecture: energy, materials, e-waste, repairability)
+  - Reuses kit parts; nothing is glued, so parts go back in the box.
+  - The servo is released (no pulses) when paused, so it stops drawing current
+    and buzzing. We will measure current per mode (T-POWER).
+  - Mount held with screws and plug-in connectors, so it is repairable.
+
+
+10. OPEN QUESTIONS FOR THE TEAM
+-------------------------------
+  - [TEAM] Agree the purpose and success criteria above.
+  - [CHECK] Kit contents (sensor version, servo model, what the screen is).
+  - [TEAM] Where the radar is displayed (kit screen / PC / web page).
+  - [TEAM] Who owns which part (suggested: sensor + servo + mount /
+    display + viewer / modes + lock-on + testing).
+
+
+SOURCES
+-------
+- Mini-Challenge 3 brief, Scanning Ultrasonic Radar Sonar (Al-Nuaimy and van
+  Zalinge, 2026); Week 9a lecture slides (van Zalinge).
+- J. Wang, ESP32 Wi-Fi Ultrasonic Radar Prototype, CDIO Lab-in-a-Box blog, Jul
+  2026: https://cdioatc.blogspot.com/2026/07/esp32-wifi-ultrasonic-radar-prototype.html
+- HC-SR04 datasheet (range 2-400 cm, 15 degree measuring angle, 10 us trigger,
+  60 ms measurement cycle recommended). [CHECK] cite the exact version used.
+- Week 8a lecture, Sustainability in EEE design.

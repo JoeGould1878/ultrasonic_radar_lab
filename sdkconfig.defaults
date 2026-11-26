@@ -1,0 +1,13 @@
+# Applied when sdkconfig is first generated (delete sdkconfig to re-apply).
+CONFIG_IDF_TARGET="esp32s3"
+
+# 1 kHz tick so vTaskDelay(1) = 1 ms (ping spacing and servo settle are ms-scale)
+CONFIG_FREERTOS_HZ=1000
+
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+
+# Serial line protocol to the PC viewer (docs/PLAN.md "Serial protocol");
+# idf.py monitor picks this rate up automatically
+CONFIG_ESP_CONSOLE_UART_CUSTOM=y
+CONFIG_ESP_CONSOLE_UART_NUM=0
+CONFIG_ESP_CONSOLE_UART_BAUDRATE=921600

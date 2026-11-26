@@ -1,0 +1,36 @@
+MINI-CHALLENGE 3: SCANNING ULTRASONIC SONAR
+DESIGN (outline; filled in by PLAN tasks D1-D9 and S1-S6)
+
+1. OVERVIEW
+   One paragraph + hardware and firmware block diagrams (D1, docs/diagrams/).
+   How sensing, movement, processing, communication and visualisation fit together.
+
+2. ALTERNATIVES CONSIDERED (D2)
+   One table per decision: D-DISPLAY, D-SCAN, D-STEP, D-ECHO, D-JOY, D-FILTER,
+   D-MOUNT. Columns: option | pros | cons | chosen? | evidence.
+
+3. BEHAVIOUR
+   Mode state machine (D3), lock-on sub-states, what the screen shows in each
+   state, how echo / no echo / failed / stale are drawn.
+
+4. ELECTRICAL DESIGN (D4)
+   Schematic. Echo divider calculation. Joystick on 3.3 V. Servo supply, peak
+   current, capacitor, brown-out risk. Screen supply and logic (if used). Wi-Fi current (if web). Power budget.
+
+5. CASE / MOUNT DESIGN AND ITS IMPACT ON THE CIRCUIT (D5)
+   Sketch. List of consequences for the circuit (cable flex and service loop,
+   where the capacitor and divider sit, sensor height and floor echoes, no
+   window over the transducers, stable base, repairability).
+
+6. SIMULATION AND MODELLING (S1-S6)
+   For each: design question -> method -> result -> assumptions -> what the
+   hardware must confirm. Charts from docs/evidence/sim/.
+
+7. EVALUATION PLAN (D7)
+   Success criterion -> test -> pass level (from docs/LAB_TESTS.md).
+
+8. RISKS AND FAILURE MODES (D8)
+   Risk | effect | mitigation | test that checks it.
+
+9. DECISIONS
+   Summary of the decision log in docs/PLAN.md.

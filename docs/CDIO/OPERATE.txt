@@ -1,0 +1,21 @@
+MINI-CHALLENGE 3: SCANNING ULTRASONIC SONAR
+OPERATE AND IMPROVE (outline; filled in by PLAN tasks O1-O5)
+
+1. TEST RESULTS
+   Each test in docs/LAB_TESTS.md: method, result (numbers), evidence file.
+
+2. EVALUATION AGAINST SUCCESS CRITERIA
+   SC1-SC10: target | measured | pass/fail | comment.
+
+3. USER FEEDBACK (O2)
+   Who, what they did, what confused them, what we changed.
+
+4. LIMITATIONS WE CAN DEMONSTRATE
+   Beam smear, merged targets, invisible angled/soft objects, crosstalk,
+   speed. Each one shown, explained and measured.
+
+5. IMPROVEMENT WITH THE MOST VALUE (O4)
+   Why this one, before/after numbers.
+
+6. WHAT WE WOULD DO NEXT
+   Ranked list, tied to the results.
