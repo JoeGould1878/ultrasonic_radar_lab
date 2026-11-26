@@ -1,7 +1,7 @@
 S1 sweep timing model: summary
 ========================================================================
 Config read from main/app_config.h:
-  APP_FADE_SWEEPS              2
+  APP_FADE_SWEEPS              3
   APP_SERVO_MAX_US             2400
   APP_SERVO_MIN_US             500
   APP_SERVO_SETTLE_MS          20
@@ -83,8 +83,8 @@ Sensitivity: A6 wrong (sensor accepts a new trigger as soon as the timeout ends)
   gap 60 ms | 1°: 9.00/9.00 (0%)  2°: 4.50/4.50 (0%)  3°: 3.00/3.00 (0%)  5°: 1.80/1.80 (0%)
 
 Fade check: an end bin is redrawn at exactly 2 passes for every step and gap,
-so with linear fade over APP_FADE_SWEEPS = 2 passes it reaches 0 just as it is
+so with linear fade over 2 passes it reaches 0 just as it is
 re-measured. Brightness when redrawn, middle / end bin:
-  fade 2 passes: 50% / 0%
-  fade 3 passes: 67% / 33%
+  fade 2 passes (original): 50% / 0%
+  fade 3 passes (D-FADE): 67% / 33%
   fade 4 passes: 75% / 50%

@@ -207,7 +207,7 @@ Only decisions actually made go here, each with its reason/evidence. Everything 
 | D-MODES | Which modes beyond SWEEP? | LOCK (lock-on), MANUAL (joystick), both, neither | Joe's idea: both; LOCK matches a brief extension ("rescan a region where an object was detected") | Team, after M1 |
 | D-MODEBTN | How are modes switched? | joystick press / separate button / from the PC or phone page | Joystick press saves a part, if the kit joystick has a switch | Team + kit |
 | D-STATUS | How are no-echo and failed readings shown? | three statuses with shapes / distance 0 / hide them | Brief asks how the display tells them apart | S4 prototype, O2 user test |
-| D-RANGE | Maximum range / echo timeout | 100 / 150 / 200 / 400 cm | Shorter = faster sweep; desk-scale use | S1, T-DIST |
+| D-RANGE | Maximum range / echo timeout | 100 / 150 / 200 / 400 cm | Desk scale and accuracy (S1: range doesn't change pass time at a 60 ms gap) | S1, T-DIST |
 | D-ECHO | How the echo is timed | GPIO interrupt + esp_timer / RMT / busy-wait | Busy-wait blocks everything | I4 |
 | D-JOY | Joystick control | position / rate | | T-JOY |
 | D-FILTER | Steadying readings | raw / median of 3 / reject jumps | Must not hide real changes | T-MOVE |

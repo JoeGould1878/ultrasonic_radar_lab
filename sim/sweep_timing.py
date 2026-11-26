@@ -132,6 +132,8 @@ WALKER_M_S = 0.2
 SC4_PASS_S = 5.0             # CONCEIVE.txt SC4
 SC3_BEARING_DEG = 5.0        # CONCEIVE.txt SC3
 TUBE_CM = 5.0                # CONCEIVE.txt SC1
+# Fade options compared, fixed so the evidence doesn't change with app_config.h
+FADE_COMPARE = ((2, "original"), (3, "D-FADE"))
 
 # --------------------------------------------------------- chart style ----
 # Categorical slots 1-4 of the dataviz reference palette (validated order).
@@ -377,7 +379,6 @@ def chart_scan_style(m: Model, path: Path):
 def chart_point_age(m: Model, path: Path):
     gap = m.cfg["APP_US_PING_GAP_MS"]
     rng = m.cfg["APP_US_MAX_RANGE_CM"]
-    fade_now = m.cfg["APP_FADE_SWEEPS"]
     fig, ax = plt.subplots(figsize=(9, 4.4))
     fig.patch.set_facecolor("white")
     style_axes(ax)
@@ -389,13 +390,15 @@ def chart_point_age(m: Model, path: Path):
         top = max(top, max(ys))
         ax.plot(xs, ys, color=STEP_COLOR[step], linewidth=2, zorder=3)
         # nudge a label off the fade line it would sit on
-        dy = -9 if abs(ys[-1] - m.cfg["APP_FADE_SWEEPS"] * m.pass_s(m.cfg["APP_SWEEP_STEP_DEG"], gap, rng, "stop-and-ping")) < 0.3 else 0
+        cpass = m.pass_s(m.cfg["APP_SWEEP_STEP_DEG"], gap, rng, "stop-and-ping")
+        dy = -9 if any(abs(ys[-1] - k * cpass) < 0.3 for k, _ in FADE_COMPARE) else 0
         end_label(ax, xs[-1], ys[-1], f"{step}°  {ys[-1]:.1f} s", STEP_COLOR[step], dy=dy)
     # fade lines are relative to each step's pass time; draw them for the config step
     cstep = m.cfg["APP_SWEEP_STEP_DEG"]
     p = m.pass_s(cstep, gap, rng, "stop-and-ping")
-    for k, lbl in ((fade_now, f"fade = {fade_now:.0f} passes (now)"), (3, "fade = 3 passes")):
-        ax.axhline(k * p, color=INK2, linestyle=(0, (4, 3)) if k == fade_now else (0, (1, 2)),
+    for (k, name), ls in zip(FADE_COMPARE, ((0, (4, 3)), (0, (1, 2)))):
+        lbl = f"fade = {k} passes ({name})"
+        ax.axhline(k * p, color=INK2, linestyle=ls,
                    linewidth=1.2, zorder=1)
         ax.annotate(f"{lbl}\nat step {cstep:.0f}°: {k * p:.1f} s", xy=(0.995, k * p),
                     xycoords=("axes fraction", "data"), xytext=(0, 3), textcoords="offset points",
@@ -547,10 +550,12 @@ def summary(m: Model, rows: list[dict]) -> str:
         p(f"  gap {gap:>2} ms | " + "  ".join(cells))
     p()
     p("Fade check: an end bin is redrawn at exactly 2 passes for every step and gap,")
-    p(f"so with linear fade over APP_FADE_SWEEPS = {cfg['APP_FADE_SWEEPS']:g} passes it reaches 0 just as it is")
+    p("so with linear fade over 2 passes it reaches 0 just as it is")
     p("re-measured. Brightness when redrawn, middle / end bin:")
+    names = dict(FADE_COMPARE)
     for k in (2, 3, 4):
-        p(f"  fade {k} passes: {max(0, 1 - 1 / k):.0%} / {max(0, 1 - 2 / k):.0%}")
+        lbl = f"{k} passes ({names[k]})" if k in names else f"{k} passes"
+        p(f"  fade {lbl}: {max(0, 1 - 1 / k):.0%} / {max(0, 1 - 2 / k):.0%}")
     return s.getvalue()
 
 
