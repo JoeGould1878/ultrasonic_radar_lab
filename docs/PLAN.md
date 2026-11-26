@@ -8,7 +8,7 @@ This is the master task list. Each task has an ID, who does it, what "done" look
 
 - Kit (component box) arrives **next week**. Until then: Conceive, Design, simulation, and the pure-C logic, all of which need no hardware.
 - Known hardware: Freenove ESP32-S3-WROOM, everything from MC2, 32×8 MAX7219, and a screen in the box of **unknown type**: it may be a long character LCD (16×2 style), which can't draw a radar picture. HC-SR04, SG90 servo and an analogue joystick are expected but not confirmed.
-- Firmware: ESP-IDF v6, C. Skeleton = headers (the contract) + build files + empty `.c` files.
+- Firmware: ESP-IDF v6.1, C. Skeleton = headers (the contract) + build files + empty `.c` files.
 - `docs/CDIO/CONCEIVE.txt` drafted. The rest of `docs/CDIO/` is outlines.
 
 ## What the brief is really marking
@@ -190,7 +190,7 @@ Only decisions actually made go here, each with its reason/evidence. Everything 
 
 | ID | Date | Decision | Alternatives | Reason / evidence |
 | --- | --- | --- | --- | --- |
-| D-FW | 26/11 | ESP-IDF v6 on the ESP32-S3 | Arduino-ESP32; Uno R4 | Same toolchain/board as MC2; Joe is the only one working on it this week |
+| D-FW | 26/11 | ESP-IDF v6.1 on the ESP32-S3 (`~/esp/esp-idf-v6.1`, loaded by the `get_idf` alias) | Arduino-ESP32; Uno R4 | Same toolchain/board as MC2; Joe is the only one working on it this week; v6.0.2 also installed; v6.1 pinned so builds are reproducible |
 | D-ORDER | 26/11 | Build and test SWEEP first; LOCK and MANUAL only after it works | All modes at once | Brief: "keep a working version of the core scanner as you experiment" |
 | | | | | |
 

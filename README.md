@@ -48,7 +48,7 @@ Data path: `sweep_plan → servo → (settle) → hcsr04 → scan_map → target
 ## Build
 
 ```bash
-. $IDF_PATH/export.sh
+. ~/esp/esp-idf-v6.1/export.sh   # ESP-IDF v6.1 (D-FW); Joe: get_idf
 idf.py set-target esp32s3      # first time only
 idf.py build flash -p /dev/ttyACM0 monitor
 cd host_tests && make          # laptop tests, no board needed

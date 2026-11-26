@@ -4,7 +4,7 @@ Guidance for Claude (and Claude Code) working in this repository.
 
 ## Project
 
-Scanning ultrasonic sonar ("radar" display): Mini-Challenge 3, CDIO, 2026. ESP32-S3 + HC-SR04 on an SG90 servo + joystick + a display that is still to be chosen (kit screen / PC over USB / web page), ESP-IDF v6, C. Three modes: SWEEP (essential), LOCK (lock-on), MANUAL (joystick).
+Scanning ultrasonic sonar ("radar" display): Mini-Challenge 3, CDIO, 2026. ESP32-S3 + HC-SR04 on an SG90 servo + joystick + a display that is still to be chosen (kit screen / PC over USB / web page), ESP-IDF v6.1, C. Three modes: SWEEP (essential), LOCK (lock-on), MANUAL (joystick).
 The assessment is on the **engineering process and evidence**, with extra weight on **design, simulation, and case design → circuit**. Read `docs/CONTEXT.md` first, then `docs/PLAN.md` (the master task list).
 
 ## How we work
@@ -24,7 +24,7 @@ The assessment is on the **engineering process and evidence**, with extra weight
 ## Commands
 
 ```bash
-. $IDF_PATH/export.sh
+get_idf   # alias: . ~/esp/esp-idf-v6.1/export.sh
 idf.py set-target esp32s3                    # once per project dir
 idf.py build
 idf.py build flash -p /dev/ttyACM0 monitor   # Ctrl+] to exit
