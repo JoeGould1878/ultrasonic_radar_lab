@@ -51,13 +51,20 @@
 
 #define APP_SWEEP_MIN_DEG        15   /* PROPOSED: avoid the servo end-stops */
 #define APP_SWEEP_MAX_DEG       165   /* PROPOSED */
-#define APP_SWEEP_STEP_DEG        2   /* SIM: step vs sweep time vs beam width */
+/* 2 deg: 4.5 s per 150 deg pass at a 60 ms gap (SC4 <= 5 s), 7 readings per
+ * thin target (4 if the useful beam is only 8 deg). 1 deg misses SC4. D-STEP. */
+#define APP_SWEEP_STEP_DEG        2   /* SIM S1 (s1_summary.txt); re-check at I7 */
 
 /* ----------------------------------------------------------- ultrasonic ---- */
 
 #define APP_US_MAX_RANGE_CM     150   /* PROPOSED: success criterion C-RANGE */
 #define APP_US_MIN_RANGE_CM       3   /* datasheet ~2 cm */
-#define APP_US_PING_GAP_MS       60   /* datasheet recommends >= 60 ms between pings (old echoes) */
+/* Datasheet recommends >= 60 ms between pings (late echoes look like near
+ * objects). S1: 60 ms already meets SC4, and echoes from up to 10.3 m cannot
+ * land in the next ping. Fallback 40 ms ONLY if all three hold: I7 shows the
+ * pass is over 5 s, B2 and T-XTALK show no ghosts or cross-talk, and the
+ * CONCEIVE stakeholder row ("ping gap >= 60 ms") is changed to match. D-GAP. */
+#define APP_US_PING_GAP_MS       60   /* SIM S1 (s1_summary.txt); re-check at I7 */
 #define APP_US_TEMP_C            20   /* speed of sound = 331.3 + 0.606*T m/s; MEASURE lab temp */
 /* Echo timeout follows from max range: 2 * 1.5 m / 343 m/s ≈ 8.7 ms (+ margin) */
 #define APP_US_TIMEOUT_US     10000
@@ -81,7 +88,16 @@
 /* ------------------------------------------------------------- display ---- */
 
 #define APP_DISPLAY_FPS          20
-#define APP_FADE_SWEEPS           2   /* a point fades out over this many sweep times */
+/* The bounce sweep revisits the end bins only every 2 passes (the middle every
+ * pass), so a fade over 2 passes would reach zero just as they are refreshed.
+ * With 3: 67 % brightness when redrawn in the middle, 33 % at the ends.
+ * O2 judges whether this meets SC6 ("older than one pass visibly faded"). D-FADE. */
+#define APP_FADE_SWEEPS           3   /* SIM S1 (s1_summary.txt); was 2 */
+/* Max age for scan_map_expire(), in passes. Must be > 2 passes or real objects
+ * at the arc ends are forgotten before they are re-measured. Removed objects
+ * still go within 2 passes (SC5): the re-ping replaces them, not the expiry.
+ * TODO(I1): pass APP_EXPIRE_SWEEPS * pass time to scan_map_expire(). Not used yet. */
+#define APP_EXPIRE_SWEEPS         3   /* SIM S1 (s1_summary.txt) */
 #define APP_STALE_MS           1500   /* no new reading for this long -> "STALE" banner */
 
 /* ------------------------------------------------------------- tasks ---- */

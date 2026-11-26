@@ -149,11 +149,16 @@ SC10 | Usability: someone outside the team, with no explanation,      | O2 user
      | which points are old                                           |
 
 Why these numbers: the HC-SR04 datasheet gives a 2 to 400 cm range and about
-a 15 degree beam. We chose 150 cm because the system is desk-scale and a
-shorter echo timeout makes each ping, and so each sweep, faster. +/-5 degrees
-is a third of the beam width, and needs the edge-midpoint method rather than
-the nearest bin. 5 s per pass follows from the 60 ms ping gap the datasheet
-recommends (our timing model, PLAN task S1, will confirm it).
+a 15 degree beam. We chose 150 cm because the system is desk-scale, and
+because accuracy falls off with range: the echo gets weaker, so thin or soft
+objects drop out, and the beam gets wider (about 39 cm across at 150 cm), so
+objects are harder to place. Range does not make the scan faster: our timing
+model (PLAN task S1) showed that at a 60 ms ping gap the pass time is the
+same at 100, 150 or 200 cm, because the gap sets the pace, not the echo
+timeout. +/-5 degrees is a third of the beam width, and needs the
+edge-midpoint method rather than the nearest bin. 5 s per pass: the timing
+model gives 4.5 s for one 150 degree pass at a 2 degree step and the 60 ms
+ping gap the datasheet recommends (docs/evidence/sim/s1_summary.txt).
 
 
 6. ESSENTIAL VS DESIRABLE
@@ -202,6 +207,13 @@ Limitations we expect, which we will demonstrate and measure:
   - Soft materials (cloth, foam, clothing) absorb sound and may not echo.
   - Slow: about 60 ms per ping, so a full scan takes seconds. Fast-moving
     objects are in the wrong place by the time the sweep comes back.
+  - SWEEP mode cannot follow a walking person. The sweep goes back and
+    forth, so a point is measured again after 1 pass (middle of the arc) to
+    2 passes (ends), 4.5 to 9 s. Someone walking at 0.2 m/s has moved 0.9 to
+    1.8 m by then, several times the beam width (about 26 cm at 1 m). Our
+    timing model (PLAN task S1) gives these numbers. This is one reason for
+    LOCK mode: sweeping only a narrow sector around a target revisits it
+    much more often.
   - Every HC-SR04 uses 40 kHz, so a nearby team's sensor can cause false echoes.
   - Speed of sound changes with temperature (about 0.17 % per degree C), which
     shifts distances slightly.

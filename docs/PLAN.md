@@ -192,6 +192,11 @@ Only decisions actually made go here, each with its reason/evidence. Everything 
 | --- | --- | --- | --- | --- |
 | D-FW | 26/11 | ESP-IDF v6.1 on the ESP32-S3 (`~/esp/esp-idf-v6.1`, loaded by the `get_idf` alias) | Arduino-ESP32; Uno R4 | Same toolchain/board as MC2; Joe is the only one working on it this week; v6.0.2 also installed; v6.1 pinned so builds are reproducible |
 | D-ORDER | 26/11 | Build and test SWEEP first; LOCK and MANUAL only after it works | All modes at once | Brief: "keep a working version of the core scanner as you experiment" |
+| D-STEP | 26/11 | 2° step (`APP_SWEEP_STEP_DEG`) | 1° / 3° / 5° | S1: 4.5 s per 150° pass at a 60 ms gap (SC4 ≤ 5 s); 7 readings see a thin target (4 if the useful beam is only 8°), enough for median-of-3 and edge-midpoint. 1° misses SC4 at every gap (9.0 s at 60 ms); 3° drops to 2 hits in the 8° case, 5° to 1. Evidence: `docs/evidence/sim/s1_summary.txt`; re-check at I7 |
+| D-SCAN | 26/11 | Stop-and-ping: move → settle → ping | Ping while moving | S1: ping-while-moving saves 0 % at a 40–60 ms gap (the 4 ms move + 20 ms settle fit inside the gap), but its angle error flips sign each pass, so an object jumps 3.2° between passes at 2° (a third of the SC3 ±5° band). Evidence: `docs/evidence/sim/s1_summary.txt`; T-MATCH confirms |
+| D-ANGLE-TAG | 26/11 | Tag each reading with the settled angle at ping time | Angle at send time; interpolated | Follows from D-SCAN: once settled, the commanded angle is the real one (S1 assumption A2; B1 measures the settle). The previous prototype could be ~2.5° off. Evidence: `docs/evidence/sim/s1_summary.txt`; T-MATCH confirms |
+| D-GAP | 26/11 | 60 ms between pings (`APP_US_PING_GAP_MS`) | 30 / 40 ms | S1: 60 ms already meets SC4 (4.5 s at 2°); echoes from up to 10.3 m can't land in the next ping (6.9 m at 40 ms, 5.2 m at 30 ms); 30 ms is shorter than the assumed 38 ms no-echo hold, so triggers may be ignored. Dropping to 40 ms needs all three: I7 shows the pass is over 5 s, B2 and T-XTALK show no ghosts or cross-talk, and the CONCEIVE stakeholder row ("ping gap >= 60 ms") is changed to match. Evidence: `docs/evidence/sim/s1_summary.txt` |
+| D-FADE | 26/11 | Points fade out over 3 passes (`APP_FADE_SWEEPS` 2 → 3); expiry also 3 passes (`APP_EXPIRE_SWEEPS`, wired up in I1) | Fade over 2 passes | S1: the bounce sweep re-measures the end bins only every 2 passes, so a 2-pass fade reaches zero just as they're refreshed. With 3: 67 % brightness when redrawn in the middle, 33 % at the ends. O2 judges whether this meets SC6. Evidence: `docs/evidence/sim/s1_summary.txt` |
 | | | | | |
 
 ## Options under consideration (not decided)
@@ -201,12 +206,8 @@ Only decisions actually made go here, each with its reason/evidence. Everything 
 | D-DISPLAY | Where is the radar picture shown? | kit screen / PC over USB (Python) / PC over USB (Web Serial page) / ESP32 web page (PC + phone) / MAX7219 | None yet: depends on what the kit screen is | B4 + S4 prototypes, team |
 | D-MODES | Which modes beyond SWEEP? | LOCK (lock-on), MANUAL (joystick), both, neither | Joe's idea: both; LOCK matches a brief extension ("rescan a region where an object was detected") | Team, after M1 |
 | D-MODEBTN | How are modes switched? | joystick press / separate button / from the PC or phone page | Joystick press saves a part, if the kit joystick has a switch | Team + kit |
-| D-ANGLE-TAG | Which angle is a reading drawn at? | settled angle at ping time / angle at send time / interpolated | Previous prototype moved the servo every 20 ms but pinged every 50 ms, so readings could be up to ~2.5° off | S1, T-MATCH |
 | D-STATUS | How are no-echo and failed readings shown? | three statuses with shapes / distance 0 / hide them | Brief asks how the display tells them apart | S4 prototype, O2 user test |
 | D-RANGE | Maximum range / echo timeout | 100 / 150 / 200 / 400 cm | Shorter = faster sweep; desk-scale use | S1, T-DIST |
-| D-GAP | Time between pings | 20–50 ms (previous prototype) / ≥ 60 ms (datasheet) | Late echoes look like near objects | S1, T-XTALK |
-| D-SCAN | Stop-and-ping or continuous | move → settle → ping / ping while moving | | S1, T-MATCH |
-| D-STEP | Step size | 1 / 2 / 3 / 5° | | S1 |
 | D-ECHO | How the echo is timed | GPIO interrupt + esp_timer / RMT / busy-wait | Busy-wait blocks everything | I4 |
 | D-JOY | Joystick control | position / rate | | T-JOY |
 | D-FILTER | Steadying readings | raw / median of 3 / reject jumps | Must not hide real changes | T-MOVE |
