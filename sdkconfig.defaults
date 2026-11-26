@@ -11,3 +11,7 @@ CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
 CONFIG_ESP_CONSOLE_UART_CUSTOM=y
 CONFIG_ESP_CONSOLE_UART_NUM=0
 CONFIG_ESP_CONSOLE_UART_BAUDRATE=921600
+
+# Freenove ESP32-S3-WROOM is the N8R8 module (8 MB flash). Confirm from the
+# first boot log ("SPI Flash Size : 8MB"); if it says otherwise, change this.
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
