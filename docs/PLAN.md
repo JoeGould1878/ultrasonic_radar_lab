@@ -114,7 +114,7 @@ The brief wants a simulation that **answers a design question**, records its **a
   - Inputs: step size, servo speed (deg/ms), settle time, ping gap (≥ 60 ms), echo time at max range, arc width.
   - Outputs: time per sweep; readings per sweep; worst-case age of a point when it is redrawn; gap between neighbouring readings in cm at 50/100/150 cm compared with the ~15° beam width; how far a 0.2 m/s walker moves between visits.
   - Charts to `docs/evidence/sim/`. *Answers:* D-STEP, D-SCAN, `APP_FADE_SWEEPS`. *Assumptions:* datasheet servo speed, ideal settle, no echo retries. *Check on hardware:* B1 measures real step + settle time; I7 compares.
-- [ ] **S2** `sim/scene.py`: scene simulator.
+- [x] **S2** `sim/scene.py`: scene simulator.
   - A 2D desk scene (poles = circles, boxes, a wall at an angle), a beam cone of about ±7.5°, the nearest surface in the cone returns an echo, surfaces at a steep angle return none (specular), plus Gaussian noise and random dropouts.
   - Emits the **same serial protocol** as the firmware (`R,…` lines), so everything downstream can't tell sim from real.
   - Shows the "smear": one thin pole appears across about 15° of bins. That motivates the edge-midpoint in D-LOCK.
