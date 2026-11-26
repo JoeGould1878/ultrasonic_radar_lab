@@ -8,6 +8,6 @@ idf_component_register(
     INCLUDE_DIRS "."
     PRIV_REQUIRES
         hcsr04 servo joystick button display
-        scan_map sweep_plan target_track mode_fsm radar_gfx
+        scan_map sweep_plan target_track mode_fsm radar_gfx lock_loop
         esp_timer
 )

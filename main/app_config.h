@@ -77,6 +77,10 @@
 #define APP_LOCK_SECTOR_HALF_DEG 15   /* SIM: narrow sweep ± around the target */
 #define APP_LOCK_LOST_PINGS       6   /* SIM: no echo near target this many times -> lost */
 #define APP_LOCK_RESWEEP_S       10   /* SIM: full wide sweep every N s while locked */
+/* Bridge up to this many non-OK bins inside a cluster (S2: one dropout split a
+ * smear, worst bearing error 6 deg). 0 = off until Joe approves it on S3's
+ * with/without results, including the two-dowel merge check. */
+#define APP_LOCK_BRIDGE_BINS      0   /* PROPOSED (S3) */
 
 /* ------------------------------------------------------------ joystick ---- */
 

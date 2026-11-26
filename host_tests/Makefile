@@ -9,7 +9,7 @@ CFLAGS  ?= -std=c11 -Wall -Wextra -Werror -g -O0
 LDLIBS  := -lm
 COMP    := ../components
 BUILD   := build
-INCS    := $(foreach c,scan_map sweep_plan target_track mode_fsm radar_gfx,-I$(COMP)/$(c)/include)
+INCS    := $(foreach c,scan_map sweep_plan target_track mode_fsm radar_gfx lock_loop,-I$(COMP)/$(c)/include)
 
 # PLAN.md tasks S2/S3/I1 add: scan_map sweep_plan target_track mode_fsm radar_gfx
 TESTS   :=
@@ -22,7 +22,7 @@ $(BUILD):
 
 # Every pure component must compile without ESP-IDF
 check-headers:
-	@for c in scan_map sweep_plan target_track mode_fsm radar_gfx; do \
+	@for c in scan_map sweep_plan target_track mode_fsm radar_gfx lock_loop; do \
 	  $(CC) $(CFLAGS) -Wno-pedantic $(INCS) -fsyntax-only $(COMP)/$$c/$$c.c || exit 1; done
 	@echo "Pure components compile on the laptop."
 

@@ -236,6 +236,7 @@ Only decisions actually made go here, each with its reason/evidence. Everything 
 - [ ] Demo date (session 6)? Canvas reflection deadlines?
 - [ ] Can the lab PC run Python with pyserial for the viewer?
 - [ ] Is a 3D printer / laser cutter available for the mount (D5)?
+- [ ] T line (decide in S4): add a field for the D-EDGE flag (low-confidence bearing)? And what goes in `centre_deg`, `left_deg`, `right_deg`, `dist_cm` while SEARCHING: `-` as in D-PROTO-NULL?
 
 ## Sources
 

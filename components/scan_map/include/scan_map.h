@@ -32,7 +32,14 @@ typedef struct {
     float            dist_cm;
     reading_status_t status;
     uint32_t         t_ms;      /**< when this bin was last written */
+    float            angle_deg; /**< exact angle of that reading (S3, 26/11) */
 } scan_bin_t;
+/* Why angle_deg (added in S3): bins are bin_deg wide starting at 0 deg, but
+ * the sweep starts at APP_SWEEP_MIN_DEG (15), so a reading at 15 deg would
+ * otherwise be reported at its bin centre (16 deg) and every cluster edge
+ * would be up to half a bin off. Keeping the real angle makes target_track
+ * exact for any step and start angle, and lets the display draw each point
+ * where it was measured (D-ANGLE-TAG). */
 
 typedef struct {
     float      bin_deg;        /**< bin width */

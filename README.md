@@ -35,7 +35,8 @@ ultrasonic_radar_lab/
 │   ├── sweep_plan/       next angle for FULL / SECTOR / MANUAL         [pure C]
 │   ├── target_track/     lock-on: cluster, confirm, follow, lost       [pure C]
 │   ├── mode_fsm/         SWEEP / LOCK / MANUAL, pause, fault           [pure C]
-│   └── radar_gfx/        polar -> screen, marks by status and age      [pure C]
+│   ├── radar_gfx/        polar -> screen, marks by status and age      [pure C]
+│   └── lock_loop/        LOCK controller: full sweep <-> sector        [pure C]
 ├── bringup/              standalone hardware tests (servo, sensor, joystick, screen)
 ├── host_tests/           laptop tests for the [pure C] components
 ├── sim/                  timing model, scene simulator, (Wokwi)
