@@ -1,0 +1,90 @@
+S1 sweep timing model: summary
+========================================================================
+Config read from main/app_config.h:
+  APP_FADE_SWEEPS              2
+  APP_SERVO_MAX_US             2400
+  APP_SERVO_MIN_US             500
+  APP_SERVO_SETTLE_MS          20
+  APP_SERVO_SPEED_MS_PER_DEG   2
+  APP_SWEEP_MAX_DEG            165
+  APP_SWEEP_MIN_DEG            15
+  APP_SWEEP_STEP_DEG           2
+  APP_US_MAX_RANGE_CM          150
+  APP_US_MIN_RANGE_CM          3
+  APP_US_PING_GAP_MS           60
+  APP_US_TEMP_C                20
+  APP_US_TIMEOUT_US            10000
+Derived: c = 343.4 m/s; timeout margin over 2R/c = 1.26 ms; arc = 150 deg
+Assumed (not in config): overhead 0.5 ms, no-echo hold 38.0 ms, beam 15.0/8.0 deg, PWM period 20.0 ms
+
+Pass time (s), stop-and-ping, worst case (empty scene)
+   range   gap |    1°    2°    3°    5° | limited by (2°)
+   100cm  30ms |  5.70*  2.85   1.90   1.14 | no-echo hold
+   100cm  40ms |  6.00*  3.00   2.00   1.20 | ping gap
+   100cm  60ms |  9.00*  4.50   3.00   1.80 | ping gap
+   150cm  30ms |  5.70*  2.85   1.90   1.22 | no-echo hold
+   150cm  40ms |  6.00*  3.00   2.00   1.22 | ping gap
+   150cm  60ms |  9.00*  4.50   3.00   1.80 | ping gap
+   200cm  30ms |  5.70*  2.85   1.97   1.30 | no-echo hold
+   200cm  40ms |  6.00*  3.00   2.00   1.30 | ping gap
+   200cm  60ms |  9.00*  4.50   3.00   1.80 | ping gap
+  (* = misses SC4, 5 s per pass)
+
+Pass time (s), ping-while-moving, worst case (empty scene)
+   range   gap |    1°    2°    3°    5° | limited by (2°)
+   100cm  30ms |  5.70*  2.85   1.90   1.14 | no-echo hold
+   100cm  40ms |  6.00*  3.00   2.00   1.20 | ping gap
+   100cm  60ms |  9.00*  4.50   3.00   1.80 | ping gap
+   150cm  30ms |  5.70*  2.85   1.90   1.14 | no-echo hold
+   150cm  40ms |  6.00*  3.00   2.00   1.20 | ping gap
+   150cm  60ms |  9.00*  4.50   3.00   1.80 | ping gap
+   200cm  30ms |  5.70*  2.85   1.90   1.14 | no-echo hold
+   200cm  40ms |  6.00*  3.00   2.00   1.20 | ping gap
+   200cm  60ms |  9.00*  4.50   3.00   1.80 | ping gap
+  (* = misses SC4, 5 s per pass)
+
+Per step at range 150 cm, stop-and-ping
+  step  gap    N   T ms  pass s  age mid  age end  walk mid  walk end
+    1°   30  151   38.0    5.70    5.70s   11.40s     114cm     228cm
+    2°   30   76   38.0    2.85    2.89s    5.70s      58cm     114cm
+    3°   30   51   38.0    1.90    1.90s    3.80s      38cm      76cm
+    5°   30   31   40.5    1.22    1.22s    2.43s      24cm      49cm
+    1°   40  151   40.0    6.00    6.00s   12.00s     120cm     240cm
+    2°   40   76   40.0    3.00    3.04s    6.00s      61cm     120cm
+    3°   40   51   40.0    2.00    2.00s    4.00s      40cm      80cm
+    5°   40   31   40.5    1.22    1.22s    2.43s      24cm      49cm
+    1°   60  151   60.0    9.00    9.00s   18.00s     180cm     360cm
+    2°   60   76   60.0    4.50    4.56s    9.00s      91cm     180cm
+    3°   60   51   60.0    3.00    3.00s    6.00s      60cm     120cm
+    5°   60   31   60.0    1.80    1.80s    3.60s      36cm      72cm
+
+Coverage (independent of gap and style)
+  step | spacing at 50/100/150 cm  | 15° footprint 50/100/150 cm | hits 15°/8°
+    1° |   0.9   1.8   2.6 cm       |  13.2  26.3  39.5 cm           |  15 / 8
+    2° |   1.8   3.5   5.2 cm       |  13.2  26.3  39.5 cm           |   7 / 4
+    3° |   2.6   5.2   7.8 cm       |  13.2  26.3  39.5 cm           |   5 / 2
+    5° |   4.4   8.7  13.1 cm       |  13.2  26.3  39.5 cm           |   3 / 1
+
+Ping-while-moving angle error at 150 cm range setting (deg; jump between passes = 2x)
+   gap | 1°: 50/100/150 cm  2°: 50/100/150 cm  3°: 50/100/150 cm  5°: 50/100/150 cm
+    30 |    1.13/1.21/1.28     2.26/2.41/2.57     3.39/3.62/3.85     5.65/6.03/6.41
+    40 |    1.07/1.15/1.22     2.15/2.29/2.44     3.22/3.44/3.66     5.36/5.73/6.09
+    60 |    0.72/0.76/0.81     1.43/1.53/1.62     2.15/2.29/2.44     3.58/3.82/4.06
+
+Ghost-free range (echo from further than this can land in the next ping)
+  gap 30 ms: 5.2 m  < no-echo hold: trigger may be ignored (A6)
+  gap 40 ms: 6.9 m
+  gap 60 ms: 10.3 m
+
+Sensitivity: A6 wrong (sensor accepts a new trigger as soon as the timeout ends)
+  pass s at 150 cm: stop-and-ping / ping-while-moving (saved)
+  gap 30 ms | 1°: 4.88/4.50 (8%)  2°: 2.59/2.25 (13%)  3°: 1.82/1.50 (18%)  5°: 1.22/0.90 (26%)
+  gap 40 ms | 1°: 6.00/6.00 (0%)  2°: 3.00/3.00 (0%)  3°: 2.00/2.00 (0%)  5°: 1.22/1.20 (1%)
+  gap 60 ms | 1°: 9.00/9.00 (0%)  2°: 4.50/4.50 (0%)  3°: 3.00/3.00 (0%)  5°: 1.80/1.80 (0%)
+
+Fade check: an end bin is redrawn at exactly 2 passes for every step and gap,
+so with linear fade over APP_FADE_SWEEPS = 2 passes it reaches 0 just as it is
+re-measured. Brightness when redrawn, middle / end bin:
+  fade 2 passes: 50% / 0%
+  fade 3 passes: 67% / 33%
+  fade 4 passes: 75% / 50%

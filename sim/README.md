@@ -4,7 +4,7 @@ The brief asks for a simulation that **answers a design question**, records **wh
 
 | Script (PLAN task) | Design question | Status |
 | --- | --- | --- |
-| `sweep_timing.py` (S1) | Step size and ping gap vs sweep time, data age, coverage vs beam width | to write |
+| `sweep_timing.py` (S1) | Step size and ping gap vs sweep time, data age, coverage vs beam width | done 26 Nov: `docs/evidence/sim/s1_*` (4 charts, CSV, summary); recommendations awaiting Joe's approval |
 | `scene.py` (S2) | What does one object look like to a 15° beam? Produces simulated `R,…` lines | to write |
 | `../host_tests/` (S3) | Do the lock-on rules lock fast, follow, and not false-lock? Which `APP_LOCK_*` values? | to write |
 | `../tools/radar_view.py` (S4) | Is the display readable: age, statuses, labels? (prototyped on simulated data) | to write |

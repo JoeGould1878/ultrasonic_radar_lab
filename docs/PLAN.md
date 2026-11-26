@@ -98,7 +98,7 @@ An **"honest" desk-scale sonar for a teaching lab**. It scans a 150° arc out to
 
 The brief wants a simulation that **answers a design question**, records its **assumptions**, and says **what still needs testing on hardware**. S1 and S3 are the main ones; S4 and S5 are cheap extras.
 
-- [ ] **S1** `sim/sweep_timing.py`: timing model.
+- [x] **S1** `sim/sweep_timing.py`: timing model.
   - Inputs: step size, servo speed (deg/ms), settle time, ping gap (≥ 60 ms), echo time at max range, arc width.
   - Outputs: time per sweep; readings per sweep; worst-case age of a point when it is redrawn; gap between neighbouring readings in cm at 50/100/150 cm compared with the ~15° beam width; how far a 0.2 m/s walker moves between visits.
   - Charts to `docs/evidence/sim/`. *Answers:* D-STEP, D-SCAN, `APP_FADE_SWEEPS`. *Assumptions:* datasheet servo speed, ideal settle, no echo retries. *Check on hardware:* B1 measures real step + settle time; I7 compares.

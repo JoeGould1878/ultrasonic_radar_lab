@@ -34,7 +34,8 @@ Kept by Claude so any new chat or Claude Code session can pick up where we left 
 
 - [x] 26 Nov: brief + Week 9a slides + previous prototype blog read; repo skeleton (headers, build files, stubs, host-test Makefile); `docs/PLAN.md`; `docs/CDIO/CONCEIVE.txt` drafted.
 - [x] 26 Nov: P0.1–P0.3 done (repo pushed, first ESP-IDF build clean, Python venv + `requirements.txt`).
-- [ ] **Next:** C2 Joe reviews CONCEIVE → S1 timing model.
+- [x] 26 Nov: S1 timing model done; recommendations for D-STEP, D-SCAN, D-GAP and `APP_FADE_SWEEPS` waiting for Joe.
+- [ ] **Next:** Joe approves the S1 recommendations (then app_config.h + decision log) → C2 Joe reviews CONCEIVE → S2 scene simulator.
 
 ## Open questions
 
@@ -46,3 +47,4 @@ See `docs/PLAN.md` → Open questions.
 - **26 Nov:** P0.2 first build with ESP-IDF v6.1 (`~/esp/esp-idf-v6.1`, the `get_idf` alias), target esp32s3: builds clean, no errors or warnings in project code, no source or header changes needed. Image 169,856 B; DIRAM 14.1 % used. `host_tests: make` passes (header check only; 0 test suites yet). P0.3 `.venv` + pinned `requirements.txt` (numpy 2.5.5, matplotlib 3.11.2, pyserial 3.5); checked it installs into a fresh venv.
 - **26 Nov:** `sdkconfig.defaults` sets flash size to 8 MB (N8R8 module; was the 2 MB default). Still to confirm from the first boot log. Rebuild clean. The 5 CMake "private include directory" warnings at configure time come from ESP-IDF v6.1's own `esp_wifi`/`wpa_supplicant` components, not project code.
 - **26 Nov:** ESP-IDF pinned to v6.1 (Joe approved; D-FW updated). v6.0.2 is also installed, so the version is now named everywhere: CLAUDE.md, README.md build steps, PLAN.md status + D-FW, CONTEXT.md.
+- **26 Nov:** S1 `sim/sweep_timing.py` reads the defaults from `main/app_config.h` and models step 1/2/3/5° x gap 30/40/60 ms x range 100/150/200 cm x stop-and-ping / ping-while-moving. Outputs in `docs/evidence/sim/s1_*` (4 PNG, CSV, summary). Key results: step 2° + gap 60 ms = 4.5 s pass (SC4 met), 1° misses SC4 at every gap; ping-while-moving saves 0 % at 40-60 ms but adds a 3.2° jump between passes at 2°; end bins are only redrawn every 2 passes, so APP_FADE_SWEEPS = 2 fades them to zero just as they're refreshed; range has no effect on pass time at a 60 ms gap. Proposed (not applied, waiting for Joe): D-STEP 2°, D-SCAN stop-and-ping, D-GAP 60 ms, APP_FADE_SWEEPS 3. Assumptions A5/A6/A7 (overhead, 38 ms no-echo hold, 8° what-if beam) are not in app_config.h; B1/B2 must measure them.
