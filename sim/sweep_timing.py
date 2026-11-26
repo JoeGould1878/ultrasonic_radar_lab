@@ -102,8 +102,6 @@ from __future__ import annotations
 import csv
 import io
 import math
-import re
-import sys
 from pathlib import Path
 
 import matplotlib
@@ -111,9 +109,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
-ROOT = Path(__file__).resolve().parent.parent
-CONFIG_H = ROOT / "main" / "app_config.h"
-OUT = ROOT / "docs" / "evidence" / "sim"
+from appcfg import CONFIG_H, ROOT, parse_config  # noqa: E402
+from appcfg import EVIDENCE_SIM as OUT  # noqa: E402
 
 # ----------------------------------------------------------------- grid ----
 STEPS_DEG = [1, 2, 3, 5]
@@ -143,24 +140,12 @@ INK2 = "#666666"
 GRID = "#e6e6e6"
 
 
-def parse_config(path: Path) -> dict[str, float]:
-    """Read every numeric #define from app_config.h."""
-    vals: dict[str, float] = {}
-    pat = re.compile(r"^\s*#define\s+(APP_\w+)\s+(-?\d+(?:\.\d+)?)f?\b")
-    for line in path.read_text().splitlines():
-        m = pat.match(line)
-        if m:
-            vals[m.group(1)] = float(m.group(2))
-    needed = [
-        "APP_SERVO_SPEED_MS_PER_DEG", "APP_SERVO_SETTLE_MS",
-        "APP_SWEEP_MIN_DEG", "APP_SWEEP_MAX_DEG", "APP_SWEEP_STEP_DEG",
-        "APP_US_MAX_RANGE_CM", "APP_US_PING_GAP_MS", "APP_US_TEMP_C",
-        "APP_US_TIMEOUT_US", "APP_FADE_SWEEPS",
-    ]
-    missing = [n for n in needed if n not in vals]
-    if missing:
-        sys.exit(f"app_config.h is missing: {', '.join(missing)}")
-    return vals
+NEEDED = [
+    "APP_SERVO_SPEED_MS_PER_DEG", "APP_SERVO_SETTLE_MS",
+    "APP_SWEEP_MIN_DEG", "APP_SWEEP_MAX_DEG", "APP_SWEEP_STEP_DEG",
+    "APP_US_MAX_RANGE_CM", "APP_US_PING_GAP_MS", "APP_US_TEMP_C",
+    "APP_US_TIMEOUT_US", "APP_FADE_SWEEPS",
+]
 
 
 class Model:
@@ -560,7 +545,7 @@ def summary(m: Model, rows: list[dict]) -> str:
 
 
 def main() -> None:
-    cfg = parse_config(CONFIG_H)
+    cfg = parse_config(CONFIG_H, NEEDED)
     m = Model(cfg)
     OUT.mkdir(parents=True, exist_ok=True)
     rows = build_rows(m)
