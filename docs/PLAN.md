@@ -265,13 +265,13 @@ Only decisions actually made go here, each with its reason/evidence. Everything 
 | D-PROTO-NULL | 26/11 | In `R` lines, `dist_cm` is `-` for NOECHO and FAIL; OK readings use 1 decimal place | `0.0`; empty field; `-1` | `0.0` could be read as an object at 0 cm: the dishonest-display failure B2 already guards against ("must log FAILED, not 0 cm"). `-` is not a number, so a reader that ignores the status fails visibly instead of drawing a fake point. S2 scene logs use it. |
 | D-EDGE | 26/11 | (a) Flag objects at the arc ends: a cluster touching `APP_SWEEP_MIN_DEG` or `APP_SWEEP_MAX_DEG` gets an "edge" flag and its bearing is reported as low confidence, not held to ±5°; the display shows the flag (S4) | (b) overscan ~8° past each end (pass ~5.0 s, SC4 on the limit); (c) narrow SC3 to 30–150° | S2: at 15° and 165° only ~4.5 bins are seen and the edge midpoint is pulled ~4.5° inward (worst 5.0°). (a) costs no sweep time and fits the honest-display goal; SC1 and SC3 unchanged. Evidence: `docs/evidence/sim/s2_summary.txt` |
 | D-DISPLAY | 27/11 | PC radar view over USB serial first (`tools/radar_view.py`), then an ESP32-hosted web page (PC + phone, X1) fed by the same lines; kit screen not used | Kit screen; PC Web Serial page; MAX7219 | The PC view doesn't depend on the kit and the brief allows the core display on a lab PC; the kit screen is probably a character LCD (can't show positions); the web page gives the phone view almost free. Joe, team agreed 27 Nov. Risk: needs Python + pyserial on the lab PC (open question, check session 2); fallback: Web Serial page in Chrome, no install. |
+| D-MODES | 27/11 | SWEEP is essential; MANUAL then LOCK are desirable, in that order | LOCK only; MANUAL only; neither | CONCEIVE section 6 (essential vs desirable order), team agreed 27 Nov. MANUAL first because it is simple and reuses the sweep code; LOCK has the most to test (SC8). Builds on D-ORDER |
 | | | | | |
 
 ## Options under consideration (not decided)
 
 | ID | Question | Options | Leaning / why (if any) | Decided by |
 | --- | --- | --- | --- | --- |
-| D-MODES | Which modes beyond SWEEP? | LOCK (lock-on), MANUAL (joystick), both, neither | Joe's idea: both; LOCK matches a brief extension ("rescan a region where an object was detected") | Team, after M1 |
 | D-MODEBTN | How are modes switched? | joystick press / separate button / from the PC or phone page | Joystick press saves a part, if the kit joystick has a switch | Team + kit |
 | D-STATUS | How are no-echo and failed readings shown? | three statuses with shapes / distance 0 / hide them | Brief asks how the display tells them apart | S4 prototype, O2 user test |
 | D-RANGE | Maximum range / echo timeout | 100 / 150 / 200 / 400 cm | Desk scale and accuracy (S1: range doesn't change pass time at a 60 ms gap) | S1, T-DIST |
