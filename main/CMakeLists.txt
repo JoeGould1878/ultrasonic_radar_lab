@@ -7,7 +7,7 @@ idf_component_register(
         "serial_out.c"
     INCLUDE_DIRS "."
     PRIV_REQUIRES
-        hcsr04 servo joystick button display
+        hcsr04 servo joystick button
         scan_map sweep_plan target_track mode_fsm radar_gfx lock_loop
         esp_timer
 )

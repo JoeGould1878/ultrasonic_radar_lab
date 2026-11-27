@@ -30,15 +30,8 @@
 #define APP_PIN_JOY_Y             5   /* PROPOSED, ADC1_CH4 */
 #define APP_PIN_JOY_SW            6   /* PROPOSED, to GND when pressed, pull-up */
 
-/* On-device screen — ONLY if D-DISPLAY picks the kit's screen (still open).
- * SPI set shown; if it is I2C use SDA 8 / SCL 9; a parallel character LCD
- * would need its own pin set. Unused if the display is the PC or web page. */
-#define APP_PIN_SCREEN_MOSI         11   /* PROPOSED */
-#define APP_PIN_SCREEN_SCLK         12   /* PROPOSED */
-#define APP_PIN_SCREEN_CS           10   /* PROPOSED */
-#define APP_PIN_SCREEN_DC            9   /* PROPOSED */
-#define APP_PIN_SCREEN_RST           8   /* PROPOSED */
-#define APP_PIN_SCREEN_BL           13   /* PROPOSED, backlight (PWM-able) */
+/* No on-device screen: the display is the PC view over USB, then a web page
+ * (D-DISPLAY), so no screen pins. */
 
 /* --------------------------------------------------------------- servo ---- */
 

@@ -4,7 +4,7 @@ Guidance for Claude (and Claude Code) working in this repository.
 
 ## Project
 
-Scanning ultrasonic sonar ("radar" display): Mini-Challenge 3, CDIO, 2026. ESP32-S3 + HC-SR04 on an SG90 servo + joystick + a display that is still to be chosen (kit screen / PC over USB / web page), ESP-IDF v6.1, C. Three modes: SWEEP (essential), LOCK (lock-on), MANUAL (joystick).
+Scanning ultrasonic sonar ("radar" display): Mini-Challenge 3, CDIO, 2026. ESP32-S3 + HC-SR04 on an SG90 servo + joystick; the display is a PC view over USB first, then a web page served by the ESP32 (D-DISPLAY; no on-device screen), ESP-IDF v6.1, C. Three modes: SWEEP (essential), LOCK (lock-on), MANUAL (joystick).
 The assessment is on the **engineering process and evidence**, with extra weight on **design, simulation, and case design → circuit**. Read `docs/CONTEXT.md` first, then `docs/PLAN.md` (the master task list).
 
 ## How we work
@@ -38,4 +38,4 @@ python tools/radar_view.py --port /dev/ttyACM0      # or --file / --sim
 
 - `components/` never include from `main/`.
 - Pure components (`scan_map`, `sweep_plan`, `target_track`, `mode_fsm`, `radar_gfx`, `lock_loop`) include only the C standard library, so they build on the laptop.
-- Only `scan_task` touches `servo` and `hcsr04`; only `display_task` touches `display`; only `input_task` touches `joystick`/`button`.
+- Only `scan_task` touches `servo` and `hcsr04`; only `input_task` touches `joystick`/`button`.
