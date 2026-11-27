@@ -6,6 +6,7 @@
 numpy==2.5.5
 matplotlib==3.11.2
 pyserial==3.5
+pygame==2.6.1        # S4 radar view (tools/radar_draw.py); bundles SDL 2.28, no deps
 
 # Pulled in by matplotlib (pinned from `pip freeze`)
 contourpy==1.4.0
