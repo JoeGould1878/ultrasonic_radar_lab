@@ -39,8 +39,7 @@ static float clampf(float x, float lo, float hi)
     return x < lo ? lo : (x > hi ? hi : x);
 }
 
-/* Ends of the current FULL / SECTOR pass. */
-static void pass_ends(const sweep_plan_t *p, float *lo, float *hi)
+void sweep_plan_pass_ends(const sweep_plan_t *p, float *lo, float *hi)
 {
     const float a = p->cfg.min_deg, b = p->cfg.max_deg, s = p->cfg.step_deg;
     if (p->kind != SWEEP_SECTOR) {
@@ -132,7 +131,7 @@ float sweep_plan_next(sweep_plan_t *p, float max_step_deg)
     }
     const float a = p->cfg.min_deg, s = p->cfg.step_deg;
     float lo, hi;
-    pass_ends(p, &lo, &hi);
+    sweep_plan_pass_ends(p, &lo, &hi);
 
     /* Head for the plan: outside it, turn toward it; at an end, turn back. */
     if (p->angle_deg >= hi - EPS_DEG && p->dir > 0) {

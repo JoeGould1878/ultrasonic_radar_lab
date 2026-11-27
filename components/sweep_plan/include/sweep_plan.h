@@ -53,6 +53,16 @@ void sweep_plan_recentre(sweep_plan_t *p, float centre_deg);
  *  MANUAL: max_step_deg limits how far it moves this call (slew limit). */
 float sweep_plan_next(sweep_plan_t *p, float max_step_deg);
 
+/** Ends of the current pass, as the plan really sweeps them: min/max for
+ *  FULL (and for MANUAL, which has no pass), and for SECTOR centre +/- half
+ *  clamped to min/max and snapped inward to the step grid (so 76..106 becomes
+ *  77..105 on the 15, 17, ... grid).
+ *  Why (added in S3, 27/11, Joe approved): lock_loop needs the snapped sector
+ *  ends for target_track_set_limits() (the edge flag must use the limits the
+ *  servo actually reaches) and the pass length for the tracker's max bin age.
+ *  Recomputing them outside would duplicate the snapping rule. */
+void sweep_plan_pass_ends(const sweep_plan_t *p, float *lo_deg, float *hi_deg);
+
 /** True once after each end-of-pass (used to count sweeps). Clears the flag. */
 bool sweep_plan_take_pass_done(sweep_plan_t *p);
 

@@ -223,6 +223,49 @@ static void test_never_jumps(void)
     CHECK(bad_range == 0);
 }
 
+static void test_pass_ends(void)
+{
+    printf("pass_ends: what the servo really reaches\n");
+    sweep_plan_t p;
+    float lo, hi;
+    sweep_plan_init(&p, &CFG, 90.0f);
+    sweep_plan_pass_ends(&p, &lo, &hi);
+    CHECK_NEAR(lo, 15.0, 0);
+    CHECK_NEAR(hi, 165.0, 0);
+    sweep_plan_sector(&p, 91.0f, 15.0f);
+    sweep_plan_pass_ends(&p, &lo, &hi);
+    CHECK_NEAR(lo, 77.0, 1e-4);
+    CHECK_NEAR(hi, 105.0, 1e-4);
+    sweep_plan_recentre(&p, 20.0f);
+    sweep_plan_pass_ends(&p, &lo, &hi);
+    CHECK_NEAR(lo, 15.0, 1e-4);
+    CHECK_NEAR(hi, 35.0, 1e-4);
+    sweep_plan_manual(&p, 50.0f);
+    sweep_plan_pass_ends(&p, &lo, &hi);
+    CHECK_NEAR(lo, 15.0, 0);
+    CHECK_NEAR(hi, 165.0, 0);
+
+    /* Matches the angles actually visited, for many centres and widths. */
+    int bad = 0;
+    for (int c10 = 100; c10 <= 1800; c10 += 37) {
+        for (int h = 0; h <= 30; h += 3) {
+            sweep_plan_init(&p, &CFG, 90.0f);
+            sweep_plan_sector(&p, c10 / 10.0f, (float)h);
+            float vlo = 999, vhi = -999;
+            for (int k = 0; k < 200; k++) {
+                float a = sweep_plan_next(&p, 0);
+                if (k >= 100) {               /* after any walk-in */
+                    vlo = fminf(vlo, a);
+                    vhi = fmaxf(vhi, a);
+                }
+            }
+            sweep_plan_pass_ends(&p, &lo, &hi);
+            if (fabsf(lo - vlo) > 1e-3f || fabsf(hi - vhi) > 1e-3f) bad++;
+        }
+    }
+    CHECK(bad == 0);
+}
+
 int main(void)
 {
     printf("test_sweep_plan\n");
@@ -232,5 +275,6 @@ int main(void)
     test_sector_entry();
     test_manual();
     test_never_jumps();
+    test_pass_ends();
     return TEST_RESULT();
 }
