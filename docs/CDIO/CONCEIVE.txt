@@ -149,12 +149,13 @@ and limits, and an honest display (age + three statuses).
 - Indoors, on a lab bench, objects 5 to 150 cm away, still air, about 20 C.
 - A noisy room with other teams running the same sensors.
 - Parts: only what is in the component box (expected: HC-SR04, SG90 servo,
-  joystick, and a screen of unknown type) plus our ESP32-S3 board.
-  [KIT] confirmed at B4 when the box arrives.
-- Display: NOT decided. The kit screen may be a long character LCD (16x2
-  style), which cannot show positions. Other options: a PC over USB, or a web
-  page served by the ESP32 that a PC and a phone can both open. We will
-  prototype the display on simulated data and decide once we know the screen.
+  joystick) plus our ESP32-S3 board. [KIT] confirmed at B4 when the box
+  arrives. The kit's screen is not used (see Display).
+- Display (decided 27 Nov 2026, team agreed): first a radar view on a PC,
+  fed by the ESP32 over USB serial. Then a web page served by the ESP32
+  over Wi-Fi, which a PC and a phone can both open, fed by the same data.
+  We don't use the kit's screen: it is probably a character LCD, which
+  cannot show positions, and the PC view works whatever is in the kit.
 - Time: 6 lab sessions. The box arrives at session 3, so sessions 1 to 2 are
   for design and simulation.
 - Powered from USB (5 V).
@@ -208,8 +209,8 @@ ping gap the datasheet recommends (docs/evidence/sim/s1_summary.txt).
 
 ESSENTIAL (must work and be tested before anything else):
   - SWEEP mode on real measurements, SC1 to SC7.
-  - One working radar display. A PC is enough, since the brief allows the
-    core display to run on a lab computer (which one: see section 4).
+  - One working radar display: the PC view over USB serial. The brief
+    allows the core display to run on a lab computer (see section 4).
   - The three statuses and age fading.
 
 DESIRABLE (extensions, in this order):
@@ -217,14 +218,12 @@ DESIRABLE (extensions, in this order):
   - LOCK mode (most interesting, most to test)
   - A stable mount/enclosure (also needed for repeatable tests)
   - Smoothing that removes flicker without hiding real changes
-  - A display that needs no PC software (kit screen if it is graphic, or
-    a web page)
+  - A display that needs no PC software: a web page served by the ESP32
   Order agreed by the team, 27 Nov 2026.
 
 STRETCH (only if all of the above is tested):
   - A phone view (live view, connection status, warning when data is no
-    longer current). If the web-page display option is chosen, this comes
-    almost for free.
+    longer current). This comes almost for free with the web page.
 
 We keep a working, tagged version of SWEEP before starting each extension.
 
@@ -328,7 +327,7 @@ Privacy and ethics
     present and moving. Combined with logging or a phone link, that becomes
     monitoring.
   - Our choices: no logging unless the user starts it, data stays on the
-    device / USB link, and if the phone stretch is built it runs on a
+    device / USB link, and the web page (and the phone view) runs on a
     password-protected local network. If it were used where people are
     present, they should be told (a sign).
   - Over-trust: a radar-style display looks authoritative. We show its limits
@@ -353,11 +352,11 @@ Sustainability (Week 8 lecture: energy, materials, e-waste, repairability)
 10. TEAM AGREEMENTS AND OPEN QUESTIONS
 --------------------------------------
   - Purpose and success criteria: agreed by the team, 27 Nov 2026.
-  - [KIT] Kit contents (sensor version, servo model, what the screen is):
-    confirmed at B4 when the box arrives.
-  - Where the radar is displayed (kit screen / PC / web page): agreed that it
-    is decided after S4 (display prototype on simulated data) and B4
-    (identify the kit screen).
+  - [KIT] Kit contents (sensor version, servo model, joystick): confirmed
+    at B4 when the box arrives.
+  - Where the radar is displayed: agreed 27 Nov 2026. PC view over USB
+    first, then a web page served by the ESP32. The kit screen is not used
+    (section 4).
   - Roles: shared. Everyone works on every part; no fixed owners.
 
 
