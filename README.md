@@ -57,5 +57,6 @@ cd host_tests && make          # laptop tests, no board needed
 
 - Brief: Mini-Challenge 3, *Scanning Ultrasonic Radar Sonar* (W. Al-Nuaimy, H. van Zalinge, 2026): `docs/brief/`
 - Previous prototype used as reference (no code reused): [CDIO Lab-in-a-Box ESP32 Wi-Fi Ultrasonic Radar](https://cdioatc.blogspot.com/2026/07/esp32-wifi-ultrasonic-radar-prototype.html) (J. Wang)
+- [pygame](https://www.pygame.org) 2.6.1 (LGPL, pygame.org): drawing for `tools/radar_view.py` (library only, no code copied)
 - `components/button` reused from our MC2 project ([spectrum_visualiser_lab](https://github.com/JoeGould1878/spectrum_visualiser_lab))
 - AI use: plan, interfaces (headers) and drafts developed by Joe Gould with Claude (Anthropic); all requirements, design decisions, hardware testing and evaluation by the team. Each source file's header says who designed and who implemented it.

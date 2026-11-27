@@ -5,13 +5,18 @@
  *
  *   R,<t_ms>,<mode>,<angle_deg>,<dist_cm>,<status>      one reading
  *   M,<t_ms>,<mode>,<paused>,<fault>                     mode change
- *   T,<t_ms>,<state>,<centre_deg>,<left>,<right>,<dist> lock-on state
+ *   T,<t_ms>,<state>,<centre_deg>,<left>,<right>,<dist>,<edge> lock-on state
  *
  * status = OK | NOECHO | FAIL. Format is fixed in docs/PLAN.md — change
  * both ends together.
  *
  * dist_cm (D-PROTO-NULL): OK -> 1 decimal place, e.g. "52.3"; NOECHO and
  * FAIL -> "-", never a number, so a reader can't draw a fake 0 cm object.
+ *
+ * T line: edge = 0|1 (D-EDGE: bearing is low confidence at an arc end). While
+ * SEARCHING, centre/left/right/dist are "-" and edge is 0.
+ * While paused, scan_task sends an M line every 1 s (heartbeat), so a viewer can
+ * tell PAUSED from a dead link.
  *
  * D-OWN: call only from scan_task; each line is written with a single call,
  * so lines never interleave and no mutex is needed.

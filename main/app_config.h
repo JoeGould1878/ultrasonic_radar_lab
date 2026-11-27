@@ -69,12 +69,12 @@
 #define APP_LOCK_MIN_BINS         2   /* SIM: object must span >= this many bins */
 #define APP_LOCK_CONFIRM_SWEEPS   2   /* SIM: seen this many sweeps running before locking */
 #define APP_LOCK_SECTOR_HALF_DEG 15   /* SIM: narrow sweep ± around the target */
-#define APP_LOCK_LOST_PINGS       6   /* SIM: no echo near target this many times -> lost */
+#define APP_LOCK_LOST_PINGS       9   /* SIM S3 (s3_summary.txt); was 6. No echo near target this many times -> lost */
 #define APP_LOCK_RESWEEP_S       10   /* SIM: full wide sweep every N s while locked */
 /* Bridge up to this many non-OK bins inside a cluster (S2: one dropout split a
- * smear, worst bearing error 6 deg). 0 = off until Joe approves it on S3's
- * with/without results, including the two-dowel merge check. */
-#define APP_LOCK_BRIDGE_BINS      0   /* PROPOSED (S3) */
+ * smear, worst bearing error 6 deg). S3: worst 3 deg with 1, two dowels still
+ * resolved from 20 deg apart (D-BRIDGE). */
+#define APP_LOCK_BRIDGE_BINS      1   /* SIM S3 (s3_summary.txt); was 0 */
 
 /* ------------------------------------------------------------ joystick ---- */
 

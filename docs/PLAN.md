@@ -134,7 +134,7 @@ The brief wants a simulation that **answers a design question**, records its **a
   - drive them with S2 scenes: static pole, slowly moving pole, two poles close together, pole removed, noisy/dropout readings, nothing there;
   - record lock time, angle error vs true centre, false locks and lost-target time while varying `APP_LOCK_*`, then pick values with evidence.
   - *Assumptions:* S2's idealised sensor. Later re-run with recorded real scans (I7).
-- [ ] **S4** Display prototype on simulated data: `tools/radar_view.py` first, then `tools/web/radar.html` fed by the same lines (D-DISPLAY).
+- [ ] **S4** (PC view done 27/11: `tools/radar_view.py` + `radar_model.py` + `radar_draw.py`, 18 tests, `docs/evidence/s4/s4_summary.txt`; web page X1 still to do) Display prototype on simulated data: `tools/radar_view.py` first, then `tools/web/radar.html` fed by the same lines (D-DISPLAY).
   - `tools/radar_view.py`: PC viewer (pygame or matplotlib). Reads `R,…` lines from a serial port **or** a file/S2 pipe. Draws rings, beam, points faded by age, a shape per status, the mode name and a STALE banner. This prototypes the display before the hardware exists (one of the brief's example simulations). It is the core display (D-DISPLAY) and the logging/evidence tool.
 - [ ] **S5** (optional) Wokwi project (`sim/wokwi/`): ESP32-S3 + HC-SR04 + servo + joystick, to check the wiring and the servo/ping sequencing. Note Wokwi's sensor is ideal: no beam width, no noise.
 - [ ] **S6** Write up the simulation section of `DESIGN.txt`: question → method → result → assumptions → what the hardware must confirm.
@@ -202,8 +202,12 @@ One ASCII line per event, comma-separated, `\n` terminated, 921600 baud:
 ```
 R,<t_ms>,<mode>,<angle_deg>,<dist_cm>,<status>       status: OK | NOECHO | FAIL
 M,<t_ms>,<mode>,<paused 0/1>,<fault 0/1>             mode: SWEEP | LOCK | MANUAL
-T,<t_ms>,<state>,<centre_deg>,<left_deg>,<right_deg>,<dist_cm>   state: SEARCH | CAND | LOCK
+T,<t_ms>,<state>,<centre_deg>,<left_deg>,<right_deg>,<dist_cm>,<edge>   state: SEARCH | CAND | LOCK
 ```
+
+`T` line (Joe, 27 Nov): the last field `edge` is `0` or `1` (D-EDGE: the cluster touches an arc end, so the bearing is low confidence). While the state is SEARCH, `centre_deg`, `left_deg`, `right_deg` and `dist_cm` are `-` (D-PROTO-NULL style; there is no target), and `edge` is `0`: `T,5230,SEARCH,-,-,-,-,0`.
+
+Heartbeat (Joe, 27 Nov): while paused no `R` lines are sent, so `scan_task` sends an `M` line every 1 s. The viewer can then tell PAUSED (heartbeat still arriving) from a dead link (nothing arriving: STALE).
 
 `dist_cm` in `R` lines (D-PROTO-NULL): OK readings send the distance with 1 decimal place (`R,1234,SWEEP,90.0,52.3,OK`); NOECHO and FAIL send `-` (`R,1294,SWEEP,92.0,-,NOECHO`), never a number, so no reader can mistake them for an object at 0 cm.
 
@@ -211,7 +215,7 @@ Anything else (ESP-IDF log lines) is ignored by the viewer, so normal logging st
 
 ## Display spec (PC view and web page)
 
-One spec for both displays (D-DISPLAY): `tools/radar_view.py` (S4, I6) and the ESP32 web page (X1) draw the same picture from the same serial lines. Built from the drawing rules of `radar_gfx` and `display_task` (written for an on-device screen, now dropped and deleted; the rules live here). Everything here is PROPOSED until S4 and O2 test it; D-STATUS is still under "Options under consideration".
+One spec for both displays (D-DISPLAY): `tools/radar_view.py` (S4, I6) and the ESP32 web page (X1) draw the same picture from the same serial lines. Built from the drawing rules of `radar_gfx` and `display_task` (written for an on-device screen, now dropped and deleted; the rules live here). Everything here is PROPOSED until S4 and O2 test it. Viewer-only constants (not firmware, so not in `app_config.h`; PROPOSED; kept in one block at the top of `tools/radar_draw.py`): rings every 50 cm, 60 fps frame cap, NOECHO brightness 0.55 ("faint" dash), STALE dimming (alpha 150 of 255); D-STATUS is still under "Options under consideration".
 
 **Input.** The `R`/`M`/`T` lines above, nothing else, so a recorded log or an S2 scene file draws exactly like the live device. Lines that don't parse are ignored (ESP-IDF log lines).
 
@@ -239,11 +243,11 @@ One spec for both displays (D-DISPLAY): `tools/radar_view.py` (S4, I6) and the E
 **Banners (text + a shape, never colour alone):**
 - **STALE:** no `R` line for `APP_STALE_MS` (1.5 s) → a "STALE" banner across the picture, and everything drawn is dimmed (SC6, T-STALE). Also shown when the serial port or the web socket drops.
 - **FAULT:** `M` line with `fault` = 1 → a "SENSOR FAULT" banner (T-FAULT). Cleared by the next `M` line with `fault` = 0.
-- **PAUSED:** `M` line with `paused` = 1 → "PAUSED".
+- **PAUSED:** `M` line with `paused` = 1 → "PAUSED". The 1 s `M` heartbeat keeps arriving, so STALE is judged from the last line of any kind while paused (a silent link is still STALE).
 
 **Status strip:** the mode name (SWEEP / LOCK / MANUAL from the `M` line), the live distance at the beam in large text (or "no echo" / "failed" in words), and the time since the last reading.
 
-**LOCK:** a box or bracket from `left_deg` to `right_deg` around `centre_deg` from the `T` line, labelled with the state (SEARCH / CAND / LOCK). A D-EDGE target (arc end) is drawn with a "low confidence" mark once the `T` line carries the flag (see Open questions).
+**LOCK:** a box or bracket from `left_deg` to `right_deg` around `centre_deg` from the `T` line, labelled with the state (SEARCH / CAND / LOCK). A D-EDGE target (arc end) is drawn with a "low confidence" mark once the `T` line carries the `edge` field of the `T` line.
 
 **Accessibility (CONCEIVE section 9):** every status has a shape and text as well as a colour; a large-text option; nothing relies on sound. Check: a greyscale screenshot still tells OK / NOECHO / FAIL apart (T-FAULT).
 
@@ -264,7 +268,11 @@ Only decisions actually made go here, each with its reason/evidence. Everything 
 | D-FADE | 26/11 | Points fade out over 3 passes (`APP_FADE_SWEEPS` 2 → 3); expiry also 3 passes (`APP_EXPIRE_SWEEPS`, wired up in I1) | Fade over 2 passes | S1: the bounce sweep re-measures the end bins only every 2 passes, so a 2-pass fade reaches zero just as they're refreshed. With 3: 67 % brightness when redrawn in the middle, 33 % at the ends. O2 judges whether this meets SC6. Evidence: `docs/evidence/sim/s1_summary.txt` |
 | D-PROTO-NULL | 26/11 | In `R` lines, `dist_cm` is `-` for NOECHO and FAIL; OK readings use 1 decimal place | `0.0`; empty field; `-1` | `0.0` could be read as an object at 0 cm: the dishonest-display failure B2 already guards against ("must log FAILED, not 0 cm"). `-` is not a number, so a reader that ignores the status fails visibly instead of drawing a fake point. S2 scene logs use it. |
 | D-EDGE | 26/11 | (a) Flag objects at the arc ends: a cluster touching `APP_SWEEP_MIN_DEG` or `APP_SWEEP_MAX_DEG` gets an "edge" flag and its bearing is reported as low confidence, not held to ±5°; the display shows the flag (S4) | (b) overscan ~8° past each end (pass ~5.0 s, SC4 on the limit); (c) narrow SC3 to 30–150° | S2: at 15° and 165° only ~4.5 bins are seen and the edge midpoint is pulled ~4.5° inward (worst 5.0°). (a) costs no sweep time and fits the honest-display goal; SC1 and SC3 unchanged. Evidence: `docs/evidence/sim/s2_summary.txt` |
-| D-OWN | 27/11 | `scan_task` owns `mode_fsm` and all serial output; `input_task` posts events through `scan_task_post_event()` | `input_task` owns the FSM; mutex around `serial_out` | `input_task` and `scan_task` both fed `mode_fsm` (press events vs SENSOR_FAULT/OK) and both could write serial; one owner removes the shared FSM state and the interleaved lines without a mutex. Found in Joe's design review before any task code existed. | Joe |
+| D-OWN | 27/11 | `scan_task` owns `mode_fsm` and all serial output; `input_task` posts events through `scan_task_post_event()` | `input_task` owns the FSM; mutex around `serial_out` | `input_task` and `scan_task` both fed `mode_fsm` (press events vs SENSOR_FAULT/OK) and both could write serial; one owner removes the shared FSM state and the interleaved lines without a mutex. Found in Joe's design review before any task code existed. Joe approved. |
+| D-BRIDGE | 27/11 | Bridge 1 non-OK bin inside a cluster (`APP_LOCK_BRIDGE_BINS` 0 → 1) | 0 (no bridging) | S3 sim, SWEEP bearing error: mean 0.40 → 0.06 deg, worst 6 → 3 deg; passes over 5 deg 5/600 → 0. Two dowels ≥ 20 deg apart resolved 100 % either way; below 20 deg, a spurious "two objects" falls from 5–25 % to 0–5 %. Evidence: `docs/evidence/sim/s3_summary.txt`. B2 confirms the dropout rate. Joe approved. |
+| D-LOSTPINGS | 27/11 | 9 missed pings before "lost" (`APP_LOCK_LOST_PINGS` 6 → 9) | 6 | S3 sim: a radial 10 cm/s target stays locked 26 % → 100 % of the time; removal worst case 1.65 s (< 2 s, SC8); noisy false losses 0.2 per run → 0. Evidence: `docs/evidence/sim/s3_summary.txt` Joe approved. |
+| D-RESWEEP | 27/11 | Resweep rule (b)+(c): on a pass only clusters within the gate count, and the one nearest the last bearing is taken; no `on_ping` loss during a resweep | (a) widen the gate | (a) caused 8 silent swaps to a closer object. With (b)+(c) the closer-object baseline keeps the lock 24/24 (was 11/19). Evidence: `docs/evidence/sim/s3_summary.txt` Joe approved. |
+| D-VIEWLIB | 27/11 | pygame 2.6.1 for the PC view | matplotlib | Measured: pygame p95 119–134 fps, 0 frames over 50 ms; matplotlib full redraw 15–29 fps, below the SC7 20 fps floor; no tkinter here. Evidence: `docs/evidence/s4/s4_summary.txt` |
 | D-DISPLAY | 27/11 | PC radar view over USB serial first (`tools/radar_view.py`), then an ESP32-hosted web page (PC + phone, X1) fed by the same lines; kit screen not used | Kit screen; PC Web Serial page; MAX7219 | The PC view doesn't depend on the kit and the brief allows the core display on a lab PC; the kit screen is probably a character LCD (can't show positions); the web page gives the phone view almost free. Joe, team agreed 27 Nov. Risk: needs Python + pyserial on the lab PC (open question, check session 2); fallback: Web Serial page in Chrome, no install. |
 | D-MODES | 27/11 | SWEEP is essential; MANUAL then LOCK are desirable, in that order | LOCK only; MANUAL only; neither | CONCEIVE section 6 (essential vs desirable order), team agreed 27 Nov. MANUAL first because it is simple and reuses the sweep code; LOCK has the most to test (SC8). Builds on D-ORDER |
 | | | | | |
@@ -274,7 +282,7 @@ Only decisions actually made go here, each with its reason/evidence. Everything 
 | ID | Question | Options | Leaning / why (if any) | Decided by |
 | --- | --- | --- | --- | --- |
 | D-MODEBTN | How are modes switched? | joystick press / separate button / from the PC or phone page | Joystick press saves a part, if the kit joystick has a switch | Team + kit |
-| D-STATUS | How are no-echo and failed readings shown? | three statuses with shapes / distance 0 / hide them | Brief asks how the display tells them apart | S4 prototype, O2 user test |
+| D-STATUS | How are no-echo and failed readings shown? | three statuses with shapes / distance 0 / hide them | Brief asks how the display tells them apart | S4 prototype: dot / dash / cross pass the greyscale check (`docs/evidence/s4/s4_t1_fault_greyscale.png`); O2 decides |
 | D-RANGE | Maximum range / echo timeout | 100 / 150 / 200 / 400 cm | Desk scale and accuracy (S1: range doesn't change pass time at a 60 ms gap) | S1, T-DIST |
 | D-ECHO | How the echo is timed | GPIO interrupt + esp_timer / RMT / busy-wait | Busy-wait blocks everything | I4 |
 | D-JOY | Joystick control | position / rate | | T-JOY |
@@ -286,9 +294,8 @@ Only decisions actually made go here, each with its reason/evidence. Everything 
 - [ ] What's actually in the kit: HC-SR04 or HC-SR04P (3.3 V)? SG90 or MG90S? Joystick module?
 - [ ] Team members and roles for this challenge [TEAM]
 - [ ] Demo date (session 6)? Canvas reflection deadlines?
-- [ ] Can the lab PC run Python with pyserial for the viewer? Check in session 2. This is the D-DISPLAY risk; fallback: a Web Serial page in Chrome, no install.
+- [ ] Can the lab PC run Python with pyserial **and pygame** for the viewer (re-run `--bench` there to check the 20 fps floor)? Check in session 2. This is the D-DISPLAY risk; fallback: a Web Serial page in Chrome, no install.
 - [ ] Is a 3D printer / laser cutter available for the mount (D5)?
-- [ ] T line (decide in S4; the Display spec's D-EDGE mark waits on it): add a field for the D-EDGE flag (low-confidence bearing)? And what goes in `centre_deg`, `left_deg`, `right_deg`, `dist_cm` while SEARCHING: `-` as in D-PROTO-NULL?
 
 ## Sources
 
