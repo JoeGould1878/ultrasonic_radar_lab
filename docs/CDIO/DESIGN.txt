@@ -6,16 +6,123 @@ DESIGN (outline; filled in by PLAN tasks D1-D9 and S1-S6)
    How sensing, movement, processing, communication and visualisation fit together.
 
 2. ALTERNATIVES CONSIDERED (D2)
-   One table per decision: D-DISPLAY, D-SCAN, D-STEP, D-ECHO, D-JOY, D-FILTER,
-   D-MOUNT. Columns: option | pros | cons | chosen? | evidence.
+   Draft, 27 Nov 2026. One block per decision in the decision log
+   (docs/PLAN.md). Criteria are the ones the decision was actually judged
+   on; nothing here is decided that the log doesn't record. Open decisions
+   are listed at the end.
+
+   D-FW  Firmware platform (26 Nov)
+     Options:  ESP-IDF v6.1 on the ESP32-S3 / Arduino-ESP32 / Arduino Uno R4.
+     Criteria: same toolchain and board as MC2, reproducible builds.
+     Chosen:   ESP-IDF v6.1 (pinned; v6.0.2 also installed).
+     Evidence: decision log; P0.2 first build (docs/CONTEXT.md, 26 Nov).
+
+   D-ORDER  Build order (26 Nov)
+     Options:  SWEEP first, then LOCK and MANUAL / all modes at once.
+     Criteria: brief: "keep a working version of the core scanner as you
+               experiment".
+     Chosen:   SWEEP first; a tagged working version before each extension.
+     Evidence: the brief (docs/brief/).
+
+   D-STEP  Sweep step (26 Nov)
+     Options:  1 / 2 / 3 / 5 degrees.
+     Criteria: SC4 (pass <= 5 s); enough readings on a thin target for
+               median-of-3 and edge-midpoint.
+     Chosen:   2 degrees: 4.5 s per 150 degree pass at a 60 ms gap, 7 readings
+               on a thin target (4 if the useful beam is only 8 degrees).
+               1 degree misses SC4 at every gap (9.0 s at 60 ms); 3 degrees
+               drops to 2 hits in the 8 degree case, 5 degrees to 1.
+     Evidence: docs/evidence/sim/s1_summary.txt (S1). Hardware check: I7.
+
+   D-SCAN  How the servo and the pings are sequenced (26 Nov)
+     Options:  stop-and-ping (move, settle, ping) / ping while moving.
+     Criteria: pass time (SC4); angle accuracy (SC3, +/-5 degrees).
+     Chosen:   stop-and-ping. Pinging while moving saves 0 % at a 40-60 ms
+               gap (the move and the 20 ms settle fit inside the gap), and its
+               angle error flips sign each pass, so an object jumps 3.2
+               degrees between passes (a third of the SC3 band).
+     Evidence: docs/evidence/sim/s1_summary.txt. Hardware check: T-MATCH.
+
+   D-ANGLE-TAG  Which angle a reading is tagged with (26 Nov)
+     Options:  settled angle at ping time / angle at send time / interpolated.
+     Criteria: the reading must be drawn where the sensor was pointing (the
+               previous Lab-in-a-Box prototype could be about 2.5 degrees off).
+     Chosen:   the settled angle at ping time (follows from D-SCAN).
+     Evidence: docs/evidence/sim/s1_summary.txt (assumption A2). Hardware
+               check: B1 measures the settle time; T-MATCH.
+
+   D-GAP  Time between pings (26 Nov)
+     Options:  30 / 40 / 60 ms.
+     Criteria: SC4; no echo from the last ping landing in the next one; the
+               sensor must accept the trigger; other teams' sensors.
+     Chosen:   60 ms. It already meets SC4 (4.5 s); echoes from up to 10.3 m
+               can't land in the next ping (6.9 m at 40 ms, 5.2 m at 30 ms);
+               30 ms is shorter than the assumed 38 ms no-echo hold.
+               40 ms only if I7, B2 and T-XTALK all justify it.
+     Evidence: docs/evidence/sim/s1_summary.txt.
+
+   D-FADE  How long points take to fade (26 Nov)
+     Options:  fade over 2 passes / 3 passes.
+     Criteria: SC6 (points older than one pass visibly faded) without real
+               objects at the arc ends vanishing before they are re-measured.
+     Chosen:   3 passes, and expiry after 3 passes. The bounce sweep revisits
+               the end bins only every 2 passes, so a 2-pass fade reaches zero
+               just as they're refreshed. With 3: 67 % brightness when
+               redrawn in the middle, 33 % at the ends.
+     Evidence: docs/evidence/sim/s1_summary.txt. Hardware check: O2.
+
+   D-PROTO-NULL  What a no-echo or failed reading sends as its distance (26 Nov)
+     Options:  "-" / "0.0" / empty field / -1.
+     Criteria: no reader may draw a fake object at 0 cm (honest display).
+     Chosen:   "-" for NOECHO and FAIL; OK readings have 1 decimal place.
+     Evidence: decision log; the S2 scene logs use it
+               (docs/evidence/sim/s2_scenes/).
+
+   D-EDGE  Objects at the arc ends (26 Nov)
+     Options:  (a) flag them as low-confidence bearing / (b) overscan about
+               8 degrees past each end / (c) narrow SC3 to 30-150 degrees.
+     Criteria: SC3 and SC1 unchanged; SC4 (pass time); honest display.
+     Chosen:   (a). At 15 and 165 degrees only about 4.5 bins see the object
+               and the bearing is pulled about 4.5 degrees inward (worst 5.0).
+               (a) costs no sweep time; (b) puts SC4 on the limit (about
+               5.0 s); (c) weakens a success criterion.
+     Evidence: docs/evidence/sim/s2_summary.txt. Hardware check: T-ANG at
+               15 and 165 degrees.
+
+   D-DISPLAY  Where the radar is shown (27 Nov; team agreed)
+     Options:  kit screen / PC over USB (Python viewer) / PC over USB (Web
+               Serial page in Chrome) / ESP32 web page (PC + phone) / MAX7219.
+     Criteria: can it draw positions; works without installing anything;
+               effort; reliability in a busy lab; phone access.
+     Chosen:   PC view over USB first (tools/radar_view.py), then a web page
+               served by the ESP32. The kit screen is probably a character
+               LCD that can't show positions, and the PC view doesn't depend
+               on the kit. Risk: the lab PC may not run Python and pyserial;
+               fallback: the Web Serial page (section 8, R16).
+     Evidence: decision log; display spec in docs/PLAN.md.
+
+   Still open (docs/PLAN.md "Options under consideration"):
+     D-MODES    which modes beyond SWEEP (LOCK, MANUAL). Note: CONCEIVE
+                records the three modes as agreed by the team on 27 Nov, but
+                the log still lists this as open.
+     D-MODEBTN  how modes are switched (joystick press / separate button /
+                from the page).
+     D-STATUS   how no-echo and failed readings are shown. The display spec
+                now gives shapes per status (Joe, 27 Nov), but the log row is
+                still open until S4 and O2.
+     D-RANGE    maximum range / echo timeout (150 cm and 10 ms used, PROPOSED).
+     D-ECHO     how the echo is timed (GPIO interrupt + esp_timer / RMT).
+     D-JOY      position or rate control (T-JOY decides).
+     D-FILTER   raw / median of 3 / reject jumps (T-MOVE decides).
+     D-MOUNT    bracket on the servo horn / pan base (D5).
 
 3. BEHAVIOUR
-   Mode state machine (D3), lock-on sub-states, what the screen shows in each
-   state, how echo / no echo / failed / stale are drawn.
+   Mode state machine (D3), lock-on sub-states, what the display shows in each
+   state, how echo / no echo / failed / stale are drawn (display spec in PLAN).
 
 4. ELECTRICAL DESIGN (D4)
    Schematic. Echo divider calculation. Joystick on 3.3 V. Servo supply, peak
-   current, capacitor, brown-out risk. Screen supply and logic (if used). Wi-Fi current (if web). Power budget.
+   current, capacitor, brown-out risk. Wi-Fi current (web page). Power budget.
 
 5. CASE / MOUNT DESIGN AND ITS IMPACT ON THE CIRCUIT (D5)
    Sketch. List of consequences for the circuit (cable flex and service loop,
