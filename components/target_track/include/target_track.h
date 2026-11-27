@@ -88,7 +88,8 @@ void target_track_init(target_track_t *t, const track_cfg_t *cfg);
  *  sector in LOCK, the arc otherwise. Clamped to the arc. */
 void target_track_set_limits(target_track_t *t, float lo_deg, float hi_deg);
 
-/** Find the nearest valid cluster in the map (only bins newer than max_age_ms).
+/** Find the nearest valid cluster in the map (only bins no older than
+ *  max_age_ms, i.e. age <= max_age_ms, the same rule as scan_map_expire).
  *  Bins are read in angle order; neighbours join a cluster if both are OK
  *  and their distances differ by <= dist_tol_cm, or if they are separated
  *  by at most bridge_gap_bins non-OK bins. */

@@ -8,6 +8,13 @@
  * The display and the lock-on tracker both read from this map, so it is the
  * one place where "old vs new" and "echo vs no echo vs failed" are decided.
  * Bins are APP_SWEEP_STEP_DEG wide; the map is sized for 0–180°.
+ *
+ * Bin layout (S3, 27/11, Joe): bin i covers [i*bin_deg, (i+1)*bin_deg),
+ * bin = floor(angle / bin_deg) clamped to the map, centre = (i + 0.5)*bin_deg,
+ * n_bins = ceil(180 / bin_deg); 180 deg clamps into the last bin. With 2 deg
+ * bins the sweep grid (15, 17, ... 165) sits mid-bin, so a small angle error
+ * (float drift, a MANUAL angle just off the grid) cannot flip a reading into
+ * the next bin, as it could if the grid fell on a rounding boundary.
  */
 #pragma once
 
@@ -34,12 +41,12 @@ typedef struct {
     uint32_t         t_ms;      /**< when this bin was last written */
     float            angle_deg; /**< exact angle of that reading (S3, 26/11) */
 } scan_bin_t;
-/* Why angle_deg (added in S3): bins are bin_deg wide starting at 0 deg, but
- * the sweep starts at APP_SWEEP_MIN_DEG (15), so a reading at 15 deg would
- * otherwise be reported at its bin centre (16 deg) and every cluster edge
- * would be up to half a bin off. Keeping the real angle makes target_track
- * exact for any step and start angle, and lets the display draw each point
- * where it was measured (D-ANGLE-TAG). */
+/* Why angle_deg (added in S3): a bin centre is only the reading's real angle
+ * when the reading sits on the bin grid. MANUAL can point anywhere, and a
+ * different step or start angle moves the grid, so a cluster edge taken from
+ * bin centres could be up to half a bin off. Keeping the real angle makes
+ * target_track exact for any step and start angle, and lets the display draw
+ * each point where it was measured (D-ANGLE-TAG). */
 
 typedef struct {
     float      bin_deg;        /**< bin width */
