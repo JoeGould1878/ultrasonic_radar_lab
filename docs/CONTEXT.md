@@ -26,7 +26,7 @@ Kept by Claude so any new chat or Claude Code session can pick up where we left 
 ## Decided
 
 - ESP-IDF v6.1 (pinned; D-FW), same board as MC2.
-- Pure-C components (standard C library only, built and tested on the laptop): `scan_map`, `sweep_plan`, `target_track`, `mode_fsm`, `radar_gfx`, `lock_loop` (added in S3: the LOCK controller shared by the simulator and `scan_task`).
+- Pure-C components (standard C library only, built and tested on the laptop): `scan_map`, `sweep_plan`, `target_track`, `mode_fsm`, `lock_loop` (added in S3: the LOCK controller shared by the simulator and `scan_task`).
 - Three modes, SWEEP first; LOCK and MANUAL are extensions; joystick press cycles modes (proposed).
 - This week = Conceive, Design, simulation (no kit).
 - **Not decided:** where the radar is displayed (D-DISPLAY: kit screen / PC over USB / web page on PC + phone). Keep all docs neutral until it's decided with evidence.

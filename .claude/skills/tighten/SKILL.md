@@ -13,7 +13,7 @@ Input: a draft prompt (the skill arguments or the text after `/tighten`). Output
 1. Read `CLAUDE.md`, `docs/CONTEXT.md` and `docs/PLAN.md`. Skim `main/app_config.h` and the relevant `components/*/include/*.h` if the draft touches them.
 2. Rewrite the draft so it uses the real names:
    - file paths (`components/<name>/include/<name>.h`, `main/app_config.h`, `docs/CDIO/*.txt`, `docs/evidence/...`)
-   - component names (`scan_map`, `sweep_plan`, `target_track`, `mode_fsm`, `radar_gfx`, `servo`, `hcsr04`, `joystick`, `button`, and the tasks `scan_task`, `display_task`, `input_task`)
+   - component names (`scan_map`, `sweep_plan`, `target_track`, `mode_fsm`, `servo`, `hcsr04`, `joystick`, `button`, and the tasks `scan_task`, `input_task`)
    - `app_config.h` constants, with their PROPOSED / SIM / MEASURE status
    - PLAN task IDs (e.g. S1, B2, I5)
    If it is unclear which PLAN task the draft belongs to, ask Joe which one before rewriting. Do not guess.

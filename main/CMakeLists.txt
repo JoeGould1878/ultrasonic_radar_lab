@@ -3,11 +3,10 @@ idf_component_register(
         "main.c"
         "scan_task.c"
         "input_task.c"
-        "display_task.c"
         "serial_out.c"
     INCLUDE_DIRS "."
     PRIV_REQUIRES
         hcsr04 servo joystick button
-        scan_map sweep_plan target_track mode_fsm radar_gfx lock_loop
+        scan_map sweep_plan target_track mode_fsm lock_loop
         esp_timer
 )

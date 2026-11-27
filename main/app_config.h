@@ -85,7 +85,7 @@
 
 /* ------------------------------------------------------------- display ---- */
 
-#define APP_DISPLAY_FPS          20
+/* No firmware display code (D-DISPLAY): drawing constants live in tools/radar_draw.py. */
 /* The bounce sweep revisits the end bins only every 2 passes (the middle every
  * pass), so a fade over 2 passes would reach zero just as they are refreshed.
  * With 3: 67 % brightness when redrawn in the middle, 33 % at the ends.
@@ -102,5 +102,4 @@
 
 #define APP_SCAN_TASK_PRIO        6
 #define APP_INPUT_TASK_PRIO       5
-#define APP_DISPLAY_TASK_PRIO     4
 #define APP_INPUT_POLL_MS        10

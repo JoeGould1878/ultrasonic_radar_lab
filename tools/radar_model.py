@@ -38,13 +38,15 @@ from appcfg import CONFIG_H, parse_config  # noqa: E402
 import sweep_timing  # noqa: E402  (sets matplotlib to Agg; the view draws with pygame)
 
 NEEDED = sweep_timing.NEEDED + [
-    "APP_EXPIRE_SWEEPS", "APP_STALE_MS", "APP_DISPLAY_FPS",
+    "APP_EXPIRE_SWEEPS", "APP_STALE_MS",
 ]
 
 MODES = ("SWEEP", "LOCK", "MANUAL")
 STATUSES = ("OK", "NOECHO", "FAIL")
 TRACK_STATES = ("SEARCH", "CAND", "LOCK")
 NULL = "-"  # D-PROTO-NULL
+TRACK_HIDE_PASSES = 2  # hide the LOCK bracket if no T line for this many full passes (Joe 27/11)
+FLOOR_FPS = 20  # SC7 redraw floor (was APP_DISPLAY_FPS, removed with display_task)
 
 
 # ------------------------------------------------------------ config ----
@@ -74,7 +76,7 @@ class ViewConfig:
             fade_ms=cfg["APP_FADE_SWEEPS"] * pass_ms,
             expire_ms=cfg["APP_EXPIRE_SWEEPS"] * pass_ms,
             stale_ms=cfg["APP_STALE_MS"],
-            floor_fps=cfg["APP_DISPLAY_FPS"],
+            floor_fps=FLOOR_FPS,
         )
 
 
@@ -104,10 +106,11 @@ class ModeMsg:
 class TrackMsg:
     t_ms: int
     state: str
-    centre: float | None    # "-" accepted for SEARCH (open question in PLAN)
+    centre: float | None    # None ("-") only while SEARCH
     left: float | None
     right: float | None
     dist: float | None
+    edge: bool              # D-EDGE: cluster touches an arc end, bearing is low confidence
 
 
 def _t(s: str) -> int:
@@ -176,12 +179,19 @@ def parse_line(line: str) -> Reading | ModeMsg | TrackMsg | None:
             raise BadLine(f"M needs 5 fields, got {len(f)}")
         return ModeMsg(_t(f[1]), _one_of(f[2], MODES, "mode"),
                        _flag(f[3], "paused"), _flag(f[4], "fault"))
-    # kind == "T"
-    if len(f) != 7:
-        raise BadLine(f"T needs 7 fields, got {len(f)}")
-    return TrackMsg(_t(f[1]), _one_of(f[2], TRACK_STATES, "state"),
-                    _num_or_null(f[3], "centre_deg"), _num_or_null(f[4], "left_deg"),
-                    _num_or_null(f[5], "right_deg"), _num_or_null(f[6], "dist_cm"))
+    # kind == "T": T,t,state,centre,left,right,dist,edge  (edge field added 27/11;
+    # the old 7-field form is bad). SEARCH: the four numbers are "-". CAND/LOCK:
+    # all four are numbers (the "-" rule for them is my reading, flagged to Joe).
+    if len(f) != 8:
+        raise BadLine(f"T needs 8 fields, got {len(f)}")
+    state = _one_of(f[2], TRACK_STATES, "state")
+    nums = [_num_or_null(x, n) for x, n in zip(f[3:7], ("centre_deg", "left_deg", "right_deg", "dist_cm"))]
+    if state == "SEARCH":
+        if any(v is not None for v in nums):
+            raise BadLine("SEARCH with numbers, expected '-' (D-PROTO-NULL)")
+    elif any(v is None for v in nums):
+        raise BadLine(f"{state} with '-' fields")
+    return TrackMsg(_t(f[1]), state, *nums, _flag(f[7], "edge"))
 
 
 def line_t_ms(line: str) -> int | None:
@@ -207,6 +217,7 @@ class RadarState:
         self.fault = False
         self.track: TrackMsg | None = None
         self.last_t: int | None = None
+        self.last_line_t: int | None = None    # newest line of ANY kind (STALE)
         self.counts = dict(R=0, M=0, T=0, ignored=0, bad=0, restarts=0)
         self.last_bad: str = ""
 
@@ -242,8 +253,11 @@ class RadarState:
             self.latest = None
             self.track = None
             self.last_t = None
+            self.last_line_t = None
         if self.last_t is None or msg.t_ms > self.last_t:
             self.last_t = msg.t_ms
+        if self.last_line_t is None or msg.t_ms > self.last_line_t:
+            self.last_line_t = msg.t_ms
         if isinstance(msg, Reading):
             self.counts["R"] += 1
             self.bins[self.bin_of(msg.angle)] = msg
@@ -273,10 +287,24 @@ class RadarState:
         return None if self.latest is None else self.age_ms(self.latest, now_ms)
 
     def is_stale(self, now_ms: float | None, link_up: bool = True) -> bool:
-        """No R line for APP_STALE_MS, no R line yet, or the link is down."""
-        if not link_up or now_ms is None or self.latest is None:
+        """STALE = the link is down, or no line of ANY kind for APP_STALE_MS
+        (Joe 27/11). While paused the firmware sends an M line every 1 s, so a
+        paused scanner is not stale; before the first R line it is stale
+        ("no data yet") unless paused."""
+        if not link_up or now_ms is None or self.last_line_t is None:
             return True
-        return self.age_ms(self.latest, now_ms) > self.cfg.stale_ms
+        if self.latest is None and not self.paused:
+            return True
+        return max(0.0, now_ms - self.last_line_t) > self.cfg.stale_ms
+
+    def lock_bracket(self, now_ms: float | None) -> TrackMsg | None:
+        """The T line to draw as a bracket, or None: only mode LOCK and state
+        LOCK, and only while the T line is newer than TRACK_HIDE_PASSES passes."""
+        t = self.track
+        if (t is None or now_ms is None or self.mode != "LOCK" or t.state != "LOCK"
+                or now_ms - t.t_ms > TRACK_HIDE_PASSES * self.cfg.pass_ms):
+            return None
+        return t
 
 
 class DeviceClock:

@@ -148,7 +148,7 @@ The brief wants a simulation that **answers a design question**, records its **a
 
 ## Phase I: implement (kit week onwards)
 
-- [ ] **I1** Pure components finished and tested (from S3) + `radar_gfx` + `hcsr04_echo_to_cm` / `servo_deg_to_us` / `joystick_normalise` helpers with host tests.
+- [ ] **I1** Pure components finished and tested (from S3) + `hcsr04_echo_to_cm` / `servo_deg_to_us` / `joystick_normalise` helpers with host tests.
 - [ ] **I2** `servo` driver (LEDC 50 Hz, 14-bit).
 - [ ] **I3** `serial_out` + protocol test against `radar_view.py`.
 - [ ] **I4** `hcsr04` driver (D-ECHO choice); timeout → NO_ECHO; echo never rises / stuck high → FAILED.
@@ -211,7 +211,7 @@ Anything else (ESP-IDF log lines) is ignored by the viewer, so normal logging st
 
 ## Display spec (PC view and web page)
 
-One spec for both displays (D-DISPLAY): `tools/radar_view.py` (S4, I6) and the ESP32 web page (X1) draw the same picture from the same serial lines. Built from the drawing rules in `components/radar_gfx/include/radar_gfx.h` and `main/display_task.h` (written for an on-device screen, now dropped), so those rules survive that code being removed. Everything here is PROPOSED until S4 and O2 test it; D-STATUS is still under "Options under consideration".
+One spec for both displays (D-DISPLAY): `tools/radar_view.py` (S4, I6) and the ESP32 web page (X1) draw the same picture from the same serial lines. Built from the drawing rules of `radar_gfx` and `display_task` (written for an on-device screen, now dropped and deleted; the rules live here). Everything here is PROPOSED until S4 and O2 test it; D-STATUS is still under "Options under consideration".
 
 **Input.** The `R`/`M`/`T` lines above, nothing else, so a recorded log or an S2 scene file draws exactly like the live device. Lines that don't parse are ignored (ESP-IDF log lines).
 
@@ -247,7 +247,7 @@ One spec for both displays (D-DISPLAY): `tools/radar_view.py` (S4, I6) and the E
 
 **Accessibility (CONCEIVE section 9):** every status has a shape and text as well as a colour; a large-text option; nothing relies on sound. Check: a greyscale screenshot still tells OK / NOECHO / FAIL apart (T-FAULT).
 
-**Latency (SC7: a reading on screen within 200 ms of the ping; T-LAT):** draw each `R` line on the next frame, and redraw at least 20 times a second (the old `APP_DISPLAY_FPS`), so drawing adds at most 50 ms. The rest of the 200 ms is for serial or Wi-Fi.
+**Latency (SC7: a reading on screen within 200 ms of the ping; T-LAT):** draw each `R` line on the next frame, and redraw at least 20 times a second (the old `APP_DISPLAY_FPS`, removed with `display_task`; now `FLOOR_FPS` in `tools/radar_model.py`), so drawing adds at most 50 ms. The rest of the 200 ms is for serial or Wi-Fi.
 
 ## Decision log
 

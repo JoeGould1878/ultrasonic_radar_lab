@@ -37,11 +37,14 @@ from collections import deque
 
 from radar_model import RadarState, Reading
 
-# Display-only numbers, not in app_config.h (none is a design value):
+# Viewer-only constants (not in app_config.h; none is a design value). All
+# PROPOSED: builder 2 lists them in the Display spec; O2 may change them.
 RING_STEP_CM = 50          # Display spec: "PROPOSED every 50 cm"
-FRAME_CAP_FPS = 60         # only stops the loop spinning; the floor is APP_DISPLAY_FPS
+FRAME_CAP_FPS = 60         # only stops the loop spinning; the floor is FLOOR_FPS (SC7)
 NOECHO_MAX_BRIGHT = 0.55   # "faint" dash (Display spec, NOECHO row)
 STALE_DIM_ALPHA = 150      # 0-255 darkening over the picture while STALE
+EDGE_DASH_DEG = 2.0        # D-EDGE mark: dashed bracket, dash length in degrees
+# (the "hide bracket after 2 passes without a T line" rule is TRACK_HIDE_PASSES in radar_model.py)
 
 BG = (8, 16, 12)
 GRID = (34, 88, 56)
@@ -153,8 +156,10 @@ class Renderer:
                 self.mark(surf, r, st.freshness(r, now_ms))
 
         # LOCK bracket from the T line
-        if st.mode == "LOCK" and st.track is not None:
-            self.lock(surf, st.track)
+        if now_ms is not None:
+            tr = st.lock_bracket(now_ms)
+            if tr is not None:
+                self.lock(surf, tr)
 
         self.legend(surf)
         stale = st.is_stale(now_ms, link_up)
@@ -199,13 +204,22 @@ class Renderer:
             d = t.dist if t.dist is not None else self.cfg.max_range_cm
             lo, hi = min(t.left, t.right), max(t.left, t.right)
             out = self.cfg.max_range_cm * 0.04      # bracket sits just beyond the target
-            pg.draw.lines(surf, C_LOCK, False, self.arc_pts(lo, hi, d + out), 2)
+            if t.edge:      # D-EDGE: dashed arc instead of a solid one
+                a = lo
+                while a < hi:
+                    pg.draw.lines(surf, C_LOCK, False, self.arc_pts(a, min(a + EDGE_DASH_DEG, hi), d + out, 2), 2)
+                    a += 2 * EDGE_DASH_DEG
+            else:
+                pg.draw.lines(surf, C_LOCK, False, self.arc_pts(lo, hi, d + out), 2)
             for a in (lo, hi):        # ends point in towards the target: [ ]
                 pg.draw.line(surf, C_LOCK, self.xy(a, d + out), self.xy(a, max(0.0, d - out)), 2)
-            if t.centre is not None:  # centre tick points out
-                pg.draw.line(surf, C_LOCK, self.xy(t.centre, d + out), self.xy(t.centre, d + 2.5 * out), 3)
-            lx, ly = self.xy((lo + hi) / 2, d + 4 * out)
-            self.text(surf, t.state, 0.032, C_LOCK, (lx, ly), "center")
+            if t.centre is not None:  # centre tick points out; edge: hollow circle (bearing uncertain)
+                if t.edge:
+                    pg.draw.circle(surf, C_LOCK, self.xy(t.centre, d + 2.5 * out), self.dot + 2, 2)
+                else:
+                    pg.draw.line(surf, C_LOCK, self.xy(t.centre, d + out), self.xy(t.centre, d + 2.5 * out), 3)
+            lx, ly = self.xy((lo + hi) / 2, d + 4.5 * out)
+            self.text(surf, "LOCK ? edge: low confidence" if t.edge else t.state, 0.032, C_LOCK, (lx, ly), "center")
         else:
             self.text(surf, t.state, 0.032, C_LOCK, (self.ox, self.oy - self.r_px * 0.25), "center")
 

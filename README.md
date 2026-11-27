@@ -34,7 +34,6 @@ ultrasonic_radar_lab/
 │   ├── sweep_plan/       next angle for FULL / SECTOR / MANUAL         [pure C]
 │   ├── target_track/     lock-on: cluster, confirm, follow, lost       [pure C]
 │   ├── mode_fsm/         SWEEP / LOCK / MANUAL, pause, fault           [pure C]
-│   ├── radar_gfx/        polar -> screen, marks by status and age      [pure C]
 │   └── lock_loop/        LOCK controller: full sweep <-> sector        [pure C]
 ├── bringup/              standalone hardware tests (servo, sensor, joystick)
 ├── host_tests/           laptop tests for the [pure C] components
@@ -43,7 +42,7 @@ ultrasonic_radar_lab/
 └── docs/                 PLAN, CONTEXT, LAB_TESTS, CDIO write-ups, brief, evidence
 ```
 
-Data path: `sweep_plan → servo → (settle) → hcsr04 → scan_map → target_track → display / serial_out`.
+Data path: `sweep_plan → servo → (settle) → hcsr04 → scan_map → target_track → serial_out → PC viewer / web page`.
 
 ## Build
 

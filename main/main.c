@@ -8,7 +8,7 @@
  *   1. servo_init -> park at 90°        (servo moves first, so power dips happen
  *   2. hcsr04_init                        before the sensor starts)
  *   3. joystick_init (stick at rest -> centre measured)
- *   4. scan_task_start, input_task_start, display_task_start
+ *   4. scan_task_start, input_task_start
  */
 #include "esp_log.h"
 #include "app_config.h"
