@@ -231,11 +231,10 @@ One spec for both displays (D-DISPLAY): `tools/radar_view.py` (S4, I6) and the E
 | Status (`R` line) | Mark | Notes |
 | --- | --- | --- |
 | OK | filled dot at (angle, dist_cm) | brightness from age, below |
-| NOECHO | nothing drawn at a range; the beam line shows the bin was measured | see the flag under "Open questions" |
+| NOECHO | faint short dash across the bearing at the max-range ring | fades with age like an OK point (D-FADE), so "no echo" stays visible after the beam moves on and never looks like "never measured" (CONCEIVE section 7: "no echo", not "nothing there"). Joe, 27 Nov |
 | FAIL | small cross | `dist_cm` is `-` (D-PROTO-NULL), so it has no range: PROPOSED to draw it on the outer ring, never at 0 cm |
-| stale | hollow ring + "STALE" text | per point, from `radar_gfx.h`; the banner below is for the whole display. When it applies next to D-FADE's fade and expiry is open (see Open questions) |
 
-**Fading (SC6 "points older than one pass visibly faded"; D-FADE):** each mark's brightness falls linearly with its age, from full when measured to zero at `APP_FADE_SWEEPS` passes (3). Age counts in passes, not frames, so the fade means "not re-measured" whatever the frame rate. A point re-measured in the middle of the arc is redrawn at 67 % brightness, at the ends at 33 % (S1). Points are removed after `APP_EXPIRE_SWEEPS` passes.
+**Fading (SC6 "points older than one pass visibly faded"; D-FADE):** age is shown by fading only; there is no separate per-point "stale" mark (`radar_gfx.h`'s hollow ring is dropped, Joe 27 Nov), and STALE is only the global banner below. Each mark's brightness falls linearly with its age, from full when measured to zero at `APP_FADE_SWEEPS` passes (3). Age counts in passes, not frames, so the fade means "not re-measured" whatever the frame rate. A point re-measured in the middle of the arc is redrawn at 67 % brightness, at the ends at 33 % (S1). Points are removed after `APP_EXPIRE_SWEEPS` passes.
 
 **Banners (text + a shape, never colour alone):**
 - **STALE:** no `R` line for `APP_STALE_MS` (1.5 s) → a "STALE" banner across the picture, and everything drawn is dimmed (SC6, T-STALE). Also shown when the serial port or the web socket drops.
@@ -288,9 +287,7 @@ Only decisions actually made go here, each with its reason/evidence. Everything 
 - [ ] Demo date (session 6)? Canvas reflection deadlines?
 - [ ] Can the lab PC run Python with pyserial for the viewer? Check in session 2. This is the D-DISPLAY risk; fallback: a Web Serial page in Chrome, no install.
 - [ ] Is a 3D printer / laser cutter available for the mount (D5)?
-- [ ] Display spec, stale points: `radar_gfx.h` gives a per-point "stale" mark (hollow ring), but D-FADE fades points to zero and removes them at `APP_EXPIRE_SWEEPS`. When would a hollow ring show? Options: drop it (fading already shows age), or use it only while the STALE banner is up. Decide in S4.
-- [ ] Display spec, NOECHO: `radar_gfx.h` draws nothing for NOECHO (beam line only). Once the beam has moved on, a NOECHO bin looks the same as a bin never measured, and CONCEIVE section 7 promises "no echo", not "nothing there". Should NOECHO bins get a faint mark at the max-range ring? Decide in S4, check in O2.
-- [ ] T line (decide in S4): add a field for the D-EDGE flag (low-confidence bearing)? And what goes in `centre_deg`, `left_deg`, `right_deg`, `dist_cm` while SEARCHING: `-` as in D-PROTO-NULL?
+- [ ] T line (decide in S4; the Display spec's D-EDGE mark waits on it): add a field for the D-EDGE flag (low-confidence bearing)? And what goes in `centre_deg`, `left_deg`, `right_deg`, `dist_cm` while SEARCHING: `-` as in D-PROTO-NULL?
 
 ## Sources
 
