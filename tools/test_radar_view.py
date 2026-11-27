@@ -105,16 +105,20 @@ def test_malformed_is_bad():
         "R,-5,SWEEP,90.0,52.3,OK", "R,1.5,SWEEP,90.0,52.3,OK",
         "R,0,sweep,90.0,52.3,OK", "R,0,SWEEP,90.0,52.3,ok", "R,0,SCAN,90.0,52.3,OK",
         "M,0,SWEEP,0", "M,0,SWEEP,2,0", "M,0,SWEEP,0,yes",
-        "T,0,LOCK,90.0,85.0,95.0", "T,0,LOCKED,90.0,85.0,95.0,50.0",
-        "T,0,LOCK,90.0,85.0,95.0,50.0,1",      # 8 fields: edge flag is not in the protocol yet
+        "T,0,LOCK,90.0,85.0,95.0", "T,0,LOCKED,90.0,85.0,95.0,50.0,0",
+        "T,0,LOCK,90.0,85.0,95.0,50.0",        # old 7-field T line: bad since the edge field
+        "T,0,LOCK,90.0,85.0,95.0,50.0,2", "T,0,LOCK,90.0,85.0,95.0,50.0,",
+        "T,0,SEARCH,90.0,-,-,-,0",             # SEARCH must be all "-"
+        "T,0,LOCK,-,-,-,-,0", "T,0,CAND,90.0,85.0,95.0,-,0",
     ]:
         assert bad(ln), ln
 
 
 def test_track_lines():
-    assert parse_line("T,9000,LOCK,90.5,84.0,97.0,50.2") == TrackMsg(9000, "LOCK", 90.5, 84.0, 97.0, 50.2)
-    # SEARCH with "-" (open question in PLAN): accepted, nothing to draw at a bearing
-    assert parse_line("T,9000,SEARCH,-,-,-,-") == TrackMsg(9000, "SEARCH", None, None, None, None)
+    assert parse_line("T,9000,LOCK,90.5,84.0,97.0,50.2,0") == TrackMsg(9000, "LOCK", 90.5, 84.0, 97.0, 50.2, False)
+    assert parse_line("T,9000,LOCK,163.0,157.0,165.0,50.2,1").edge is True      # D-EDGE
+    assert parse_line("T,9000,CAND,90.5,84.0,97.0,50.2,0").state == "CAND"
+    assert parse_line("T,9000,SEARCH,-,-,-,-,0") == TrackMsg(9000, "SEARCH", None, None, None, None, False)
 
 
 def test_real_logs_parse_cleanly():
@@ -230,6 +234,53 @@ def test_stale():
     assert st.is_stale(1001, link_up=False)                    # port dropped
 
 
+def test_paused_is_not_stale_while_m_lines_keep_coming():
+    """Joe 27/11: STALE = no line of ANY kind for STALE_MS; paused firmware
+    sends an M line every 1 s, so PAUSED shows and STALE does not."""
+    st = RadarState(CFG)
+    st.feed(ModeMsg(0, "SWEEP", False, False))
+    st.feed(Reading(1000, "SWEEP", 90.0, 50.0, "OK"))
+    st.feed(ModeMsg(1200, "SWEEP", True, False))               # pause
+    assert st.paused
+    for t in (2200, 3200, 4200):                               # M every 1 s, no R
+        st.feed(ModeMsg(t, "SWEEP", True, False))
+        assert not st.is_stale(t + 900)                        # 0.9 s after the last M
+    assert not st.is_stale(4200 + CFG.stale_ms)
+    assert st.is_stale(4200 + CFG.stale_ms + 1)                # lines stop (cable out): STALE
+    # not paused: an M line does not hide a missing R stream? it does count as a line:
+    st2 = RadarState(CFG)
+    st2.feed(Reading(0, "SWEEP", 90.0, 50.0, "OK"))
+    st2.feed(ModeMsg(1000, "SWEEP", False, False))
+    assert not st2.is_stale(1000 + CFG.stale_ms)
+    assert st2.is_stale(1000 + CFG.stale_ms + 1)
+    # paused before any R line: PAUSED, not "no data yet"
+    st3 = RadarState(CFG)
+    st3.feed(ModeMsg(0, "SWEEP", True, False))
+    assert not st3.is_stale(500)
+
+
+def test_lock_bracket_rules():
+    """Joe 27/11: bracket only when mode = LOCK and T state = LOCK; hidden when
+    no T line for 2 full passes."""
+    st = RadarState(CFG)
+    lock_t = TrackMsg(10000, "LOCK", 90.0, 85.0, 95.0, 50.0, False)
+    st.feed(Reading(10000, "LOCK", 90.0, 50.0, "OK"))
+    st.feed(lock_t)
+    assert st.lock_bracket(10000) is None                      # no M line yet: mode unknown
+    st.feed(ModeMsg(10000, "SWEEP", False, False))
+    assert st.lock_bracket(10000) is None                      # mode SWEEP
+    st.feed(ModeMsg(10000, "LOCK", False, False))
+    assert st.lock_bracket(10000) is lock_t
+    hide = 2 * CFG.pass_ms
+    assert st.lock_bracket(10000 + hide) is lock_t
+    assert st.lock_bracket(10000 + hide + 1) is None           # 2 passes with no T line
+    st.feed(TrackMsg(20000, "CAND", 90.0, 85.0, 95.0, 50.0, False))
+    assert st.lock_bracket(20000) is None                      # CAND: no bracket
+    st.feed(TrackMsg(20100, "SEARCH", None, None, None, None, False))
+    assert st.lock_bracket(20100) is None
+    assert st.lock_bracket(None) is None
+
+
 def test_t1_fault_flags():
     st = RadarState(CFG)
     st.feed(ModeMsg(0, "SWEEP", False, True))
@@ -241,7 +292,7 @@ def test_t1_fault_flags():
 def test_restart_clears_map():
     st = RadarState(CFG)
     st.feed(Reading(60000, "SWEEP", 90.0, 50.0, "OK"))
-    st.feed(TrackMsg(59990, "LOCK", 90.0, 85.0, 95.0, 50.0))  # slightly older: fine
+    st.feed(TrackMsg(59990, "LOCK", 90.0, 85.0, 95.0, 50.0, False))  # slightly older: fine
     assert st.counts["restarts"] == 0 and st.track is not None
     st.feed(Reading(0, "SWEEP", 15.0, None, "NOECHO"))         # device rebooted
     assert st.counts["restarts"] == 1 and list(st.bins) == [st.bin_of(15.0)] and st.track is None

@@ -35,7 +35,7 @@ import os
 import time
 from collections import deque
 
-from radar_model import RadarState, Reading
+from radar_model import TRACK_HIDE_PASSES, RadarState, Reading
 
 # Viewer-only constants (not in app_config.h; none is a design value). All
 # PROPOSED: builder 2 lists them in the Display spec; O2 may change them.
@@ -160,6 +160,11 @@ class Renderer:
             tr = st.lock_bracket(now_ms)
             if tr is not None:
                 self.lock(surf, tr)
+            t = st.track
+            if (tr is None and t is not None and st.mode == "LOCK"
+                    and now_ms - t.t_ms <= TRACK_HIDE_PASSES * self.cfg.pass_ms):
+                self.text(surf, f"tracking: {t.state}", 0.03, C_LOCK,        # SEARCH / CAND: no bracket yet
+                          (self.ox, self.oy - self.r_px * 0.25), "center")
 
         self.legend(surf)
         stale = st.is_stale(now_ms, link_up)
