@@ -9,6 +9,10 @@
 #include <stdint.h>
 #include "scan_map.h"
 #include "test_util.h"
+/* Host tests may read the config (components may not): the grid guard below
+ * checks the real sweep numbers. Relative path, so no -I../main that a
+ * component could accidentally use. */
+#include "../main/app_config.h"
 
 static scan_map_t m;   /* ~3 KB: keep it off the stack */
 
@@ -166,6 +170,25 @@ static void test_expire(void)
     CHECK(m.bins[9].status == READING_OK);
 }
 
+/* Grid guard (Joe, 27/11): the floor layout only keeps the sweep grid mid-bin
+ * when APP_SWEEP_MIN_DEG / APP_SWEEP_STEP_DEG has a fractional part of 0.5
+ * (15 / 2 = 7.5). With a 1, 3 or 5 deg step from 15 the grid would sit on bin
+ * edges again, where drift flips the bin. Changing the step or start angle
+ * fails here first. */
+static void test_grid_guard(void)
+{
+    printf("grid guard (app_config.h: %d..%d deg, step %d)\n",
+           APP_SWEEP_MIN_DEG, APP_SWEEP_MAX_DEG, APP_SWEEP_STEP_DEG);
+    CHECK_NEAR(fmod((double)APP_SWEEP_MIN_DEG / APP_SWEEP_STEP_DEG, 1.0), 0.5, 0);
+    scan_map_init(&m, (float)APP_SWEEP_STEP_DEG);
+    for (int a = APP_SWEEP_MIN_DEG; a <= APP_SWEEP_MAX_DEG; a += APP_SWEEP_STEP_DEG) {
+        int b = scan_map_bin(&m, (float)a);
+        CHECK_NEAR(scan_map_bin_angle(&m, b), a, 0);
+        CHECK(scan_map_bin(&m, a - 0.45f * APP_SWEEP_STEP_DEG) == b);
+        CHECK(scan_map_bin(&m, a + 0.45f * APP_SWEEP_STEP_DEG) == b);
+    }
+}
+
 int main(void)
 {
     printf("test_scan_map\n");
@@ -175,5 +198,6 @@ int main(void)
     test_update();
     test_age_freshness();
     test_expire();
+    test_grid_guard();
     return TEST_RESULT();
 }

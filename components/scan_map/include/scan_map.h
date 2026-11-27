@@ -54,7 +54,9 @@ typedef struct {
     scan_bin_t bins[SCAN_MAP_MAX_BINS];
 } scan_map_t;
 
-/** Clear the map. bin_deg in (0, 180]. */
+/** Clear the map. bin_deg in (0, 180]: below 1 deg (or <= 0 / NaN) it is
+ *  raised to 1 deg, since 181 bins cannot cover 0-180 any finer; above 180
+ *  it is capped at 180. */
 void scan_map_init(scan_map_t *m, float bin_deg);
 
 /** Angle -> bin index (clamped). */

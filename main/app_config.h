@@ -53,6 +53,7 @@
 #define APP_SWEEP_MAX_DEG       165   /* PROPOSED */
 /* 2 deg: 4.5 s per 150 deg pass at a 60 ms gap (SC4 <= 5 s), 7 readings per
  * thin target (4 if the useful beam is only 8 deg). 1 deg misses SC4. D-STEP. */
+/* Changing the step or start angle: check the scan_map bin layout (test_scan_map grid guard). */
 #define APP_SWEEP_STEP_DEG        2   /* SIM S1 (s1_summary.txt); re-check at I7 */
 
 /* ----------------------------------------------------------- ultrasonic ---- */
