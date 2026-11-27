@@ -7,7 +7,8 @@
  * config (15..165, 2 deg). Checks: lock after two full passes, the sector
  * and tracker limits, walk-in without jumps, recentring, resweep (whole arc,
  * turnaround leg skipped, started at an arc end, resweep_ms shorter than a
- * pass), fast loss on removal, arc-end clipping, reset.
+ * pass, a closer object elsewhere does not end the lock, no on_ping loss
+ * during a resweep), fast loss on removal, arc-end clipping, reset.
  * The noisy, scene-based measurements are in sim/lock_sim.py.
  */
 #include <math.h>
@@ -208,15 +209,76 @@ static void test_resweep(void)
     CHECK(w.ll.last_full_ms == w.now);
     CHECK(w.big_steps == 0);
 
-    /* A closer object elsewhere wins the resweep's nearest cluster -> lost
-     * (the behaviour lock_sim measures as the still-target baseline). */
+    /* A closer object elsewhere (140 deg, 30 cm) is seen by the resweep but
+     * is outside the gate: the lock stays on the same object (fix (b), Joe
+     * 27/11; before it, the nearest cluster across the arc ended the lock). */
     w.obj[1] = (obj_t){.bearing = 140.0f, .dist = 30.0f, .present = true};
     n = 0;
     while (lock_loop_plan(&w.ll) != LOCK_PLAN_RESWEEP && n < 1000) { ping(); n++; }
     CHECK(lock_loop_track(&w.ll)->state == TRACK_LOCKED);  /* sector never saw it */
     n = 0;
     while (lock_loop_plan(&w.ll) == LOCK_PLAN_RESWEEP && n < 400) { ping(); n++; }
+    CHECK(lock_loop_track(&w.ll)->state == TRACK_LOCKED);
+    CHECK(lock_loop_plan(&w.ll) == LOCK_PLAN_SECTOR);
+    CHECK_NEAR(lock_loop_track(&w.ll)->target.centre_deg, 90.0, 1.0);
+    CHECK_NEAR(lock_loop_track(&w.ll)->target.dist_cm, 50.0, 1e-3);
+}
+
+static void test_resweep_no_ping_loss(void)
+{
+    printf("resweep: no on_ping loss, judged at its end\n");
+    lock_loop_cfg_t c = cfg();
+    c.resweep_ms = 10000;
+    start(&c, 15.0f);
+    w.obj[0] = (obj_t){.bearing = 90.0f, .dist = 50.0f, .present = true};
+    CHECK(run_until_locked(400) > 0);
+    int n = 0;
+    while (lock_loop_plan(&w.ll) != LOCK_PLAN_RESWEEP && n < 1000) { ping(); n++; }
+    CHECK(lock_loop_plan(&w.ll) == LOCK_PLAN_RESWEEP);
+    const float left = lock_loop_track(&w.ll)->target.left_deg;
+    const float right = lock_loop_track(&w.ll)->target.right_deg;
+    CHECK_NEAR(left, 83.0, 1e-3);                         /* seen from 83 to 97 */
+    CHECK_NEAR(right, 97.0, 1e-3);
+
+    /* The target moves 12 deg (inside the 15 deg gate) while the beam is
+     * away: the full pass now gets 6 NO_ECHO in a row across the OLD
+     * 83..97 (83 ... 93) = lost_pings. on_ping would have ended the lock
+     * there; it must not run in a resweep. */
+    w.obj[0].bearing = 102.0f;
+    int misses = 0, run = 0, locked_all = 1;
+    n = 0;
+    while (lock_loop_plan(&w.ll) == LOCK_PLAN_RESWEEP && n < 400) {
+        track_state_t st = ping();
+        n++;
+        if (w.last_angle >= left - 1e-3f && w.last_angle <= right + 1e-3f) {
+            bool seen = fabsf(w.last_angle - 102.0f) <= 7.0f;
+            run = seen ? 0 : run + 1;
+            if (run > misses) misses = run;
+        }
+        if (lock_loop_plan(&w.ll) == LOCK_PLAN_RESWEEP && st != TRACK_LOCKED) locked_all = 0;
+    }
+    CHECK(misses >= c.track.lost_pings);                  /* the case really happens */
+    CHECK(locked_all);                                    /* LOCKED for the whole resweep */
+    CHECK(lock_loop_track(&w.ll)->state == TRACK_LOCKED); /* kept at its end */
+    CHECK(lock_loop_plan(&w.ll) == LOCK_PLAN_SECTOR);
+    CHECK_NEAR(lock_loop_track(&w.ll)->target.centre_deg, 102.0, 1.0);
+
+    /* on_ping still ends a lock in the SECTOR: remove the target. The servo
+     * first walks back from the arc end; the loss must come lost_pings pings
+     * after the beam enters the target's left..right (on_ping), not later at
+     * a sector pass end (on_pass). */
+    w.obj[0].present = false;
+    const float l2 = lock_loop_track(&w.ll)->target.left_deg;
+    const float r2 = lock_loop_track(&w.ll)->target.right_deg;
+    int inside = 0;
+    n = 0;
+    while (lock_loop_track(&w.ll)->state == TRACK_LOCKED && n < 100) {
+        ping();
+        n++;
+        if (w.last_angle >= l2 - 1e-3f && w.last_angle <= r2 + 1e-3f) inside++;
+    }
     CHECK(lock_loop_track(&w.ll)->state == TRACK_SEARCHING);
+    CHECK(inside == c.track.lost_pings);
     CHECK(lock_loop_plan(&w.ll) == LOCK_PLAN_FULL);
 }
 
@@ -334,6 +396,7 @@ int main(void)
     test_removed();
     test_follow();
     test_resweep();
+    test_resweep_no_ping_loss();
     test_resweep_from_arc_end();
     test_resweep_short_interval();
     test_arc_end();

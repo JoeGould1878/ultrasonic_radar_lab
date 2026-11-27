@@ -18,13 +18,17 @@
  *    jump) and the first sector pass ends at the far sector end.
  *  - Tracker limits = sweep_plan_pass_ends() of the plan in use: the snapped
  *    sector in SECTOR, the arc in FULL / RESWEEP.
- *  - LOCKED: on_ping after every reading. A loss there -> FULL at once.
+ *  - LOCKED: on_ping after every reading, EXCEPT during a RESWEEP (Joe 27/11,
+ *    resweep fix (c)): the resweep is judged only at its end by on_pass.
+ *    Why: the target moves while the beam is away for ~5 s, so pings across
+ *    its OLD left..right were counted as misses and ended the lock mid-pass.
+ *    A loss in SECTOR -> FULL at once.
  *  - SECTOR pass end: on_pass; still LOCKED -> recentre on the target (new
  *    limits); and if resweep_ms > 0 and now - last_full_ms >= resweep_ms,
  *    start a RESWEEP. Lost -> FULL.
  *  - RESWEEP (resweep_turned, Joe 27/11): the servo starts at a sector end,
  *    so the first arc end it reaches is only a turnaround: no on_pass there
- *    (on_ping still runs), resweep_turned = true. The next pass end closes a
+ *    (no on_ping either), resweep_turned = true. The next pass end closes a
  *    complete end-to-end pass and runs on_pass. A resweep that starts AT an
  *    arc end (sector clamped to the arc) is complete at its first pass end,
  *    so resweep_turned starts true. Holds for any resweep_ms. Then still
@@ -103,7 +107,7 @@ float lock_loop_next_angle(lock_loop_t *ll)
 track_state_t lock_loop_on_reading(lock_loop_t *ll, const scan_map_t *map, uint32_t now_ms,
                                    float angle_deg, float dist_cm, reading_status_t status)
 {
-    if (ll->track.state == TRACK_LOCKED &&
+    if (ll->track.state == TRACK_LOCKED && ll->kind != LOCK_PLAN_RESWEEP &&
         target_track_on_ping(&ll->track, angle_deg, dist_cm, status) != TRACK_LOCKED) {
         go_full(ll, LOCK_PLAN_FULL);                 /* fast "lost" */
         return ll->track.state;

@@ -29,6 +29,10 @@
  *    count as the same object (confirming a candidate, following a lock).
  *    Needed because the header had no association rule; lock_loop sets it to
  *    APP_LOCK_SECTOR_HALF_DEG.
+ *  - (27/11, Joe, resweep fix (b)) CANDIDATE and LOCKED take the cluster
+ *    NEAREST THE CANDIDATE / TARGET BEARING among those whose centre is within
+ *    gate_deg of it, not the nearest in distance: a closer object elsewhere
+ *    in the arc no longer ends the lock at a resweep.
  *  - Bearings use scan_bin_t.angle_deg (the exact reading angle), not bin
  *    centres.
  */
@@ -96,7 +100,12 @@ void target_track_set_limits(target_track_t *t, float lo_deg, float hi_deg);
 track_cluster_t target_track_find_cluster(const target_track_t *t, const scan_map_t *m,
                                           uint32_t now_ms, uint32_t max_age_ms);
 
-/** Call once per completed pass (FULL or SECTOR). Returns the new state. */
+/** Call once per completed pass (FULL or SECTOR). Returns the new state.
+ *  SEARCHING: the nearest cluster (smallest distance) becomes the candidate.
+ *  CANDIDATE / LOCKED: of the clusters whose centre is within gate_deg of the
+ *  candidate / target bearing, the one whose centre is nearest that bearing.
+ *  None in the gate: CANDIDATE restarts from the nearest cluster (SEARCHING
+ *  if there is none); LOCKED is lost (SEARCHING). */
 track_state_t target_track_on_pass(target_track_t *t, const scan_map_t *m,
                                    uint32_t now_ms, uint32_t max_age_ms);
 

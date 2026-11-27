@@ -14,7 +14,8 @@
  *   SEARCHING / CANDIDATE  full sweep; target_track_on_pass() at each pass end.
  *   -> LOCKED              sector sweep, centre +/- sector_half_deg, clamped to
  *                          the arc. Tracker limits = the sector (edge flag).
- *                          target_track_on_ping() after every ping (fast "lost").
+ *                          target_track_on_ping() after every ping (fast "lost"),
+ *                          except during a resweep (judged at its end only).
  *                          At each sector pass end: on_pass(), then recentre
  *                          the sector on the target.
  *   every resweep_ms       one full pass while still LOCKED (sees the rest of
@@ -22,7 +23,7 @@
  *                          back to the sector if the target is still found.
  *                          A resweep starts at a sector end, usually mid-arc,
  *                          so the first arc end it reaches is a turnaround
- *                          (on_ping still runs, no on_pass) and one complete
+ *                          (no on_pass there) and one complete
  *                          end-to-end pass is judged after it. If it starts
  *                          at an arc end, that first pass is already complete.
  *   lost                   back to a full sweep, tracker limits = the arc.

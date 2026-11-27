@@ -305,13 +305,22 @@ static void test_states(void)
     scan_map_init(&m, 2.0f);
     CHECK(target_track_on_pass(&t, &m, now, 5000) == TRACK_SEARCHING);
 
-    /* LOCKED, nearest cluster is another object elsewhere -> lost (the
-     * "nearest across the full arc" case lock_sim reports separately). */
+    /* LOCKED, a CLOSER object elsewhere (140 deg, 30 cm) is outside the
+     * gate: the target is kept (fix (b), Joe 27/11; it used to be lost). */
     put_run(81, 93, 50.0f, 0, now);
     target_track_on_pass(&t, &m, now, 5000);
     target_track_on_pass(&t, &m, now, 5000);
     CHECK(t.state == TRACK_LOCKED);
-    put_run(141, 147, 30.0f, 0, now);
+    put_run(137, 143, 30.0f, 0, now);
+    CHECK_NEAR(find(&t, now, 5000).centre_deg, 140.0, 0); /* nearest in distance */
+    t.miss_count = 2;
+    CHECK(target_track_on_pass(&t, &m, now, 5000) == TRACK_LOCKED);
+    CHECK_NEAR(t.target.centre_deg, 87.0, 0);
+    CHECK_NEAR(t.target.dist_cm, 50.0, 0);
+    CHECK(t.miss_count == 0);
+    /* ... and once the target has gone, only the outside-gate one is left: lost. */
+    scan_map_init(&m, 2.0f);
+    put_run(137, 143, 30.0f, 0, now);
     CHECK(target_track_on_pass(&t, &m, now, 5000) == TRACK_SEARCHING);
 
     /* LOCKED with nothing found -> lost. */
@@ -340,6 +349,78 @@ static void test_states(void)
     scan_map_init(&m, 2.0f);
     put_run(83, 95, 50.0f, 0, now);
     CHECK(target_track_on_pass(&t, &m, now, 5000) == TRACK_CANDIDATE);
+}
+
+static void test_gate_choice(void)
+{
+    printf("gate: nearest bearing within the gate, not nearest distance\n");
+    target_track_t t;
+    track_cfg_t c = cfg();
+    uint32_t now = 0;
+
+    /* LOCKED on 81..93 (87, 50 cm). Two clusters in the gate: 95..99 at
+     * 30 cm (centre 97, 10 deg off, closer) and 79..91 at 60 cm (centre 85,
+     * 2 deg off). The one nearest the bearing wins. */
+    target_track_init(&t, &c);
+    scan_map_init(&m, 2.0f);
+    put_run(81, 93, 50.0f, 0, now);
+    target_track_on_pass(&t, &m, now, 5000);
+    target_track_on_pass(&t, &m, now, 5000);
+    CHECK(t.state == TRACK_LOCKED);
+    scan_map_init(&m, 2.0f);
+    put_run(79, 91, 60.0f, 0, now);
+    put_run(95, 99, 30.0f, 0, now);
+    CHECK_NEAR(find(&t, now, 5000).centre_deg, 97.0, 0);  /* nearest in distance */
+    CHECK(target_track_on_pass(&t, &m, now, 5000) == TRACK_LOCKED);
+    CHECK_NEAR(t.target.centre_deg, 85.0, 0);
+    CHECK_NEAR(t.target.dist_cm, 60.0, 0);
+
+    /* Gate edge: exactly gate_deg off is in (<=). Target now 85. */
+    scan_map_init(&m, 2.0f);
+    put_run(97, 103, 50.0f, 0, now);                      /* centre 100 = 85 + 15 */
+    CHECK(target_track_on_pass(&t, &m, now, 5000) == TRACK_LOCKED);
+    CHECK_NEAR(t.target.centre_deg, 100.0, 0);
+
+    /* Bearing tie (two clusters 4 deg either side): the lower angle wins. */
+    scan_map_init(&m, 2.0f);
+    put_run(93, 95, 40.0f, 0, now);                       /* centre 94 */
+    put_run(105, 107, 70.0f, 0, now);                     /* centre 106 */
+    CHECK(target_track_on_pass(&t, &m, now, 5000) == TRACK_LOCKED);
+    CHECK_NEAR(t.target.centre_deg, 94.0, 0);
+
+    /* CANDIDATE on 87: the candidate object again (89, 50 cm) plus a closer
+     * object at 140 deg. Confirmed on the candidate, not restarted from 140. */
+    target_track_init(&t, &c);
+    scan_map_init(&m, 2.0f);
+    put_run(81, 93, 50.0f, 0, now);
+    CHECK(target_track_on_pass(&t, &m, now, 5000) == TRACK_CANDIDATE);
+    scan_map_init(&m, 2.0f);
+    put_run(83, 95, 50.0f, 0, now);
+    put_run(137, 143, 30.0f, 0, now);
+    CHECK(target_track_on_pass(&t, &m, now, 5000) == TRACK_LOCKED);
+    CHECK_NEAR(t.target.centre_deg, 89.0, 0);
+    CHECK(t.seen_count == 2);
+
+    /* CANDIDATE, two in the gate: nearest bearing confirms. */
+    c.confirm_sweeps = 3;
+    target_track_init(&t, &c);
+    scan_map_init(&m, 2.0f);
+    put_run(81, 93, 50.0f, 0, now);                       /* candidate 87 */
+    target_track_on_pass(&t, &m, now, 5000);
+    scan_map_init(&m, 2.0f);
+    put_run(71, 75, 20.0f, 0, now);                       /* centre 73, 14 off, closest */
+    put_run(85, 93, 55.0f, 0, now);                       /* centre 89, 2 off */
+    CHECK(target_track_on_pass(&t, &m, now, 5000) == TRACK_CANDIDATE);
+    CHECK_NEAR(t.target.centre_deg, 89.0, 0);
+    CHECK(t.seen_count == 2);
+
+    /* CANDIDATE, none in the gate: restart from the NEAREST (distance) one. */
+    scan_map_init(&m, 2.0f);
+    put_run(41, 45, 60.0f, 0, now);                       /* 43: 46 off, 60 cm */
+    put_run(141, 145, 35.0f, 0, now);                     /* 143: 54 off, 35 cm */
+    CHECK(target_track_on_pass(&t, &m, now, 5000) == TRACK_CANDIDATE);
+    CHECK_NEAR(t.target.centre_deg, 143.0, 0);
+    CHECK(t.seen_count == 1);
 }
 
 static void lock_on(target_track_t *t, const track_cfg_t *c)
@@ -403,6 +484,7 @@ int main(void)
     test_bridging();
     test_edge();
     test_states();
+    test_gate_choice();
     test_on_ping();
     return TEST_RESULT();
 }

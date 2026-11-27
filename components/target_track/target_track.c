@@ -6,7 +6,8 @@
  * Credits / sources used: none (standard C only). The cluster rule matches
  * sim/scene.py clusters_illustrative (S2), which test_scenes checks.
  *
- * Rules (the header leaves these open; items 2, 4 and 5 approved by Joe 27/11):
+ * Rules (the header leaves these open; items 2, 4 and 5 approved by Joe 27/11;
+ * item 5's gated nearest-bearing choice added 27/11 with resweep fix (b)):
  *  1. A bin is usable when it is OK, no older than max_age_ms (age <= max),
  *     and its distance is <= max_range_cm (max_range_cm <= 0: no limit).
  *     Anything else (NO_ECHO, FAILED, never measured, too old, too far) is a
@@ -22,14 +23,18 @@
  *     dropped. Nearest = smallest dist; a tie goes to the lower angle.
  *  4. edge: left <= lim_lo + bin_deg/2 or right >= lim_hi - bin_deg/2, i.e.
  *     the cluster includes a reading at (or past) a current sweep limit.
- *  5. on_pass: SEARCHING -> CANDIDATE on any cluster. CANDIDATE: a cluster
- *     whose centre is within gate_deg of the candidate counts one more pass
- *     (LOCKED at confirm_sweeps); one outside the gate restarts the
- *     candidate from it; none -> SEARCHING. LOCKED: nearest cluster within
- *     the gate -> target updated, miss count reset; outside the gate or none
- *     -> lost (SEARCHING). confirm_sweeps <= 1 locks on the first pass.
+ *  5. on_pass: SEARCHING -> CANDIDATE on the nearest cluster.
+ *     CANDIDATE and LOCKED (Joe 27/11, resweep fix (b)): only the clusters
+ *     whose centre is within gate_deg of the candidate / target bearing
+ *     count, and of those the one whose centre is NEAREST THAT BEARING is
+ *     taken (not the nearest in distance: a closer object elsewhere in the
+ *     arc must not win). CANDIDATE: one in the gate counts one more pass
+ *     (LOCKED at confirm_sweeps); none in the gate -> restart the candidate
+ *     from the nearest cluster; no cluster at all -> SEARCHING. LOCKED: one
+ *     in the gate -> target updated, miss count reset; none in the gate ->
+ *     lost (SEARCHING). confirm_sweeps <= 1 locks on the first pass.
  *     gate_deg is used as given (0 = exact match only; lock_loop substitutes
- *     sector_half_deg for 0).
+ *     sector_half_deg for 0). A bearing tie goes to the lower angle.
  *  6. on_ping (LOCKED only): a ping is "near" when its angle lies within the
  *     target's left..right. Near + OK + |dist - target dist| <= dist_tol is a
  *     hit and resets the misses; any other near ping is a miss.
@@ -97,15 +102,33 @@ static track_cluster_t make_cluster(const target_track_t *t, const scan_map_t *m
     return c;
 }
 
-static void keep_nearest(track_cluster_t *best, const track_cluster_t *c)
+/* Which cluster a scan keeps (rule 3 / rule 5). */
+typedef struct {
+    bool  by_bearing;   /* false: smallest dist; true: centre nearest ref_deg */
+    float ref_deg;      /*   ... and only centres within gate_deg of it */
+    float gate_deg;
+} pick_t;
+
+static void keep_best(track_cluster_t *best, const track_cluster_t *c, const pick_t *pk)
 {
-    if (c->valid && (!best->valid || c->dist_cm < best->dist_cm)) {
+    if (!c->valid) {
+        return;
+    }
+    if (!pk->by_bearing) {
+        if (!best->valid || c->dist_cm < best->dist_cm) {
+            *best = *c;
+        }
+        return;
+    }
+    const float off = fabsf(c->centre_deg - pk->ref_deg);
+    if (off <= pk->gate_deg &&
+        (!best->valid || off < fabsf(best->centre_deg - pk->ref_deg))) {
         *best = *c;
     }
 }
 
-track_cluster_t target_track_find_cluster(const target_track_t *t, const scan_map_t *m,
-                                          uint32_t now_ms, uint32_t max_age_ms)
+static track_cluster_t scan(const target_track_t *t, const scan_map_t *m,
+                            uint32_t now_ms, uint32_t max_age_ms, const pick_t *pk)
 {
     track_cluster_t best = {0};
     const int bridge = t->cfg.bridge_gap_bins < 0 ? 0 : t->cfg.bridge_gap_bins;
@@ -122,22 +145,29 @@ track_cluster_t target_track_find_cluster(const target_track_t *t, const scan_ma
             }
             if (open) {
                 track_cluster_t c = make_cluster(t, m, first, last, now_ms, max_age_ms);
-                keep_nearest(&best, &c);
+                keep_best(&best, &c, pk);
             }
             open = true;
             first = last = i;
             gap = 0;
         } else if (open && ++gap > bridge) {
             track_cluster_t c = make_cluster(t, m, first, last, now_ms, max_age_ms);
-            keep_nearest(&best, &c);
+            keep_best(&best, &c, pk);
             open = false;
         }
     }
     if (open) {
         track_cluster_t c = make_cluster(t, m, first, last, now_ms, max_age_ms);
-        keep_nearest(&best, &c);
+        keep_best(&best, &c, pk);
     }
     return best;
+}
+
+track_cluster_t target_track_find_cluster(const target_track_t *t, const scan_map_t *m,
+                                          uint32_t now_ms, uint32_t max_age_ms)
+{
+    const pick_t nearest = {.by_bearing = false};
+    return scan(t, m, now_ms, max_age_ms, &nearest);
 }
 
 static void lose(target_track_t *t)
@@ -173,9 +203,13 @@ void target_track_set_limits(target_track_t *t, float lo_deg, float hi_deg)
     t->lim_hi_deg = clampf(hi_deg, t->cfg.arc_min_deg, t->cfg.arc_max_deg);
 }
 
-static bool in_gate(const target_track_t *t, const track_cluster_t *c)
+/* Rule 5: the cluster nearest the current bearing, within the gate. */
+static track_cluster_t in_gate(const target_track_t *t, const scan_map_t *m,
+                               uint32_t now_ms, uint32_t max_age_ms)
 {
-    return c->valid && fabsf(c->centre_deg - t->target.centre_deg) <= t->cfg.gate_deg;
+    const pick_t pk = {.by_bearing = true, .ref_deg = t->target.centre_deg,
+                       .gate_deg = t->cfg.gate_deg};
+    return scan(t, m, now_ms, max_age_ms, &pk);
 }
 
 static void start_candidate(target_track_t *t, const track_cluster_t *c)
@@ -189,28 +223,34 @@ static void start_candidate(target_track_t *t, const track_cluster_t *c)
 track_state_t target_track_on_pass(target_track_t *t, const scan_map_t *m,
                                    uint32_t now_ms, uint32_t max_age_ms)
 {
-    track_cluster_t c = target_track_find_cluster(t, m, now_ms, max_age_ms);
+    track_cluster_t c;
     switch (t->state) {
     case TRACK_SEARCHING:
+        c = target_track_find_cluster(t, m, now_ms, max_age_ms);
         if (c.valid) {
             start_candidate(t, &c);
         }
         break;
     case TRACK_CANDIDATE:
-        if (in_gate(t, &c)) {
+        c = in_gate(t, m, now_ms, max_age_ms);
+        if (c.valid) {
             t->target = c;
             if (++t->seen_count >= t->cfg.confirm_sweeps) {
                 t->state = TRACK_LOCKED;
                 t->miss_count = 0;
             }
-        } else if (c.valid) {
+            break;
+        }
+        c = target_track_find_cluster(t, m, now_ms, max_age_ms);
+        if (c.valid) {
             start_candidate(t, &c);
         } else {
             lose(t);
         }
         break;
     case TRACK_LOCKED:
-        if (in_gate(t, &c)) {
+        c = in_gate(t, m, now_ms, max_age_ms);
+        if (c.valid) {
             t->target = c;
             t->miss_count = 0;
         } else {
