@@ -1,0 +1,3 @@
+bridge,pass,left_deg,right_deg,centre_deg,n_bins,dist_cm,edge,nearest
+0,0,95.0,105.0,100.00,6,50.9,0,1
+1,0,95.0,105.0,100.00,6,50.9,0,1

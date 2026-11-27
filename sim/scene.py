@@ -111,6 +111,8 @@ TRUTH FILES  (<scene>.truth.csv, next to <scene>.txt)
 
 OUTPUTS (docs/evidence/sim/)
     s2_scenes/<scene>.txt, .truth.csv   every scene, default sensor model
+    s2_scenes/<scene>.clusters.csv      (S3) clusters per pass, bridge 0 and 1,
+                                        for the C = Python check (test_scenes)
     s2_results.csv, s2_summary.txt      the numbers behind Q1-Q4
     s2_smear_view.png      top-down: one pass of T1 at 50/100/150 cm and at 15 deg
     s2_bearing_error.png   Q1: nearest-bin vs edge-midpoint error by bearing
@@ -508,12 +510,18 @@ def stream(scene, cfg, timing, sensor, seed, passes, realtime):
 # C code gives the same answers on these same scenes.
 # Rule: neighbouring OK bins whose distances differ by <= dist_tol belong to
 # one cluster; a cluster needs >= min_bins bins; bearing = middle of its edges.
+# bridge (S3, default 0 = the S2 rule, unchanged): an OK reading also joins
+# across up to `bridge` non-OK readings, if its distance is still within
+# dist_tol of the cluster's last OK reading; an OK reading at another
+# distance is never bridged over; bridged readings are not counted in n.
+# This is the rule Joe approved for target_track (27/11).
 # ---------------------------------------------------------------------------
-def clusters_illustrative(pass_readings, step, dist_tol, min_bins):
+def clusters_illustrative(pass_readings, step, dist_tol, min_bins, bridge=0):
     """pass_readings: [(t, pass, angle, dist, status)] of ONE pass.
     Returns [dict(left, right, centre, n, dist, t_mid)] sorted by angle."""
     rs = sorted(pass_readings, key=lambda r: r[2])
     out, cur = [], []
+    gap = 0
 
     def close():
         if len(cur) >= min_bins:
@@ -526,17 +534,60 @@ def clusters_illustrative(pass_readings, step, dist_tol, min_bins):
 
     for r in rs:
         ok = r[4] == "OK"
-        if ok and cur and abs(r[2] - cur[-1][2] - step) < 1e-6 and abs(r[3] - cur[-1][3]) <= dist_tol:
-            cur.append(r)
-            continue
-        close()
-        cur = [r] if ok else []
+        if ok:
+            if (cur and gap <= bridge and abs(r[2] - cur[-1][2] - step * (gap + 1)) < 1e-6
+                    and abs(r[3] - cur[-1][3]) <= dist_tol):
+                cur.append(r)
+            else:
+                close()
+                cur = [r]
+            gap = 0
+        elif cur:
+            gap += 1
+            if gap > bridge:
+                close()
+                cur, gap = [], 0
     close()
     return out
 
 
 def edge_midpoint_illustrative(left_deg, right_deg):
     return (left_deg + right_deg) / 2.0
+
+
+def write_clusters(scene, readings, cfg):
+    """<scene>.clusters.csv (S3): every cluster of every pass, bridge 0 and 1,
+    computed from the readings AS LOGGED (1 decimal place), so that
+    host_tests/test_scenes.c, which replays the .txt log through the C
+    target_track, sees exactly the same numbers. nearest = 1 marks the
+    cluster target_track_find_cluster must return (smallest dist, lower
+    angle on a tie). edge: touches the arc ends within half a step.
+    Like target_track, an OK reading beyond APP_US_MAX_RANGE_CM is ignored
+    (treated as non-OK): S2's noise can push a reading from a target at the
+    range limit just past it. The S2 analysis above does not do this.
+    Distances are float32, as in the C code (scan_bin_t.dist_cm), so a pair
+    that differs by exactly dist_tol after rounding joins or splits the same
+    way in both."""
+    lo, hi, step = cfg["APP_SWEEP_MIN_DEG"], cfg["APP_SWEEP_MAX_DEG"], cfg["APP_SWEEP_STEP_DEG"]
+    rmax = cfg["APP_US_MAX_RANGE_CM"]
+    logged = []
+    for t, p, a, d, st in readings:
+        dl = np.float32(f"{d:.1f}") if st == "OK" else np.float32(0.0)
+        logged.append((t, p, float(f"{a:.1f}"), dl, st if (st != "OK" or dl <= rmax) else "RANGE"))
+    with open(SCENE_DIR / f"{scene.name}.clusters.csv", "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["bridge", "pass", "left_deg", "right_deg", "centre_deg", "n_bins",
+                    "dist_cm", "edge", "nearest"])
+        for bridge in (0, 1):
+            for k, pr in enumerate(by_pass(logged)):
+                cl = clusters_illustrative(pr, step, cfg["APP_LOCK_DIST_TOL_CM"],
+                                           int(cfg["APP_LOCK_MIN_BINS"]), bridge)
+                near = min(cl, key=lambda c: c["dist"]) if cl else None
+                for c in cl:
+                    edge = c["left"] <= lo + step / 2 or c["right"] >= hi - step / 2
+                    w.writerow([bridge, k, f"{c['left']:.1f}", f"{c['right']:.1f}",
+                                f"{c['centre']:.2f}", c["n"], f"{c['dist']:.1f}",
+                                int(edge), int(c is near)])
 
 
 def by_pass(readings):
@@ -936,6 +987,7 @@ def main() -> None:
     for sc in scenes.values():
         rd, tr = run_scene(sc, cfg, timing, Sensor(), seed=0)
         write_scene(sc, rd, tr, Sensor(), 0)
+        write_clusters(sc, rd, cfg)
 
     a = Analysis(cfg, timing, scenes)
     a.q1()
