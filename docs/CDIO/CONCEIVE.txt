@@ -3,8 +3,7 @@ CONCEIVE
 Draft 1, Thu 26 Nov 2026. Written by Joe Gould with Claude (Anthropic) as a drafting aid.
 Draft 2, Fri 27 Nov 2026: team review applied (team agreed, 27 Nov).
 
-Items marked [CHECK] need Joe to confirm. Items marked [KIT] are confirmed at B4
-when the box arrives.
+Items marked [KIT] are confirmed at B4 when the box arrives.
 Numbers marked PROPOSED are targets we set now and test later (docs/LAB_TESTS.md).
 
 
@@ -95,9 +94,50 @@ Previous student projects (from the brief's resources):
       (about 1.4 m). We set the timeout from our chosen range (150 cm, 10 ms).
     * No distance accuracy tests, no mount, no labels on the display. These
       are the gaps we can fill: measured accuracy, a mount, a labelled display.
-- Arduino Project Hub radar (Arduino Uno + Processing on a PC) and the How To
-  Mechatronics demo: the classic green sweep display drawn on a PC from serial
-  data. [CHECK] still to read in detail (PLAN task C3).
+- Arduino Project Hub, "Building an Ultrasonic Radar Using Arduino and
+  Processing" (diegogalvan_1294, Jun 2025). Read from the page text.
+  Arduino Uno + HC-SR04 + SG90, swept 0 to 180 degrees in 1 degree steps,
+  drawn by a Processing sketch on a PC from "angle,distance." text lines
+  over USB serial (9600 baud). Useful lessons:
+    * Each step is move, wait 15 ms, then ping, in one loop, and it sends
+      the angle the servo was told to go to. So it does not have the
+      Lab-in-a-Box angle bug. This is the same idea as our stop-and-ping
+      (D-SCAN), but 15 ms is shorter than our assumed 20 ms settle time
+      (APP_SERVO_SETTLE_MS) and nothing checks that the servo has settled.
+    * Pings are only about 15 ms apart (plus the echo time), a quarter of
+      the datasheet's 60 ms cycle. No echo timeout is set.
+    * A missed echo comes back as 0 cm and is simply not drawn, so "no echo"
+      looks the same as "nothing there". We send NOECHO and FAIL as their
+      own statuses, never as 0 (D-PROTO-NULL).
+    * Detected points fade: each starts bright and dims a little every
+      frame. We take the fading idea (credited), but fade by passes
+      (D-FADE), so a faded point means "not re-measured", whatever the
+      frame rate.
+    * Only plots objects closer than 20 cm. No tests, accuracy figures or
+      limits are reported.
+- How To Mechatronics, "Arduino Radar Project" (Dejan Nedelkovski; no date
+  on the page, comments from 2017). Read from the article; we could not
+  watch the linked YouTube video (8NboJtVqWRw). Arduino Mega + HC-SR04 +
+  micro servo, swept 15 to 165 degrees (the same arc as ours) in 1 degree
+  steps, drawn by Processing on a PC from the same "angle,distance." lines.
+  Useful lessons:
+    * Each step is move, wait 30 ms, then ping: also stop-and-ping, no angle
+      bug. Pings are therefore about 30 ms apart, half the datasheet's
+      60 ms, which is how a 1 degree step fits in at least 4.5 s per pass
+      (151 steps x 30 ms). We chose 2 degrees and 60 ms instead (D-STEP,
+      D-GAP), so an echo from a far wall cannot land in the next ping.
+    * Only plots objects closer than 40 cm. Old drawings fade under a
+      see-through layer drawn every frame (described as "motion blur"), so
+      how faded something looks depends on the frame rate, not on when it
+      was measured. No fade time is given.
+    * No measurements are reported. In the comments, one reply says it is
+      "not that accurate" and a reader says the scan is slow.
+  What we take from both (credited): the PC sweep display drawn from simple
+  text lines over serial. Our line format (main/serial_out.h) adds the time,
+  mode and a status for every reading. What we do differently: a 150 cm
+  range, an explicit echo timeout, a settle time we will measure (B1),
+  no-echo and failure shown, not hidden, points aged by passes, and
+  measured accuracy and limits. Neither page's code was copied.
 
 What could be new in ours: extra modes (including lock-on), measured accuracy
 and limits, and an honest display (age + three statuses).
@@ -331,4 +371,10 @@ SOURCES
   PDF dated 11 May 2011): range 2-400 cm, 15 degree measuring angle, 10 us
   trigger, "over 60ms measurement cycle", uS/58 = cm.
   https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf
+- diegogalvan_1294, Building an Ultrasonic Radar Using Arduino and Processing,
+  Arduino Project Hub, Jun 2025 (read 27 Nov 2026):
+  https://projecthub.arduino.cc/diegogalvan_1294/building-an-ultrasonic-radar-using-arduino-and-processing-59053e
+- D. Nedelkovski, Arduino Radar Project, How To Mechatronics (undated; read
+  27 Nov 2026): https://howtomechatronics.com/projects/arduino-radar-project/
+  Video (not watched): https://www.youtube.com/watch?v=8NboJtVqWRw
 - Week 8a lecture, Sustainability in EEE design.
