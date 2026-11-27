@@ -39,7 +39,8 @@ Kept by Claude so any new chat or Claude Code session can pick up where we left 
 - [x] 26 Nov: Joe approved the S1 recommendations; applied to app_config.h, decision log and CONCEIVE.
 - [x] 26 Nov: S2 scene simulator done (35 scenes + truth files; Q1–Q4 answered).
 - [x] 26 Nov: S3 headers approved and committed (lock_loop contract, target_track/scan_map changes).
-- [ ] **Next:** S3 implementation + host tests + lock_sim (see Handover at the top of the Log); C2 Joe reviews CONCEIVE.
+- [x] 27 Nov: S3 built: pure components + 6 host-test suites, C = Python on all S2 scenes, `sim/lock_sim.py` + `docs/evidence/sim/s3_*`.
+- [ ] **Next:** Joe decides the S3 recommendations and the SC8 movement question (see Handover).
 
 ## Open questions
 
@@ -47,13 +48,14 @@ See `docs/PLAN.md` → Open questions.
 
 ## Log
 
-> **Handover (next session)** (written 26 Nov, end of day)
+> **Handover (next session)** (rewritten 27 Nov, after S3)
 >
-> **Where we are:** S3 headers committed (22a949a): `lock_loop.h` (new pure component, stub `.c`), `target_track.h` (arc limits, `bridge_gap_bins`, `gate_deg`, `edge`, `n_bins`, `target_track_set_limits`), `scan_map.h` (`angle_deg`). Joe approved all of them. No S3 implementation written yet. Build clean; host tests 0 suites.
+> **Where we are:** S3 implemented and run. Components: scan_map, sweep_plan (+ `sweep_plan_pass_ends`), target_track, mode_fsm, lock_loop (+ `resweep_turned`). Host tests 6 suites (incl. test_scenes: C = Python 190/190 passes at bridge 0 and 1). `sim/lock_sim.py` drives the real C lock_loop through `host_tests/lock_shim.c`; results in `docs/evidence/sim/s3_summary.txt`. No `APP_LOCK_*` value changed yet. SC8: lock within 2 passes PASS, removal < 2 s PASS (worst 1.5 s), no false lock PASS, keeps the lock at 10 cm/s FAIL (locked 8 % of the time; best `APP_LOCK_*` setting 83 %).
 >
-> **Waiting on Joe:**
-> - Bridging: `APP_LOCK_BRIDGE_BINS` stays 0 (PROPOSED) until he approves it on the S3 with/without results (worst and mean bearing error, plus the two-dowel merge check).
-> - Resweep fix, if needed: SC8 "keeps the lock" is a success criterion, not a follow-up. The `RESWEEP_S` sweep must show whether the lock survives a resweep at 5 and 10 cm/s at 50 cm. If it fails, propose the simplest fix with numbers for both variants: (a) widen the gate during and just after a resweep by the expected movement, (b) match the cluster nearest the last known bearing. Neither becomes the default until Joe approves.
+> **Waiting on Joe (S3 report, 27 Nov):**
+> - Proposed: `APP_LOCK_BRIDGE_BINS` 0 → 1 (LOCK worst error 5–7° → 1° at 30–150°; no extra dowel merging); `APP_LOCK_LOST_PINGS` 6 → 9 (fixes the radial case, removal worst 1.65 s); keep DIST_TOL 8, MIN_BINS 2, CONFIRM 2, SECTOR_HALF 15, RESWEEP 10 s. Not applied until Joe approves; then decision-log lines citing `s3_summary.txt`.
+> - Resweep fix: (b) nearest bearing + (c) no on_ping during a resweep keeps the same object in every run; (a) widened gate silently swaps to a closer object (8/8 runs): reject (a). Neither in the firmware yet.
+> - SC8 "keeps the lock at ~10 cm/s": fails with every `APP_LOCK_*` value and every tested fix (edge recentre, lead, jump-in). Joe/team: change the SC8 speed (5 cm/s passes with resweeps off), or redesign LOCK tracking (not prototyped), or accept and report as a limit.
 > - T-line fields (edge flag; values while SEARCHING): decided in S4 (PLAN Open questions). No protocol change before then.
 >
 > **Joe's S3 rulings, 27 Nov.** Approved: bin layout (floor, centre i + 0.5, n = ceil(180 / bin_deg)); age <= max_age used everywhere; later choices 1-6 from the step-1 proposal (test_scenes max age = one pass; bridge joins two OK bins within dist_tol across <= N non-OK bins, bridged bins not counted; sector ends snapped inward to the full-sweep grid, servo steps into a new sector; LOCKED on_pass = nearest cluster + gate, else lost; on_ping near = target's left..right, consecutive misses; lock_sim through a flat C shim). His additions, word for word:
@@ -65,7 +67,7 @@ See `docs/PLAN.md` → Open questions.
 >
 > **Work order:** S3 → D1/D4/D5/D7 → S4 (PLAN "Work order until the kit arrives"). Time-box S3 to what SC8 and the `APP_LOCK_*` choices need. Nice-to-haves go on a follow-up list; don't build them.
 >
-> **Exact next step:** implement `scan_map.c` (stores `angle_deg`), then `sweep_plan.c`, `target_track.c` (edge flag from the current limits, bridging, gate association, upper-middle median), `mode_fsm.c` and `lock_loop.c`, each with its host-test suite. Then `test_scenes.c` (C = Python on the S2 logs via `<scene>.clusters.csv` from `scene.py`, bridge 0 and 1; re-run S2 and confirm only those files are added), then `sim/lock_sim.py` (ctypes). Commit in chunks: (2) components + unit tests, (3) lock_sim + outputs. Final report: C = Python match count; bridging with/without; each recommended `APP_LOCK_*` value with its evidence; SECTOR_HALF bearing error centred vs off-centre, clipping rate and whether recentring fixes it; resweep survival at 5 and 10 cm/s; pass/fail for each SC8 sub-criterion; assumptions.
+> **Exact next step:** apply Joe's S3 decisions (app_config values + decision log + CONCEIVE section 7 limit if SC8 movement stays a limit), then the chosen resweep fix in `lock_loop.c` with tests, if any. S3 is then ticked in PLAN.
 
 - **26 Nov:** skeleton + plan + Conceive draft (Claude, in chat). Not yet built with ESP-IDF; pure components syntax-checked with gcc (`host_tests: make check-headers`).
 - **26 Nov:** P0.2 first build with ESP-IDF v6.1 (`~/esp/esp-idf-v6.1`, the `get_idf` alias), target esp32s3: builds clean, no errors or warnings in project code, no source or header changes needed. Image 169,856 B; DIRAM 14.1 % used. `host_tests: make` passes (header check only; 0 test suites yet). P0.3 `.venv` + pinned `requirements.txt` (numpy 2.5.5, matplotlib 3.11.2, pyserial 3.5); checked it installs into a fresh venv.
@@ -85,3 +87,4 @@ See `docs/PLAN.md` → Open questions.
 - **27 Nov (other chat):** D1 hardware block diagram (77f001f): `docs/diagrams/gen_diagrams.py` → `hardware.svg/.png`; pins read from `app_config.h` (all PROPOSED until D6); power vs signal legend, voltage on every power line; byte-identical on re-run; approach credited to MC2. Firmware diagrams wait for the display_task/radar_gfx decision.
 - **27 Nov (other chat):** display component and `APP_PIN_SCREEN_*` removed (7a0bdea, D-DISPLAY: no on-device screen); main drops the display dependency and `display_init`; CLAUDE.md, README and the tighten skill updated; `display_task` and `radar_gfx` stay pending a separate decision. bb27c04 also holds the components/display deletion (staged by the other chat); 7a0bdea has the rest of that change.
 - **27 Nov:** S3 `lock_loop`. `sweep_plan_pass_ends()` added to `sweep_plan.h` (32ea2dc, Joe: option a) so lock_loop uses the snapped sector ends for the tracker limits and the max bin age (one pass of the current plan + one ping). `lock_loop.c` + 63 checks (9b60192, other chat; adopted). Resweep turnaround: Joe chose a `resweep_turned` field in `lock_loop_t` (9065939 header, bb27c04 code) over 9b60192's "is the far end fresh?" map check, which is only right while `resweep_ms` > one full pass; new tests (arc-end start = 75 pings, mid-arc = leg + 75, `resweep_ms` 1 = 105 pings, whole arc every time); the map-check version fails 11 of them. `test_lock_loop` 126 checks; host tests 5 suites / 1511 checks, ASan/UBSan clean. Next: scene.py bridge parameter + clusters.csv, test_scenes, lock_sim.
+- **27 Nov:** S3 finished, waiting on Joe. `scene.py` bridge parameter (default 0) + 35 `*.clusters.csv` (e896e35; S2 re-run: every existing output byte-identical). `test_scenes` (717d679): C target_track = Python on all 35 S2 scenes, 190/190 passes at bridge 0 and 1, 29 057 checks; max age = one pass there (scene.py groups per pass), firmware uses pass + ping (keeps the real 4.5 s-old end reading). `lock_shim.c` (5fed2a9): flat ctypes interface + loss causes + an EXPERIMENT controller (switches off = lock_loop, 0 differences). `lock_sim.py` + `s3_*` (91190ea): see the S3 report and the Handover. Outputs byte-identical on re-run.
