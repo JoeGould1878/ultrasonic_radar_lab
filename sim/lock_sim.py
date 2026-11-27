@@ -22,7 +22,11 @@ DESIGN QUESTIONS
         whether recentring fixes it.
     Q5  Resweep: does a lock survive the periodic full pass at 5 and 10 cm/s,
         and why not (loss causes); a still target with a closer object
-        elsewhere is reported separately.
+        elsewhere is reported separately. (Answered: fix (b)+(c), 749592d.)
+    Q6  SC8 speed (Joe 27/11): with the final config and resweeps on, where
+        does the locked time go at 5 cm/s (by phase and loss cause), does one
+        fix help (defer a due resweep while the target moves), and what is
+        the highest speed that stays 100 % / >= 95 % locked?
 
 METHOD
     Closed loop, one ping per period (S1: 60 ms): the C lock_loop picks the
@@ -35,7 +39,8 @@ METHOD
     centre minus the true bearing at the moment the beam crossed that centre.
     Candidate fixes are run through an EXPERIMENT copy of the controller in
     the shim (lock_shim.c, switches off = identical to lock_loop, checked
-    here every run); none of them is in the firmware.
+    here every run); none of them is in the firmware. Fix (b)+(c) was chosen
+    this way and is now in lock_loop / target_track, so its switches are gone.
     C = Python on the S2 logs: host_tests/test_scenes (its result is quoted).
     That test uses max age = ONE PASS (the per-pass grouping of scene.py);
     the firmware (lock_loop) uses one pass + one ping, which keeps the real
@@ -54,15 +59,21 @@ ASSUMPTIONS (S2's sensor model S2-A1..A10 unchanged; plus)
     S3-A4  "Back to full sweep" = lock_loop's plan is FULL again.
     S3-A5  Noisy sensor = S2-A5 (10 % dropouts, 2 % ghosts), for false locks
            and false losses only.                              -> T-XTALK, I7
+    S3-A6  SC8 speed: the hand moves at constant speed and turns instantly at
+           45/135 deg, never pausing. A real hand slows and pauses, which
+           helps the resweep; the phase check varies only the start time.
+                                                               -> T-LOCK video
 
 CONFIRM ON HARDWARE
-    T-LOCK (SC8): passes to lock, hand movement at 10 cm/s, removal time,
-    2 min empty. I7: replay real LOCK recordings through the same C code.
+    T-LOCK (SC8): passes to lock, hand movement at the SC8 speed with
+    resweeps on, removal time, 2 min empty. I7: replay real LOCK recordings
+    through the same C code.
 
 OUTPUTS (docs/evidence/sim/)
     s3_summary.txt, s3_results.csv   every number below
     s3_following.png   locked time vs speed for the candidate settings
-    s3_resweep.png     resweep outcome per variant
+    s3_resweep.png     resweep outcome, firmware (b)+(c), lost_pings 6 vs 9
+    s3_speed.png       SC8 speed table (3c), firmware vs the defer experiment
     s3_bridge.png      bridging: bearing error and two-dowel merge
     s3_timeline.png    one 10 cm/s run: why the sector loses the target
 
@@ -134,8 +145,7 @@ def build_shim():
 
 
 # EXPERIMENT switches (host_tests/lock_shim.c xflags_t). Not firmware.
-XFLAGS = ["no_ping_resweep", "widen_dps", "nearest_bearing", "edge_recentre", "lead_max_dps",
-          "jump_in"]
+XFLAGS = ["edge_recentre", "lead_max_dps", "jump_in", "defer_dps"]
 
 
 def base_params(cfg, timing) -> dict:
@@ -164,7 +174,7 @@ class Loop:
             self.h = lib.ls_new_x(arr, len(PARAMS), xa)
         if not self.h:
             raise RuntimeError("ls_new failed")
-        self._out = (ctypes.c_double * 16)()
+        self._out = (ctypes.c_double * 19)()
 
     def __del__(self):
         if getattr(self, "h", None):
@@ -182,7 +192,8 @@ class Loop:
         return dict(state=int(o[0]), plan=int(o[1]), valid=bool(o[2]), centre=o[3], left=o[4],
                     right=o[5], dist=o[6], edge=bool(o[7]), n=int(o[8]), misses=int(o[9]),
                     seen=int(o[10]), angle=o[11], cause=int(o[12]), pass_end=bool(o[13]),
-                    pass_kind=int(o[14]), gate_fail_centre=o[15])
+                    pass_kind=int(o[14]), gate_fail_centre=o[15], lo=o[16], hi=o[17],
+                    deferred=int(o[18]))
 
 
 # --------------------------------------------------------------- world ----
@@ -548,18 +559,17 @@ def exp_false_lock(lib, cfg, timing, P, R):
     return out
 
 
-FOLLOW_VARIANTS = [
+FOLLOW_VARIANTS = [               # "firmware" = app_config.h as it is now
     ("firmware", {}, None),
-    ("lost_pings 9", dict(lost_pings=9), None),
+    ("lost_pings 6", dict(lost_pings=6), None),
     ("lost_pings 12", dict(lost_pings=12), None),
+    ("bridge 0", dict(bridge=0), None),
     ("dist_tol 12", dict(dist_tol=12), None),
     ("min_bins 1", dict(min_bins=1), None),
     ("sector_half 12", dict(sector_half=12), None),
-    ("lost 9 + min_bins 1", dict(lost_pings=9, min_bins=1), None),
-    ("lost 9 + half 12", dict(lost_pings=9, sector_half=12), None),
     ("EXP F1 edge recentre", {}, dict(edge_recentre=1)),
     ("EXP F2 lead", {}, dict(lead_max_dps=20)),
-    ("EXP (e) jump-in + lost 9", dict(lost_pings=9), dict(jump_in=1)),
+    ("EXP (e) jump-in", {}, dict(jump_in=1)),
 ]
 FOLLOW_CASES = [("tangential 5 cm/s", lambda: [arc_tube(90, 50, v_cms=5, t_move=MOVE_T0)], 70000),
                 ("tangential 10 cm/s", lambda: [arc_tube(90, 50, v_cms=10, t_move=MOVE_T0)], 70000),
@@ -589,9 +599,9 @@ def exp_follow(lib, cfg, timing, P, R):
     return out
 
 
-RESWEEP_VARIANTS = [("firmware", None), ("(c) no on_ping in resweep", dict(no_ping_resweep=1)),
-                    ("(a) (c) + gate widened 10.9 deg/s", dict(no_ping_resweep=1, widen_dps=SC8_DPS)),
-                    ("(b) (c) + nearest bearing", dict(no_ping_resweep=1, nearest_bearing=1))]
+# Resweep fix (b)+(c) is in the firmware since 749592d; the variants that
+# chose it (firmware before the fix, (c), (a), (b)) are in 91190ea's summary.
+RESWEEP_VARIANTS = [("firmware (b)+(c)", None)]
 RESWEEP_CASES = [("still", lambda: [arc_tube(90, 50)]),
                  ("still + closer object at 140deg 30cm from 15 s",
                   lambda: [arc_tube(90, 50), s2.tube("T1b", "T1", 140, 30, s2.T1_D, t_on=15000)]),
@@ -602,7 +612,7 @@ RESWEEP_CASES = [("still", lambda: [arc_tube(90, 50)]),
 def exp_resweep(lib, cfg, timing, P, R):
     """Q5: the periodic full pass (APP_LOCK_RESWEEP_S) while locked."""
     out = {}
-    for lost in (int(P["lost_pings"]), 9):
+    for lost in sorted({6, int(P["lost_pings"])}):
         for vname, x in RESWEEP_VARIANTS:
             p = dict(P, lost_pings=lost)
             for cname, fn in RESWEEP_CASES:
@@ -623,6 +633,162 @@ def exp_resweep(lib, cfg, timing, P, R):
     return out
 
 
+# ------------------------------------------- SC8 speed (Joe 27/11, 3a-c) ----
+PHASES = ["sector", "walk-in after lock", "walk-in after resweep", "resweep", "unlocked"]
+
+
+def breakdown(log, t0):
+    """Each ping after t0 -> phase. Locked: 'sector' (beam inside the sector),
+    'walk-in after lock/resweep' (SECTOR plan but the beam still outside the
+    sector, walking back from where the full pass / resweep ended),
+    'resweep'. Not locked: 'unlocked', charged to the loss that started it.
+    A loss is named '<cause> in <phase>'; a sector loss before the first
+    sector pass end after a resweep is named 'in the 1st sector pass after a
+    resweep' (it acts on the bearing the resweep measured)."""
+    ph, lost_to, loss_where = {k: 0 for k in PHASES}, {}, {}
+    prev_state, prev_plan, prev_phase = SEARCHING, PLAN_FULL, None
+    walk_src, fresh, cur_loss = None, None, None
+    for t, i in zip(log.t, log.info):
+        if i["plan"] == PLAN_SECTOR and prev_plan != PLAN_SECTOR:
+            walk_src = fresh = "resweep" if prev_plan == PLAN_RESWEEP else "lock"
+        if i["state"] == LOCKED:
+            if i["plan"] == PLAN_RESWEEP:
+                p = "resweep"
+            elif i["lo"] - 1e-3 <= i["angle"] <= i["hi"] + 1e-3:
+                p, walk_src = "sector", None
+            else:
+                p = f"walk-in after {walk_src or 'lock'}"
+        else:
+            p = "unlocked"
+            if prev_state == LOCKED:
+                where = prev_phase
+                if where == "sector" and fresh == "resweep":
+                    where = "the 1st sector pass after a resweep"
+                cur_loss = f"{CAUSES.get(i['cause'], '?')} in {where}"
+                if t >= t0:
+                    loss_where[cur_loss] = loss_where.get(cur_loss, 0) + 1
+        if i["pass_end"] and i["pass_kind"] == PLAN_SECTOR:
+            fresh = None
+        if t >= t0:
+            ph[p] += 1
+            if p == "unlocked":
+                k = cur_loss or "before the first lock"
+                lost_to[k] = lost_to.get(k, 0) + 1
+        prev_state, prev_plan, prev_phase = i["state"], i["plan"], p
+    return ph, lost_to, loss_where
+
+
+def exp_breakdown(lib, cfg, timing, P, R, x=None, tag="firmware"):
+    """3a: where the time goes at tangential 5 cm/s, resweeps on (the RESWEEP
+    runs' seeds, so the firmware row is the same 8 runs as the RESWEEP table)."""
+    ph, lost_to, where, oc = {k: 0 for k in PHASES}, {}, {}, []
+    deferred = 0
+    for k in range(8):
+        objs = [arc_tube(90, 50, v_cms=5, t_move=MOVE_T0)]
+        log = run(lib, cfg, timing, objs, P, 70000, seed=seed_of("rsw", "tangential 5 cm/s", k), x=x)
+        a, b, c = breakdown(log, MOVE_T0)
+        for d, e in ((ph, a), (lost_to, b), (where, c)):
+            for kk, v in e.items():
+                d[kk] = d.get(kk, 0) + v
+        oc += resweep_outcomes(log, objs)
+        deferred += log.info[-1]["deferred"]
+    n = sum(ph.values())
+    o = dict(pct={kk: 100.0 * v / n for kk, v in ph.items()},
+             lost_to={kk: 100.0 * v / n for kk, v in sorted(lost_to.items(), key=lambda z: -z[1])},
+             losses=dict(sorted(where.items(), key=lambda z: -z[1])),
+             resweeps=len(oc), kept=oc.count("kept"), switched=oc.count("switched"), deferred=deferred)
+    for kk, v in o["pct"].items():
+        R.add("sc8_breakdown", "tangential 5 cm/s, resweeps on", tag, f"pct_{kk}", v)
+    for kk, v in o["lost_to"].items():
+        R.add("sc8_breakdown", "tangential 5 cm/s, resweeps on", tag, f"pct_unlocked_after {kk}", v)
+    for kk, v in o["losses"].items():
+        R.add("sc8_breakdown", "tangential 5 cm/s, resweeps on", tag, f"losses {kk}", v)
+    for kk in ("resweeps", "kept", "switched", "deferred"):
+        R.add("sc8_breakdown", "tangential 5 cm/s, resweeps on", tag, kk, o[kk])
+    return o
+
+
+DEFER_DPS = 3.0     # 3b threshold: ~2.75 cm/s at 52.5 cm; a still target measures < 1 deg/s
+SPEED_CASES = [(f"tangential {v:g} cm/s", "arc", v) for v in (2, 3, 4, 5, 6, 8, 10)] + \
+              [(f"radial away {v:g} cm/s", "radial", v) for v in (5, 10)]
+
+
+def speed_case(lib, cfg, timing, P, kind, v, x=None):
+    """3c: 8 runs. Tangential: 60 s of movement (S3-A1). Radial: from 45 cm
+    until the tube reaches 140 cm (then it leaves the 150 cm range), i.e.
+    19 s at 5 cm/s, 9.5 s at 10 cm/s: a 60 s radial run does not fit."""
+    if kind == "arc":
+        dur, fn = MOVE_T0 + 60000, lambda: [arc_tube(90, 50, v_cms=v, t_move=MOVE_T0)]
+    else:
+        dur, fn = MOVE_T0 + int(95.0 / v * 1000), lambda: [radial_tube(90, 45, v, MOVE_T0)]
+    fr, ll, oc, deferred = [], [], [], 0
+    for k in range(8):
+        objs = fn()
+        log = run(lib, cfg, timing, objs, P, dur, seed=seed_of("speed", kind, v, k), x=x)
+        fr.append(locked_frac(log, MOVE_T0))
+        ll += losses(log, MOVE_T0)
+        oc += resweep_outcomes(log, objs)
+        deferred += log.info[-1]["deferred"]
+    return dict(locked_pct=100 * mean(fr), worst_run_pct=100 * min(fr), move_s=(dur - MOVE_T0) / 1000.0,
+                resweeps=len(oc), kept=oc.count("kept"), switched=oc.count("switched"),
+                losses=len(ll), deferred=deferred, causes=tally(ll))
+
+
+def exp_speed(lib, cfg, timing, P, R):
+    """3c: speed threshold table, final config, resweeps ON; and 3b's defer
+    fix (EXPERIMENT, not the default) on the same runs."""
+    out = {}
+    for tag, x in (("firmware", None), (f"EXP defer > {DEFER_DPS:g} deg/s", dict(defer_dps=DEFER_DPS))):
+        for cname, kind, v in SPEED_CASES:
+            o = speed_case(lib, cfg, timing, P, kind, v, x)
+            out[(tag, cname)] = o
+            for m, val in o.items():
+                R.add("sc8_speed", cname, tag, m,
+                      val if m != "causes" else "; ".join(f"{a}: {b}" for a, b in val.items()))
+        o = speed_case(lib, cfg, timing, P, "arc", 0.0, x)     # still: are resweeps still done?
+        out[(tag, "still")] = o
+        for m, val in o.items():
+            R.add("sc8_speed", "still", tag, m,
+                  val if m != "causes" else "; ".join(f"{a}: {b}" for a, b in val.items()))
+    return out
+
+
+PHASE_SPEEDS = (2.0, 2.5, 3.0)
+
+
+def exp_phase(lib, cfg, timing, P, R):
+    """Robustness of the SC8 number: the 8 runs above differ only in sensor
+    noise (same movement, same resweep timing), so the worst run is close to
+    the mean. Here the movement starts 0, 1 ... 9 s later than MOVE_T0, which
+    moves the 10 s resweeps to other points of the back-and-forth."""
+    out = {}
+    for v in PHASE_SPEEDS:
+        fr = []
+        for k in range(10):
+            tm = MOVE_T0 + 1000 * k
+            log = run(lib, cfg, timing, [arc_tube(90, 50, v_cms=v, t_move=tm)], P, tm + 60000,
+                      seed=seed_of("phase", v, k))
+            fr.append(100 * locked_frac(log, tm))
+        out[v] = fr
+        R.add("sc8_phase", f"tangential {v:g} cm/s, start 10-19 s", "firmware", "locked_pct_mean", mean(fr))
+        R.add("sc8_phase", f"tangential {v:g} cm/s, start 10-19 s", "firmware", "locked_pct_worst", min(fr))
+    return out
+
+
+def highest_ok(spd, tag, kind, floor):
+    """Highest tested speed of this kind, at or below which every tested speed
+    has every run at >= floor % locked (worst run, not the mean)."""
+    best = None
+    for cname, k, v in SPEED_CASES:
+        if k != kind:
+            continue
+        if spd[(tag, cname)]["worst_run_pct"] >= floor - 1e-9:
+            best = v
+        else:
+            break
+    return best
+
+
 def scenes_result():
     """C = Python (host_tests/test_scenes), quoted from its own output."""
     r = subprocess.run(["make", "-s", "-C", str(ROOT / "host_tests"), "build/test_scenes"],
@@ -639,7 +805,7 @@ INK, INK2, GRID = s2.INK, s2.INK2, s2.GRID
 
 
 def chart_following(fol, path):
-    variants = ["firmware", "lost_pings 9", "lost 9 + min_bins 1"]
+    variants = ["lost_pings 6", "firmware", "min_bins 1"]
     cols = [C1, C2, C3]
     cases = [c[0] for c in FOLLOW_CASES]
     fig, ax = plt.subplots(figsize=(10, 4.6))
@@ -659,39 +825,68 @@ def chart_following(fol, path):
     ax.grid(axis="y", color=GRID, lw=0.8, zorder=0)
     ax.legend(frameon=False, fontsize=9, loc="upper right", ncols=3, bbox_to_anchor=(1, 1.13))
     s2.fig_title(fig, "S3: keeping the lock on a moving T1 at 50 cm (resweeps off)",
-                 "8 runs x 60 s per bar. SC8 asks for 100 % at about 10 cm/s. No APP_LOCK_* setting reaches it "
-                 "tangentially; lost_pings 9 fixes the radial case.")
+                 "8 runs x 60 s per bar (radial: 9 s). firmware = app_config.h now (bridge 1, lost_pings 9); "
+                 "lost_pings 6 = the value before 3d066b0. Resweeps are measured in s3_speed.png.")
     fig.subplots_adjust(top=0.78, bottom=0.12, left=0.07, right=0.99)
     fig.savefig(path, dpi=150)
     plt.close(fig)
 
 
-def chart_resweep(rsw, lost, path):
-    names = [v[0] for v in RESWEEP_VARIANTS]
-    short = ["firmware", "(c)", "(a)", "(b)"]
-    cols = [C1, C2, C3, C4]
+def chart_resweep(rsw, path):
+    losts = sorted({k[0] for k in rsw})
+    cols = [C1, C2]
     cases = [c[0] for c in RESWEEP_CASES]
     labels = ["still", "still + closer\nobject (15 s)", "tangential\n5 cm/s", "tangential\n10 cm/s"]
+    v = RESWEEP_VARIANTS[0][0]
     fig, ax = plt.subplots(figsize=(10, 4.6))
     fig.patch.set_facecolor("white")
     s2.style_axes(ax)
-    w = 0.2
-    for j, (v, sv, col) in enumerate(zip(names, short, cols)):
-        xs = [i + (j - 1.5) * w for i in range(len(cases))]
+    w = 0.34
+    for j, (lost, col) in enumerate(zip(losts, cols)):
+        xs = [i + (j - 0.5) * w for i in range(len(cases))]
         for x, c in zip(xs, cases):
             o = rsw[(lost, v, c)]
             y = 100.0 * o["kept"] / o["resweeps"] if o["resweeps"] else 0.0
-            ax.bar(x, y, width=w - 0.03, color=col, zorder=2, label=sv if c == cases[0] else None)
+            ax.bar(x, y, width=w - 0.04, color=col, zorder=2, label=f"lost_pings {lost}" if c == cases[0] else None)
             lab = f"{o['kept']}/{o['resweeps']}" + (f"\n{o['switched']} swapped" if o["switched"] else "")
-            ax.text(x, y + 1.5, lab, ha="center", va="bottom", fontsize=7, color=INK2)
+            ax.text(x, y + 1.5, lab, ha="center", va="bottom", fontsize=7.5, color=INK2)
     ax.set_xticks(range(len(cases)), labels, fontsize=9, color=INK)
     ax.set_ylim(0, 115)
     ax.set_ylabel("% of resweeps that keep the SAME object", fontsize=9, color=INK2)
     ax.grid(axis="y", color=GRID, lw=0.8, zorder=0)
-    ax.legend(frameon=False, fontsize=9, loc="upper right", ncols=4, bbox_to_anchor=(1, 1.13))
-    s2.fig_title(fig, f"S3: does a resweep keep the SAME object? (lost_pings {lost}, every 10 s, 8 runs x 60 s)",
-                 "(c) no on_ping in a resweep; (a) = (c) + gate widened 10.9 deg/s; (b) = (c) + nearest last "
-                 "bearing. Labels: kept / resweeps. Experiments.")
+    ax.legend(frameon=False, fontsize=9, loc="upper right", ncols=2, bbox_to_anchor=(1, 1.13))
+    s2.fig_title(fig, "S3: does a resweep keep the SAME object? Firmware with fix (b)+(c), every 10 s, 8 runs x 60 s",
+                 "(b) nearest bearing within the gate, (c) no on_ping in a resweep (749592d). Labels: kept / resweeps. "
+                 "The variants that chose it: 91190ea s3_summary.txt.")
+    fig.subplots_adjust(top=0.78, bottom=0.16, left=0.07, right=0.99)
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+
+
+def chart_speed(spd, path):
+    tags = list(dict.fromkeys(k[0] for k in spd))
+    cases = [c[0] for c in SPEED_CASES]
+    labels = [c.replace("tangential ", "tang.\n").replace("radial away ", "radial\n") for c in cases]
+    fig, ax = plt.subplots(figsize=(10.5, 4.6))
+    fig.patch.set_facecolor("white")
+    s2.style_axes(ax)
+    w = 0.38
+    for j, (tag, col) in enumerate(zip(tags, [C1, C3])):
+        xs = [i + (j - 0.5) * w for i in range(len(cases))]
+        ys = [spd[(tag, c)]["locked_pct"] for c in cases]
+        ax.bar(xs, ys, width=w - 0.04, color=col, label=tag, zorder=2)
+        for x, y in zip(xs, ys):
+            ax.text(x, y + 1.5, f"{y:.0f}", ha="center", va="bottom", fontsize=7.5, color=INK2)
+    ax.axhline(95, color=INK2, lw=0.8, ls=(0, (3, 3)), zorder=1)
+    ax.text(len(cases) - 0.5, 96, "95 %", fontsize=8, color=INK2, ha="right", va="bottom")
+    ax.set_xticks(range(len(cases)), labels, fontsize=8.5, color=INK)
+    ax.set_ylim(0, 112)
+    ax.set_ylabel("% of time locked while moving", fontsize=9, color=INK2)
+    ax.grid(axis="y", color=GRID, lw=0.8, zorder=0)
+    ax.legend(frameon=False, fontsize=9, loc="upper right", ncols=2, bbox_to_anchor=(1, 1.13))
+    s2.fig_title(fig, "S3: SC8 speed with resweeps ON (bridge 1, lost_pings 9, fix (b)+(c)), 8 runs per bar",
+                 "Tangential = along the 50 cm arc, 60 s back and forth 45-135 deg. Radial = away from 45 cm until "
+                 "140 cm. The defer fix is an experiment, not the default.")
     fig.subplots_adjust(top=0.78, bottom=0.16, left=0.07, right=0.99)
     fig.savefig(path, dpi=150)
     plt.close(fig)
@@ -780,7 +975,7 @@ def chart_timeline(lib, cfg, timing, P, path):
 
 
 # ------------------------------------------------------------- summary ----
-def summary(cfg, timing, P, eq, sc, st, bsw, off, rm, fl, fol, rsw) -> str:
+def summary(cfg, timing, P, eq, sc, st, bsw, off, rm, fl, fol, rsw, bd, spd, phs) -> str:
     L = []
     p = L.append
     err, missed, merge = bsw
@@ -841,9 +1036,10 @@ def summary(cfg, timing, P, eq, sc, st, bsw, off, rm, fl, fol, rsw) -> str:
             p(f"    {vname:22s} locked {o['locked_pct']:5.1f} %  losses/min {o['losses_per_min']:4.1f}  "
               f"err mean/max {o['err_mean']:4.1f}/{o['err_max']:4.1f}  [{cs}]")
     p("")
-    p("RESWEEP every 10 s (8 runs x 60 s). Still + closer object is the 'nearest cluster across the full arc'")
-    p("case, NOT a movement failure: it is listed apart from the moving cases. 'kept' = same object after the")
-    p("resweep; 'SWITCHED' = still LOCKED but silently on another object (counted as a failure).")
+    p("RESWEEP every 10 s (8 runs x 60 s), firmware with fix (b)+(c) (749592d). Still + closer object was the")
+    p("'nearest cluster across the full arc' case, NOT a movement failure. 'kept' = same object after the")
+    p("resweep; 'SWITCHED' = still LOCKED but silently on another object (counted as a failure). The runs that")
+    p("chose (b)+(c) over (a) (firmware before the fix, (c), (a), (b)) are in 91190ea's s3_summary.txt.")
     for lost in sorted({k[0] for k in rsw}):
         p(f"  lost_pings {lost}:")
         for vname, _ in RESWEEP_VARIANTS:
@@ -853,6 +1049,49 @@ def summary(cfg, timing, P, eq, sc, st, bsw, off, rm, fl, fol, rsw) -> str:
                 p(f"      {cname:48s} kept {o['kept']:2d}/{o['resweeps']:2d}, SWITCHED object {o['switched']:2d} "
                   f"(lost: ping {o['lost_ping']}, "
                   f"gate {o['lost_gate']}, no cluster {o['lost_nocluster']})  locked {o['locked_pct']:5.1f} %")
+    p("")
+    tag_x = f"EXP defer > {DEFER_DPS:g} deg/s"
+    p("SC8 SPEED (Joe 27/11). Final config, resweeps ON every 10 s.")
+    p("3a  Where the time goes, tangential 5 cm/s, 8 runs x 60 s (same runs as the RESWEEP table above).")
+    p("    % of the 60 s; walk-in = SECTOR plan, beam still walking back into the sector from the end of the")
+    p("    full pass / resweep. Unlocked time is charged to the loss that started it.")
+    for tag, o in bd.items():
+        p(f"    {tag}: resweeps {o['resweeps']}, kept {o['kept']}, switched {o['switched']}, deferred (pass ends) "
+          f"{o['deferred']}")
+        p("      " + ", ".join(f"{k} {v:.1f}" for k, v in o["pct"].items()))
+        for k, v in o["lost_to"].items():
+            p(f"      unlocked after '{k}': {v:.1f} % ({o['losses'].get(k, 0)} losses)")
+    p("    Why: a resweep starting at a sector end goes to the far arc end first (turnaround leg), then one")
+    p("    full pass: 5-7.5 s with the beam away. At 5 cm/s (5.5 deg/s) the target moves 25-40 deg, more than")
+    p("    the 15 deg gate -> on_pass gate fail. If it is kept, the sector is re-entered at the bearing the")
+    p("    resweep measured when it crossed the target (already the rule), but the servo first walks back")
+    p("    from the arc end (up to ~3 s), so on its 1st sector pass the target has left the sector ->")
+    p("    on_ping misses. Both losses are the resweep's duration, not the sector following.")
+    p(f"3b  One fix (EXPERIMENT, not the default): defer a due resweep while the measured angular speed")
+    p(f"    (last 3 sector pass ends) is > {DEFER_DPS:g} deg/s. Re-entering at the crossing bearing was not")
+    p("    tried: lock_loop already does that (go_sector uses the resweep's cluster).")
+    p("    Result: no better. In the back-and-forth movement the speed only drops at a turnaround, so")
+    p("    the deferred resweep fires there and the target then moves away at full speed during it.")
+    p("    Defer helps only a target that really stops (a still target still gets every resweep, see below).")
+    p("3c  Speed table, 8 runs each (tangential: 60 s moving; radial: from 45 cm until 140 cm). The runs")
+    p("    differ only in sensor noise (same movement and resweep timing): see the phase check below.")
+    p(f"    {'case':24s} {'config':22s} {'locked %':>8s} {'worst run':>9s} {'resweeps kept/all':>17s} "
+      f"{'switched':>8s} {'deferred':>8s}  losses (cause, plan)")
+    for tag in dict.fromkeys(k[0] for k in spd):
+        for cname in [c[0] for c in SPEED_CASES] + ["still"]:
+            o = spd[(tag, cname)]
+            cs = "; ".join(f"{a}: {b}" for a, b in o["causes"].items()) or "none"
+            p(f"    {cname:24s} {tag:22s} {o['locked_pct']:8.1f} {o['worst_run_pct']:9.1f} "
+              f"{o['kept']:>8d}/{o['resweeps']:<8d} {o['switched']:8d} {o['deferred']:8d}  {cs}")
+    p("    Phase check (firmware): tangential, movement starting at 10, 11 ... 19 s (10 runs x 60 s):")
+    for v, fr in phs.items():
+        p(f"      {v:g} cm/s: mean {mean(fr):5.1f} %, worst {min(fr):5.1f} %   [" +
+          " ".join(f"{x:.0f}" for x in fr) + "]")
+    for tag in dict.fromkeys(k[0] for k in spd):
+        h100, h95 = highest_ok(spd, tag, "arc", 100.0), highest_ok(spd, tag, "arc", 95.0)
+        r100 = highest_ok(spd, tag, "radial", 100.0)
+        p(f"    {tag}: highest tangential speed with every run 100 % locked: {h100} cm/s; >= 95 %: {h95} cm/s; "
+          f"radial 100 %: {r100} cm/s (highest tested)")
     return "\n".join(L) + "\n"
 
 
@@ -872,6 +1111,11 @@ def main() -> None:
     fl = exp_false_lock(lib, cfg, timing, P, R)
     fol = exp_follow(lib, cfg, timing, P, R)
     rsw = exp_resweep(lib, cfg, timing, P, R)
+    bd = {"firmware": exp_breakdown(lib, cfg, timing, P, R),
+          f"EXP defer > {DEFER_DPS:g} deg/s": exp_breakdown(lib, cfg, timing, P, R, x=dict(defer_dps=DEFER_DPS),
+                                                          tag=f"EXP defer > {DEFER_DPS:g} deg/s")}
+    spd = exp_speed(lib, cfg, timing, P, R)
+    phs = exp_phase(lib, cfg, timing, P, R)
 
     OUT.mkdir(parents=True, exist_ok=True)
     import csv
@@ -880,13 +1124,14 @@ def main() -> None:
         w.writeheader()
         w.writerows(R.rows)
     chart_following(fol, OUT / "s3_following.png")
-    chart_resweep(rsw, 9, OUT / "s3_resweep.png")
+    chart_resweep(rsw, OUT / "s3_resweep.png")
+    chart_speed(spd, OUT / "s3_speed.png")
     chart_bridge(*bsw, OUT / "s3_bridge.png")
     chart_timeline(lib, cfg, timing, P, OUT / "s3_timeline.png")
-    text = summary(cfg, timing, P, eq, sc, st, bsw, off, rm, fl, fol, rsw)
+    text = summary(cfg, timing, P, eq, sc, st, bsw, off, rm, fl, fol, rsw, bd, spd, phs)
     (OUT / "s3_summary.txt").write_text(text)
     print(text)
-    print(f"Wrote {len(R.rows)} result rows and 4 charts to {OUT.relative_to(ROOT)}/")
+    print(f"Wrote {len(R.rows)} result rows and 5 charts to {OUT.relative_to(ROOT)}/")
 
 
 if __name__ == "__main__":

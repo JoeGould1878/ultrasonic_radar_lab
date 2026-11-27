@@ -2,63 +2,63 @@ exp,case,variant,metric,value
 static,T1 15deg 50cm,bridge 0,lock_max,2
 static,T1 15deg 50cm,bridge 0,within2,10
 static,T1 15deg 50cm,bridge 0,never,0
-static,T1 15deg 50cm,bridge 0,err_mean,4.030
-static,T1 15deg 50cm,bridge 0,err_max,7.000
-static,T1 15deg 50cm,bridge 0,edge_pct,95.279
+static,T1 15deg 50cm,bridge 0,err_mean,3.991
+static,T1 15deg 50cm,bridge 0,err_max,6.000
+static,T1 15deg 50cm,bridge 0,edge_pct,96.137
 static,T1 15deg 50cm,bridge 0,losses,0
 static,T1 30deg 50cm,bridge 0,lock_max,2
 static,T1 30deg 50cm,bridge 0,within2,10
 static,T1 30deg 50cm,bridge 0,never,0
-static,T1 30deg 50cm,bridge 0,err_mean,0.625
+static,T1 30deg 50cm,bridge 0,err_mean,0.570
 static,T1 30deg 50cm,bridge 0,err_max,6.000
 static,T1 30deg 50cm,bridge 0,edge_pct,0.000
 static,T1 30deg 50cm,bridge 0,losses,0
 static,T1 60deg 50cm,bridge 0,lock_max,2
 static,T1 60deg 50cm,bridge 0,within2,10
 static,T1 60deg 50cm,bridge 0,never,0
-static,T1 60deg 50cm,bridge 0,err_mean,0.692
-static,T1 60deg 50cm,bridge 0,err_max,6.000
+static,T1 60deg 50cm,bridge 0,err_mean,0.524
+static,T1 60deg 50cm,bridge 0,err_max,4.000
 static,T1 60deg 50cm,bridge 0,edge_pct,0.000
 static,T1 60deg 50cm,bridge 0,losses,0
 static,T1 90deg 50cm,bridge 0,lock_max,2
 static,T1 90deg 50cm,bridge 0,within2,10
 static,T1 90deg 50cm,bridge 0,never,0
-static,T1 90deg 50cm,bridge 0,err_mean,0.291
-static,T1 90deg 50cm,bridge 0,err_max,5.000
+static,T1 90deg 50cm,bridge 0,err_mean,0.283
+static,T1 90deg 50cm,bridge 0,err_max,4.000
 static,T1 90deg 50cm,bridge 0,edge_pct,0.000
 static,T1 90deg 50cm,bridge 0,losses,0
 static,T1 120deg 50cm,bridge 0,lock_max,2
 static,T1 120deg 50cm,bridge 0,within2,10
 static,T1 120deg 50cm,bridge 0,never,0
-static,T1 120deg 50cm,bridge 0,err_mean,0.608
+static,T1 120deg 50cm,bridge 0,err_mean,0.525
 static,T1 120deg 50cm,bridge 0,err_max,5.000
 static,T1 120deg 50cm,bridge 0,edge_pct,0.000
 static,T1 120deg 50cm,bridge 0,losses,0
 static,T1 150deg 50cm,bridge 0,lock_max,2
 static,T1 150deg 50cm,bridge 0,within2,10
 static,T1 150deg 50cm,bridge 0,never,0
-static,T1 150deg 50cm,bridge 0,err_mean,0.223
+static,T1 150deg 50cm,bridge 0,err_mean,0.221
 static,T1 150deg 50cm,bridge 0,err_max,4.000
 static,T1 150deg 50cm,bridge 0,edge_pct,0.000
 static,T1 150deg 50cm,bridge 0,losses,0
 static,T1 165deg 50cm,bridge 0,lock_max,2
 static,T1 165deg 50cm,bridge 0,within2,10
 static,T1 165deg 50cm,bridge 0,never,0
-static,T1 165deg 50cm,bridge 0,err_mean,3.929
+static,T1 165deg 50cm,bridge 0,err_mean,4.084
 static,T1 165deg 50cm,bridge 0,err_max,7.000
-static,T1 165deg 50cm,bridge 0,edge_pct,97.403
+static,T1 165deg 50cm,bridge 0,edge_pct,94.194
 static,T1 165deg 50cm,bridge 0,losses,0
 static,T1 90deg 100cm,bridge 0,lock_max,2
 static,T1 90deg 100cm,bridge 0,within2,10
 static,T1 90deg 100cm,bridge 0,never,0
-static,T1 90deg 100cm,bridge 0,err_mean,0.461
-static,T1 90deg 100cm,bridge 0,err_max,5.000
+static,T1 90deg 100cm,bridge 0,err_mean,0.466
+static,T1 90deg 100cm,bridge 0,err_max,4.000
 static,T1 90deg 100cm,bridge 0,edge_pct,0.000
 static,T1 90deg 100cm,bridge 0,losses,0
 static,T1 90deg 150cm,bridge 0,lock_max,6
 static,T1 90deg 150cm,bridge 0,within2,6
 static,T1 90deg 150cm,bridge 0,never,0
-static,T1 90deg 150cm,bridge 0,err_mean,2.955
+static,T1 90deg 150cm,bridge 0,err_mean,2.814
 static,T1 90deg 150cm,bridge 0,err_max,6.000
 static,T1 90deg 150cm,bridge 0,edge_pct,0.000
 static,T1 90deg 150cm,bridge 0,losses,11
@@ -121,7 +121,7 @@ static,T1 90deg 100cm,bridge 1,losses,0
 static,T1 90deg 150cm,bridge 1,lock_max,6
 static,T1 90deg 150cm,bridge 1,within2,8
 static,T1 90deg 150cm,bridge 1,never,0
-static,T1 90deg 150cm,bridge 1,err_mean,2.595
+static,T1 90deg 150cm,bridge 1,err_mean,2.557
 static,T1 90deg 150cm,bridge 1,err_max,6.000
 static,T1 90deg 150cm,bridge 1,edge_pct,0.000
 static,T1 90deg 150cm,bridge 1,losses,8
@@ -152,134 +152,134 @@ bridge_merge,"two T3 at 50cm, 10deg apart",bridge 1,pct_passes_two,0.000
 bridge_merge,"two T3 at 50cm, 7.5deg apart",bridge 1,pct_passes_two,2.500
 bridge_merge,"two T3 at 50cm, 5deg apart",bridge 1,pct_passes_two,0.000
 offset,jump 0deg,half 10,kept,10
-offset,jump 0deg,half 10,first_err_mean,0.700
-offset,jump 0deg,half 10,first_edge_pct,30.000
-offset,jump 0deg,half 10,settle_max,2
-offset,jump 0deg,half 10,centred_err_mean,0.480
-offset,jump 0deg,half 10,centred_err_max,6.000
-offset,jump 0deg,half 10,centred_edge_pct,7.910
+offset,jump 0deg,half 10,first_err_mean,0.000
+offset,jump 0deg,half 10,first_edge_pct,0.000
+offset,jump 0deg,half 10,settle_max,1
+offset,jump 0deg,half 10,centred_err_mean,0.029
+offset,jump 0deg,half 10,centred_err_max,1.000
+offset,jump 0deg,half 10,centred_edge_pct,0.000
 offset,jump 5deg,half 10,kept,10
-offset,jump 5deg,half 10,first_err_mean,0.800
-offset,jump 5deg,half 10,first_edge_pct,50.000
-offset,jump 5deg,half 10,settle_max,3
-offset,jump 5deg,half 10,centred_err_mean,0.612
-offset,jump 5deg,half 10,centred_err_max,6.000
-offset,jump 5deg,half 10,centred_edge_pct,8.743
+offset,jump 5deg,half 10,first_err_mean,0.300
+offset,jump 5deg,half 10,first_edge_pct,60.000
+offset,jump 5deg,half 10,settle_max,1
+offset,jump 5deg,half 10,centred_err_mean,0.052
+offset,jump 5deg,half 10,centred_err_max,1.000
+offset,jump 5deg,half 10,centred_edge_pct,0.000
 offset,jump 10deg,half 10,kept,10
-offset,jump 10deg,half 10,first_err_mean,0.400
-offset,jump 10deg,half 10,first_edge_pct,80.000
-offset,jump 10deg,half 10,settle_max,1
-offset,jump 10deg,half 10,centred_err_mean,0.406
-offset,jump 10deg,half 10,centred_err_max,5.000
-offset,jump 10deg,half 10,centred_edge_pct,8.571
-offset,jump 14deg,half 10,kept,4
-offset,jump 14deg,half 10,first_err_mean,0.375
-offset,jump 14deg,half 10,first_edge_pct,37.500
-offset,jump 14deg,half 10,settle_max,1
-offset,jump 14deg,half 10,centred_err_mean,0.608
-offset,jump 14deg,half 10,centred_err_max,6.000
-offset,jump 14deg,half 10,centred_edge_pct,11.640
+offset,jump 10deg,half 10,first_err_mean,1.400
+offset,jump 10deg,half 10,first_edge_pct,70.000
+offset,jump 10deg,half 10,settle_max,2
+offset,jump 10deg,half 10,centred_err_mean,0.035
+offset,jump 10deg,half 10,centred_err_max,1.000
+offset,jump 10deg,half 10,centred_edge_pct,0.000
+offset,jump 14deg,half 10,kept,6
+offset,jump 14deg,half 10,first_err_mean,0.778
+offset,jump 14deg,half 10,first_edge_pct,55.556
+offset,jump 14deg,half 10,settle_max,2
+offset,jump 14deg,half 10,centred_err_mean,0.052
+offset,jump 14deg,half 10,centred_err_max,1.000
+offset,jump 14deg,half 10,centred_edge_pct,0.000
 offset,jump 0deg,half 12,kept,10
-offset,jump 0deg,half 12,first_err_mean,0.600
+offset,jump 0deg,half 12,first_err_mean,0.000
 offset,jump 0deg,half 12,first_edge_pct,0.000
-offset,jump 0deg,half 12,settle_max,2
-offset,jump 0deg,half 12,centred_err_mean,0.639
-offset,jump 0deg,half 12,centred_err_max,5.000
-offset,jump 0deg,half 12,centred_edge_pct,4.082
+offset,jump 0deg,half 12,settle_max,1
+offset,jump 0deg,half 12,centred_err_mean,0.077
+offset,jump 0deg,half 12,centred_err_max,3.000
+offset,jump 0deg,half 12,centred_edge_pct,0.000
 offset,jump 5deg,half 12,kept,10
 offset,jump 5deg,half 12,first_err_mean,0.000
-offset,jump 5deg,half 12,first_edge_pct,0.000
+offset,jump 5deg,half 12,first_edge_pct,20.000
 offset,jump 5deg,half 12,settle_max,1
-offset,jump 5deg,half 12,centred_err_mean,0.278
-offset,jump 5deg,half 12,centred_err_max,6.000
-offset,jump 5deg,half 12,centred_edge_pct,2.778
+offset,jump 5deg,half 12,centred_err_mean,0.050
+offset,jump 5deg,half 12,centred_err_max,4.000
+offset,jump 5deg,half 12,centred_edge_pct,0.709
 offset,jump 10deg,half 12,kept,10
-offset,jump 10deg,half 12,first_err_mean,0.700
-offset,jump 10deg,half 12,first_edge_pct,30.000
-offset,jump 10deg,half 12,settle_max,3
-offset,jump 10deg,half 12,centred_err_mean,0.824
-offset,jump 10deg,half 12,centred_err_max,6.000
-offset,jump 10deg,half 12,centred_edge_pct,5.229
-offset,jump 14deg,half 12,kept,5
-offset,jump 14deg,half 12,first_err_mean,1.300
-offset,jump 14deg,half 12,first_edge_pct,30.000
-offset,jump 14deg,half 12,settle_max,3
-offset,jump 14deg,half 12,centred_err_mean,0.855
-offset,jump 14deg,half 12,centred_err_max,6.000
-offset,jump 14deg,half 12,centred_edge_pct,7.237
+offset,jump 10deg,half 12,first_err_mean,1.200
+offset,jump 10deg,half 12,first_edge_pct,40.000
+offset,jump 10deg,half 12,settle_max,2
+offset,jump 10deg,half 12,centred_err_mean,0.105
+offset,jump 10deg,half 12,centred_err_max,2.000
+offset,jump 10deg,half 12,centred_edge_pct,0.000
+offset,jump 14deg,half 12,kept,8
+offset,jump 14deg,half 12,first_err_mean,0.200
+offset,jump 14deg,half 12,first_edge_pct,50.000
+offset,jump 14deg,half 12,settle_max,1
+offset,jump 14deg,half 12,centred_err_mean,0.079
+offset,jump 14deg,half 12,centred_err_max,2.000
+offset,jump 14deg,half 12,centred_edge_pct,0.000
 offset,jump 0deg,half 15,kept,10
-offset,jump 0deg,half 15,first_err_mean,0.400
+offset,jump 0deg,half 15,first_err_mean,0.000
 offset,jump 0deg,half 15,first_edge_pct,0.000
-offset,jump 0deg,half 15,settle_max,3
-offset,jump 0deg,half 15,centred_err_mean,0.509
-offset,jump 0deg,half 15,centred_err_max,5.000
+offset,jump 0deg,half 15,settle_max,1
+offset,jump 0deg,half 15,centred_err_mean,0.029
+offset,jump 0deg,half 15,centred_err_max,1.000
 offset,jump 0deg,half 15,centred_edge_pct,0.000
 offset,jump 5deg,half 15,kept,10
-offset,jump 5deg,half 15,first_err_mean,0.400
+offset,jump 5deg,half 15,first_err_mean,0.000
 offset,jump 5deg,half 15,first_edge_pct,0.000
 offset,jump 5deg,half 15,settle_max,1
-offset,jump 5deg,half 15,centred_err_mean,0.545
-offset,jump 5deg,half 15,centred_err_max,6.000
+offset,jump 5deg,half 15,centred_err_mean,0.019
+offset,jump 5deg,half 15,centred_err_max,1.000
 offset,jump 5deg,half 15,centred_edge_pct,0.000
-offset,jump 10deg,half 15,kept,9
-offset,jump 10deg,half 15,first_err_mean,0.500
-offset,jump 10deg,half 15,first_edge_pct,20.000
-offset,jump 10deg,half 15,settle_max,2
-offset,jump 10deg,half 15,centred_err_mean,0.509
-offset,jump 10deg,half 15,centred_err_max,6.000
+offset,jump 10deg,half 15,kept,10
+offset,jump 10deg,half 15,first_err_mean,0.200
+offset,jump 10deg,half 15,first_edge_pct,10.000
+offset,jump 10deg,half 15,settle_max,1
+offset,jump 10deg,half 15,centred_err_mean,0.057
+offset,jump 10deg,half 15,centred_err_max,1.000
 offset,jump 10deg,half 15,centred_edge_pct,0.000
-offset,jump 14deg,half 15,kept,3
-offset,jump 14deg,half 15,first_err_mean,0.400
-offset,jump 14deg,half 15,first_edge_pct,0.000
-offset,jump 14deg,half 15,settle_max,1
-offset,jump 14deg,half 15,centred_err_mean,0.872
-offset,jump 14deg,half 15,centred_err_max,6.000
+offset,jump 14deg,half 15,kept,9
+offset,jump 14deg,half 15,first_err_mean,1.444
+offset,jump 14deg,half 15,first_edge_pct,55.556
+offset,jump 14deg,half 15,settle_max,2
+offset,jump 14deg,half 15,centred_err_mean,0.010
+offset,jump 14deg,half 15,centred_err_max,1.000
 offset,jump 14deg,half 15,centred_edge_pct,0.000
 offset,jump 0deg,half 20,kept,10
-offset,jump 0deg,half 20,first_err_mean,0.800
+offset,jump 0deg,half 20,first_err_mean,0.200
 offset,jump 0deg,half 20,first_edge_pct,0.000
-offset,jump 0deg,half 20,settle_max,2
-offset,jump 0deg,half 20,centred_err_mean,0.500
-offset,jump 0deg,half 20,centred_err_max,6.000
+offset,jump 0deg,half 20,settle_max,1
+offset,jump 0deg,half 20,centred_err_mean,0.025
+offset,jump 0deg,half 20,centred_err_max,1.000
 offset,jump 0deg,half 20,centred_edge_pct,0.000
 offset,jump 5deg,half 20,kept,10
-offset,jump 5deg,half 20,first_err_mean,1.100
+offset,jump 5deg,half 20,first_err_mean,0.000
 offset,jump 5deg,half 20,first_edge_pct,0.000
-offset,jump 5deg,half 20,settle_max,3
-offset,jump 5deg,half 20,centred_err_mean,0.600
-offset,jump 5deg,half 20,centred_err_max,6.000
+offset,jump 5deg,half 20,settle_max,1
+offset,jump 5deg,half 20,centred_err_mean,0.123
+offset,jump 5deg,half 20,centred_err_max,4.000
 offset,jump 5deg,half 20,centred_edge_pct,0.000
 offset,jump 10deg,half 20,kept,10
-offset,jump 10deg,half 20,first_err_mean,1.000
-offset,jump 10deg,half 20,first_edge_pct,0.000
-offset,jump 10deg,half 20,settle_max,2
-offset,jump 10deg,half 20,centred_err_mean,0.612
-offset,jump 10deg,half 20,centred_err_max,6.000
+offset,jump 10deg,half 20,first_err_mean,0.200
+offset,jump 10deg,half 20,first_edge_pct,20.000
+offset,jump 10deg,half 20,settle_max,1
+offset,jump 10deg,half 20,centred_err_mean,0.098
+offset,jump 10deg,half 20,centred_err_max,4.000
 offset,jump 10deg,half 20,centred_edge_pct,0.000
-offset,jump 14deg,half 20,kept,4
-offset,jump 14deg,half 20,first_err_mean,0.500
-offset,jump 14deg,half 20,first_edge_pct,10.000
+offset,jump 14deg,half 20,kept,10
+offset,jump 14deg,half 20,first_err_mean,0.800
+offset,jump 14deg,half 20,first_edge_pct,40.000
 offset,jump 14deg,half 20,settle_max,2
-offset,jump 14deg,half 20,centred_err_mean,0.326
-offset,jump 14deg,half 20,centred_err_max,5.000
+offset,jump 14deg,half 20,centred_err_mean,0.107
+offset,jump 14deg,half 20,centred_err_max,1.000
 offset,jump 14deg,half 20,centred_edge_pct,0.000
-removal,T1 90deg 50cm,lost_pings 3,removal_max_ms,1355
-removal,T1 90deg 50cm,lost_pings 3,removal_mean_ms,379.500
+removal,T1 90deg 50cm,lost_pings 3,removal_max_ms,695
+removal,T1 90deg 50cm,lost_pings 3,removal_mean_ms,337.500
 removal,T1 90deg 50cm,lost_pings 3,never,0
 removal,T1 90deg 50cm,lost_pings 3,false_losses_per_min_normal,0.000
-removal,T1 90deg 50cm,lost_pings 3,false_losses_per_min_noisy,0.200
+removal,T1 90deg 50cm,lost_pings 3,false_losses_per_min_noisy,0.600
 removal,T1 90deg 50cm,lost_pings 6,removal_max_ms,1503
 removal,T1 90deg 50cm,lost_pings 6,removal_mean_ms,751.500
 removal,T1 90deg 50cm,lost_pings 6,never,0
 removal,T1 90deg 50cm,lost_pings 6,false_losses_per_min_normal,0.000
-removal,T1 90deg 50cm,lost_pings 6,false_losses_per_min_noisy,0.200
-removal,T1 90deg 50cm,lost_pings 9,removal_max_ms,1648
-removal,T1 90deg 50cm,lost_pings 9,removal_mean_ms,1123.500
+removal,T1 90deg 50cm,lost_pings 6,false_losses_per_min_noisy,0.000
+removal,T1 90deg 50cm,lost_pings 9,removal_max_ms,1503
+removal,T1 90deg 50cm,lost_pings 9,removal_mean_ms,1015.500
 removal,T1 90deg 50cm,lost_pings 9,never,0
 removal,T1 90deg 50cm,lost_pings 9,false_losses_per_min_normal,0.000
 removal,T1 90deg 50cm,lost_pings 9,false_losses_per_min_noisy,0.000
-removal,T1 90deg 50cm,lost_pings 12,removal_max_ms,1648
-removal,T1 90deg 50cm,lost_pings 12,removal_mean_ms,1129.500
+removal,T1 90deg 50cm,lost_pings 12,removal_max_ms,1563
+removal,T1 90deg 50cm,lost_pings 12,removal_mean_ms,1021.500
 removal,T1 90deg 50cm,lost_pings 12,never,0
 removal,T1 90deg 50cm,lost_pings 12,false_losses_per_min_normal,0.000
 removal,T1 90deg 50cm,lost_pings 12,false_losses_per_min_noisy,0.000
@@ -292,488 +292,486 @@ false_lock,"empty 2 min, normal sensor",confirm 2 min_bins 3,locks_in_10_runs,0
 false_lock,"empty 2 min, normal sensor",confirm 3 min_bins 1,locks_in_10_runs,0
 false_lock,"empty 2 min, normal sensor",confirm 3 min_bins 2,locks_in_10_runs,0
 false_lock,"empty 2 min, normal sensor",confirm 3 min_bins 3,locks_in_10_runs,0
-false_lock,"empty 2 min, noisy sensor",confirm 1 min_bins 1,locks_in_10_runs,171
-false_lock,"empty 2 min, noisy sensor",confirm 1 min_bins 2,locks_in_10_runs,1
+false_lock,"empty 2 min, noisy sensor",confirm 1 min_bins 1,locks_in_10_runs,173
+false_lock,"empty 2 min, noisy sensor",confirm 1 min_bins 2,locks_in_10_runs,3
 false_lock,"empty 2 min, noisy sensor",confirm 1 min_bins 3,locks_in_10_runs,0
-false_lock,"empty 2 min, noisy sensor",confirm 2 min_bins 1,locks_in_10_runs,27
+false_lock,"empty 2 min, noisy sensor",confirm 2 min_bins 1,locks_in_10_runs,37
 false_lock,"empty 2 min, noisy sensor",confirm 2 min_bins 2,locks_in_10_runs,0
 false_lock,"empty 2 min, noisy sensor",confirm 2 min_bins 3,locks_in_10_runs,0
-false_lock,"empty 2 min, noisy sensor",confirm 3 min_bins 1,locks_in_10_runs,4
+false_lock,"empty 2 min, noisy sensor",confirm 3 min_bins 1,locks_in_10_runs,8
 false_lock,"empty 2 min, noisy sensor",confirm 3 min_bins 2,locks_in_10_runs,0
 false_lock,"empty 2 min, noisy sensor",confirm 3 min_bins 3,locks_in_10_runs,0
 follow,tangential 5 cm/s,firmware,locked_pct,100.000
 follow,tangential 5 cm/s,firmware,losses_per_min,0.000
-follow,tangential 5 cm/s,firmware,err_mean,1.332
-follow,tangential 5 cm/s,firmware,err_max,9.284
+follow,tangential 5 cm/s,firmware,err_mean,1.024
+follow,tangential 5 cm/s,firmware,err_max,3.006
 follow,tangential 5 cm/s,firmware,causes,
-follow,tangential 10 cm/s,firmware,locked_pct,8.213
-follow,tangential 10 cm/s,firmware,losses_per_min,3.000
-follow,tangential 10 cm/s,firmware,err_mean,nan
-follow,tangential 10 cm/s,firmware,err_max,nan
-follow,tangential 10 cm/s,firmware,causes,on_ping misses (sector): 24
-follow,tangential 15 cm/s,firmware,locked_pct,8.250
-follow,tangential 15 cm/s,firmware,losses_per_min,2.500
-follow,tangential 15 cm/s,firmware,err_mean,nan
-follow,tangential 15 cm/s,firmware,err_max,nan
-follow,tangential 15 cm/s,firmware,causes,on_ping misses (sector): 20
-follow,radial away 10 cm/s,firmware,locked_pct,26.083
-follow,radial away 10 cm/s,firmware,losses_per_min,6.667
-follow,radial away 10 cm/s,firmware,err_mean,0.000
-follow,radial away 10 cm/s,firmware,err_max,0.000
-follow,radial away 10 cm/s,firmware,causes,on_ping misses (sector): 8
-follow,tangential 5 cm/s,lost_pings 9,locked_pct,100.000
-follow,tangential 5 cm/s,lost_pings 9,losses_per_min,0.000
-follow,tangential 5 cm/s,lost_pings 9,err_mean,1.332
-follow,tangential 5 cm/s,lost_pings 9,err_max,9.284
-follow,tangential 5 cm/s,lost_pings 9,causes,
-follow,tangential 10 cm/s,lost_pings 9,locked_pct,68.163
-follow,tangential 10 cm/s,lost_pings 9,losses_per_min,1.500
-follow,tangential 10 cm/s,lost_pings 9,err_mean,3.095
-follow,tangential 10 cm/s,lost_pings 9,err_max,11.917
-follow,tangential 10 cm/s,lost_pings 9,causes,on_pass no cluster (sector): 9; on_pass gate fail (sector): 1; on_ping misses (sector): 2
-follow,tangential 15 cm/s,lost_pings 9,locked_pct,23.738
-follow,tangential 15 cm/s,lost_pings 9,losses_per_min,3.375
-follow,tangential 15 cm/s,lost_pings 9,err_mean,5.018
-follow,tangential 15 cm/s,lost_pings 9,err_max,7.590
-follow,tangential 15 cm/s,lost_pings 9,causes,on_pass no cluster (sector): 11; on_ping misses (sector): 16
-follow,radial away 10 cm/s,lost_pings 9,locked_pct,100.000
-follow,radial away 10 cm/s,lost_pings 9,losses_per_min,0.000
-follow,radial away 10 cm/s,lost_pings 9,err_mean,0.437
-follow,radial away 10 cm/s,lost_pings 9,err_max,6.000
-follow,radial away 10 cm/s,lost_pings 9,causes,
+follow,tangential 10 cm/s,firmware,locked_pct,100.000
+follow,tangential 10 cm/s,firmware,losses_per_min,0.000
+follow,tangential 10 cm/s,firmware,err_mean,2.862
+follow,tangential 10 cm/s,firmware,err_max,6.865
+follow,tangential 10 cm/s,firmware,causes,
+follow,tangential 15 cm/s,firmware,locked_pct,20.963
+follow,tangential 15 cm/s,firmware,losses_per_min,3.000
+follow,tangential 15 cm/s,firmware,err_mean,5.205
+follow,tangential 15 cm/s,firmware,err_max,7.590
+follow,tangential 15 cm/s,firmware,causes,on_pass no cluster (sector): 9; on_ping misses (sector): 15
+follow,radial away 10 cm/s,firmware,locked_pct,100.000
+follow,radial away 10 cm/s,firmware,losses_per_min,0.000
+follow,radial away 10 cm/s,firmware,err_mean,0.014
+follow,radial away 10 cm/s,firmware,err_max,1.000
+follow,radial away 10 cm/s,firmware,causes,
+follow,tangential 5 cm/s,lost_pings 6,locked_pct,100.000
+follow,tangential 5 cm/s,lost_pings 6,losses_per_min,0.000
+follow,tangential 5 cm/s,lost_pings 6,err_mean,1.024
+follow,tangential 5 cm/s,lost_pings 6,err_max,3.006
+follow,tangential 5 cm/s,lost_pings 6,causes,
+follow,tangential 10 cm/s,lost_pings 6,locked_pct,8.213
+follow,tangential 10 cm/s,lost_pings 6,losses_per_min,3.000
+follow,tangential 10 cm/s,lost_pings 6,err_mean,nan
+follow,tangential 10 cm/s,lost_pings 6,err_max,nan
+follow,tangential 10 cm/s,lost_pings 6,causes,on_ping misses (sector): 24
+follow,tangential 15 cm/s,lost_pings 6,locked_pct,5.900
+follow,tangential 15 cm/s,lost_pings 6,losses_per_min,2.000
+follow,tangential 15 cm/s,lost_pings 6,err_mean,nan
+follow,tangential 15 cm/s,lost_pings 6,err_max,nan
+follow,tangential 15 cm/s,lost_pings 6,causes,on_ping misses (sector): 16
+follow,radial away 10 cm/s,lost_pings 6,locked_pct,26.000
+follow,radial away 10 cm/s,lost_pings 6,losses_per_min,6.667
+follow,radial away 10 cm/s,lost_pings 6,err_mean,nan
+follow,radial away 10 cm/s,lost_pings 6,err_max,nan
+follow,radial away 10 cm/s,lost_pings 6,causes,on_ping misses (sector): 8
 follow,tangential 5 cm/s,lost_pings 12,locked_pct,100.000
 follow,tangential 5 cm/s,lost_pings 12,losses_per_min,0.000
-follow,tangential 5 cm/s,lost_pings 12,err_mean,1.332
-follow,tangential 5 cm/s,lost_pings 12,err_max,9.284
+follow,tangential 5 cm/s,lost_pings 12,err_mean,1.024
+follow,tangential 5 cm/s,lost_pings 12,err_max,3.006
 follow,tangential 5 cm/s,lost_pings 12,causes,
-follow,tangential 10 cm/s,lost_pings 12,locked_pct,68.237
-follow,tangential 10 cm/s,lost_pings 12,losses_per_min,1.500
-follow,tangential 10 cm/s,lost_pings 12,err_mean,3.095
-follow,tangential 10 cm/s,lost_pings 12,err_max,11.917
-follow,tangential 10 cm/s,lost_pings 12,causes,on_pass no cluster (sector): 9; on_pass gate fail (sector): 1; on_ping misses (sector): 2
-follow,tangential 15 cm/s,lost_pings 12,locked_pct,25.400
-follow,tangential 15 cm/s,lost_pings 12,losses_per_min,3.125
-follow,tangential 15 cm/s,lost_pings 12,err_mean,4.889
-follow,tangential 15 cm/s,lost_pings 12,err_max,9.841
-follow,tangential 15 cm/s,lost_pings 12,causes,on_pass no cluster (sector): 18; on_ping misses (sector): 7
+follow,tangential 10 cm/s,lost_pings 12,locked_pct,100.000
+follow,tangential 10 cm/s,lost_pings 12,losses_per_min,0.000
+follow,tangential 10 cm/s,lost_pings 12,err_mean,2.862
+follow,tangential 10 cm/s,lost_pings 12,err_max,6.865
+follow,tangential 10 cm/s,lost_pings 12,causes,
+follow,tangential 15 cm/s,lost_pings 12,locked_pct,25.712
+follow,tangential 15 cm/s,lost_pings 12,losses_per_min,3.000
+follow,tangential 15 cm/s,lost_pings 12,err_mean,4.982
+follow,tangential 15 cm/s,lost_pings 12,err_max,8.379
+follow,tangential 15 cm/s,lost_pings 12,causes,on_pass no cluster (sector): 16; on_ping misses (sector): 8
 follow,radial away 10 cm/s,lost_pings 12,locked_pct,100.000
 follow,radial away 10 cm/s,lost_pings 12,losses_per_min,0.000
-follow,radial away 10 cm/s,lost_pings 12,err_mean,0.437
-follow,radial away 10 cm/s,lost_pings 12,err_max,6.000
+follow,radial away 10 cm/s,lost_pings 12,err_mean,0.014
+follow,radial away 10 cm/s,lost_pings 12,err_max,1.000
 follow,radial away 10 cm/s,lost_pings 12,causes,
+follow,tangential 5 cm/s,bridge 0,locked_pct,100.000
+follow,tangential 5 cm/s,bridge 0,losses_per_min,0.000
+follow,tangential 5 cm/s,bridge 0,err_mean,1.491
+follow,tangential 5 cm/s,bridge 0,err_max,9.925
+follow,tangential 5 cm/s,bridge 0,causes,
+follow,tangential 10 cm/s,bridge 0,locked_pct,86.050
+follow,tangential 10 cm/s,bridge 0,losses_per_min,1.000
+follow,tangential 10 cm/s,bridge 0,err_mean,3.054
+follow,tangential 10 cm/s,bridge 0,err_max,9.175
+follow,tangential 10 cm/s,bridge 0,causes,on_pass no cluster (sector): 6; on_ping misses (sector): 2
+follow,tangential 15 cm/s,bridge 0,locked_pct,23.738
+follow,tangential 15 cm/s,bridge 0,losses_per_min,3.375
+follow,tangential 15 cm/s,bridge 0,err_mean,5.194
+follow,tangential 15 cm/s,bridge 0,err_max,8.804
+follow,tangential 15 cm/s,bridge 0,causes,on_pass no cluster (sector): 11; on_ping misses (sector): 16
+follow,radial away 10 cm/s,bridge 0,locked_pct,100.000
+follow,radial away 10 cm/s,bridge 0,losses_per_min,0.000
+follow,radial away 10 cm/s,bridge 0,err_mean,0.392
+follow,radial away 10 cm/s,bridge 0,err_max,4.000
+follow,radial away 10 cm/s,bridge 0,causes,
 follow,tangential 5 cm/s,dist_tol 12,locked_pct,100.000
 follow,tangential 5 cm/s,dist_tol 12,losses_per_min,0.000
-follow,tangential 5 cm/s,dist_tol 12,err_mean,1.332
-follow,tangential 5 cm/s,dist_tol 12,err_max,9.284
+follow,tangential 5 cm/s,dist_tol 12,err_mean,1.024
+follow,tangential 5 cm/s,dist_tol 12,err_max,3.006
 follow,tangential 5 cm/s,dist_tol 12,causes,
-follow,tangential 10 cm/s,dist_tol 12,locked_pct,8.213
-follow,tangential 10 cm/s,dist_tol 12,losses_per_min,3.000
-follow,tangential 10 cm/s,dist_tol 12,err_mean,nan
-follow,tangential 10 cm/s,dist_tol 12,err_max,nan
-follow,tangential 10 cm/s,dist_tol 12,causes,on_ping misses (sector): 24
-follow,tangential 15 cm/s,dist_tol 12,locked_pct,8.250
-follow,tangential 15 cm/s,dist_tol 12,losses_per_min,2.500
-follow,tangential 15 cm/s,dist_tol 12,err_mean,nan
-follow,tangential 15 cm/s,dist_tol 12,err_max,nan
-follow,tangential 15 cm/s,dist_tol 12,causes,on_ping misses (sector): 20
+follow,tangential 10 cm/s,dist_tol 12,locked_pct,100.000
+follow,tangential 10 cm/s,dist_tol 12,losses_per_min,0.000
+follow,tangential 10 cm/s,dist_tol 12,err_mean,2.862
+follow,tangential 10 cm/s,dist_tol 12,err_max,6.865
+follow,tangential 10 cm/s,dist_tol 12,causes,
+follow,tangential 15 cm/s,dist_tol 12,locked_pct,20.963
+follow,tangential 15 cm/s,dist_tol 12,losses_per_min,3.000
+follow,tangential 15 cm/s,dist_tol 12,err_mean,5.205
+follow,tangential 15 cm/s,dist_tol 12,err_max,7.590
+follow,tangential 15 cm/s,dist_tol 12,causes,on_pass no cluster (sector): 9; on_ping misses (sector): 15
 follow,radial away 10 cm/s,dist_tol 12,locked_pct,100.000
 follow,radial away 10 cm/s,dist_tol 12,losses_per_min,0.000
-follow,radial away 10 cm/s,dist_tol 12,err_mean,0.437
-follow,radial away 10 cm/s,dist_tol 12,err_max,6.000
+follow,radial away 10 cm/s,dist_tol 12,err_mean,0.014
+follow,radial away 10 cm/s,dist_tol 12,err_max,1.000
 follow,radial away 10 cm/s,dist_tol 12,causes,
 follow,tangential 5 cm/s,min_bins 1,locked_pct,100.000
 follow,tangential 5 cm/s,min_bins 1,losses_per_min,0.000
-follow,tangential 5 cm/s,min_bins 1,err_mean,1.434
-follow,tangential 5 cm/s,min_bins 1,err_max,9.284
+follow,tangential 5 cm/s,min_bins 1,err_mean,1.024
+follow,tangential 5 cm/s,min_bins 1,err_max,3.006
 follow,tangential 5 cm/s,min_bins 1,causes,
-follow,tangential 10 cm/s,min_bins 1,locked_pct,7.850
-follow,tangential 10 cm/s,min_bins 1,losses_per_min,2.875
-follow,tangential 10 cm/s,min_bins 1,err_mean,nan
-follow,tangential 10 cm/s,min_bins 1,err_max,nan
-follow,tangential 10 cm/s,min_bins 1,causes,on_ping misses (sector): 23
-follow,tangential 15 cm/s,min_bins 1,locked_pct,8.250
-follow,tangential 15 cm/s,min_bins 1,losses_per_min,2.500
-follow,tangential 15 cm/s,min_bins 1,err_mean,nan
-follow,tangential 15 cm/s,min_bins 1,err_max,nan
-follow,tangential 15 cm/s,min_bins 1,causes,on_ping misses (sector): 20
-follow,radial away 10 cm/s,min_bins 1,locked_pct,26.083
-follow,radial away 10 cm/s,min_bins 1,losses_per_min,6.667
-follow,radial away 10 cm/s,min_bins 1,err_mean,0.000
-follow,radial away 10 cm/s,min_bins 1,err_max,0.000
-follow,radial away 10 cm/s,min_bins 1,causes,on_ping misses (sector): 8
+follow,tangential 10 cm/s,min_bins 1,locked_pct,100.000
+follow,tangential 10 cm/s,min_bins 1,losses_per_min,0.000
+follow,tangential 10 cm/s,min_bins 1,err_mean,2.862
+follow,tangential 10 cm/s,min_bins 1,err_max,6.865
+follow,tangential 10 cm/s,min_bins 1,causes,
+follow,tangential 15 cm/s,min_bins 1,locked_pct,21.312
+follow,tangential 15 cm/s,min_bins 1,losses_per_min,3.000
+follow,tangential 15 cm/s,min_bins 1,err_mean,5.200
+follow,tangential 15 cm/s,min_bins 1,err_max,7.590
+follow,tangential 15 cm/s,min_bins 1,causes,on_pass no cluster (sector): 8; on_ping misses (sector): 16
+follow,radial away 10 cm/s,min_bins 1,locked_pct,100.000
+follow,radial away 10 cm/s,min_bins 1,losses_per_min,0.000
+follow,radial away 10 cm/s,min_bins 1,err_mean,0.014
+follow,radial away 10 cm/s,min_bins 1,err_max,1.000
+follow,radial away 10 cm/s,min_bins 1,causes,
 follow,tangential 5 cm/s,sector_half 12,locked_pct,100.000
 follow,tangential 5 cm/s,sector_half 12,losses_per_min,0.000
-follow,tangential 5 cm/s,sector_half 12,err_mean,1.434
-follow,tangential 5 cm/s,sector_half 12,err_max,9.086
+follow,tangential 5 cm/s,sector_half 12,err_mean,1.280
+follow,tangential 5 cm/s,sector_half 12,err_max,5.570
 follow,tangential 5 cm/s,sector_half 12,causes,
-follow,tangential 10 cm/s,sector_half 12,locked_pct,8.213
-follow,tangential 10 cm/s,sector_half 12,losses_per_min,3.000
-follow,tangential 10 cm/s,sector_half 12,err_mean,nan
-follow,tangential 10 cm/s,sector_half 12,err_max,nan
-follow,tangential 10 cm/s,sector_half 12,causes,on_ping misses (sector): 24
-follow,tangential 15 cm/s,sector_half 12,locked_pct,7.662
-follow,tangential 15 cm/s,sector_half 12,losses_per_min,2.375
+follow,tangential 10 cm/s,sector_half 12,locked_pct,100.000
+follow,tangential 10 cm/s,sector_half 12,losses_per_min,0.000
+follow,tangential 10 cm/s,sector_half 12,err_mean,3.488
+follow,tangential 10 cm/s,sector_half 12,err_max,6.934
+follow,tangential 10 cm/s,sector_half 12,causes,
+follow,tangential 15 cm/s,sector_half 12,locked_pct,6.600
+follow,tangential 15 cm/s,sector_half 12,losses_per_min,2.000
 follow,tangential 15 cm/s,sector_half 12,err_mean,nan
 follow,tangential 15 cm/s,sector_half 12,err_max,nan
-follow,tangential 15 cm/s,sector_half 12,causes,on_ping misses (sector): 19
-follow,radial away 10 cm/s,sector_half 12,locked_pct,26.000
-follow,radial away 10 cm/s,sector_half 12,losses_per_min,6.667
-follow,radial away 10 cm/s,sector_half 12,err_mean,0.000
-follow,radial away 10 cm/s,sector_half 12,err_max,0.000
-follow,radial away 10 cm/s,sector_half 12,causes,on_ping misses (sector): 8
-follow,tangential 5 cm/s,lost 9 + min_bins 1,locked_pct,100.000
-follow,tangential 5 cm/s,lost 9 + min_bins 1,losses_per_min,0.000
-follow,tangential 5 cm/s,lost 9 + min_bins 1,err_mean,1.434
-follow,tangential 5 cm/s,lost 9 + min_bins 1,err_max,9.284
-follow,tangential 5 cm/s,lost 9 + min_bins 1,causes,
-follow,tangential 10 cm/s,lost 9 + min_bins 1,locked_pct,80.375
-follow,tangential 10 cm/s,lost 9 + min_bins 1,losses_per_min,1.000
-follow,tangential 10 cm/s,lost 9 + min_bins 1,err_mean,3.175
-follow,tangential 10 cm/s,lost 9 + min_bins 1,err_max,11.917
-follow,tangential 10 cm/s,lost 9 + min_bins 1,causes,on_pass no cluster (sector): 4; on_ping misses (sector): 3; on_pass gate fail (sector): 1
-follow,tangential 15 cm/s,lost 9 + min_bins 1,locked_pct,23.375
-follow,tangential 15 cm/s,lost 9 + min_bins 1,losses_per_min,3.500
-follow,tangential 15 cm/s,lost 9 + min_bins 1,err_mean,5.073
-follow,tangential 15 cm/s,lost 9 + min_bins 1,err_max,7.590
-follow,tangential 15 cm/s,lost 9 + min_bins 1,causes,on_pass no cluster (sector): 10; on_ping misses (sector): 17; on_pass gate fail (sector): 1
-follow,radial away 10 cm/s,lost 9 + min_bins 1,locked_pct,100.000
-follow,radial away 10 cm/s,lost 9 + min_bins 1,losses_per_min,0.000
-follow,radial away 10 cm/s,lost 9 + min_bins 1,err_mean,0.565
-follow,radial away 10 cm/s,lost 9 + min_bins 1,err_max,7.000
-follow,radial away 10 cm/s,lost 9 + min_bins 1,causes,
-follow,tangential 5 cm/s,lost 9 + half 12,locked_pct,100.000
-follow,tangential 5 cm/s,lost 9 + half 12,losses_per_min,0.000
-follow,tangential 5 cm/s,lost 9 + half 12,err_mean,1.434
-follow,tangential 5 cm/s,lost 9 + half 12,err_max,9.086
-follow,tangential 5 cm/s,lost 9 + half 12,causes,
-follow,tangential 10 cm/s,lost 9 + half 12,locked_pct,83.100
-follow,tangential 10 cm/s,lost 9 + half 12,losses_per_min,0.625
-follow,tangential 10 cm/s,lost 9 + half 12,err_mean,3.470
-follow,tangential 10 cm/s,lost 9 + half 12,err_max,8.944
-follow,tangential 10 cm/s,lost 9 + half 12,causes,on_pass no cluster (sector): 5
-follow,tangential 15 cm/s,lost 9 + half 12,locked_pct,8.488
-follow,tangential 15 cm/s,lost 9 + half 12,losses_per_min,2.375
-follow,tangential 15 cm/s,lost 9 + half 12,err_mean,nan
-follow,tangential 15 cm/s,lost 9 + half 12,err_max,nan
-follow,tangential 15 cm/s,lost 9 + half 12,causes,on_pass no cluster (sector): 17; on_ping misses (sector): 2
-follow,radial away 10 cm/s,lost 9 + half 12,locked_pct,100.000
-follow,radial away 10 cm/s,lost 9 + half 12,losses_per_min,0.000
-follow,radial away 10 cm/s,lost 9 + half 12,err_mean,0.372
-follow,radial away 10 cm/s,lost 9 + half 12,err_max,6.000
-follow,radial away 10 cm/s,lost 9 + half 12,causes,
-follow,tangential 5 cm/s,EXP F1 edge recentre,locked_pct,86.750
-follow,tangential 5 cm/s,EXP F1 edge recentre,losses_per_min,0.625
-follow,tangential 5 cm/s,EXP F1 edge recentre,err_mean,1.734
-follow,tangential 5 cm/s,EXP F1 edge recentre,err_max,7.250
-follow,tangential 5 cm/s,EXP F1 edge recentre,causes,on_pass gate fail (sector): 2; on_ping misses (sector): 3
-follow,tangential 10 cm/s,EXP F1 edge recentre,locked_pct,8.213
-follow,tangential 10 cm/s,EXP F1 edge recentre,losses_per_min,3.000
-follow,tangential 10 cm/s,EXP F1 edge recentre,err_mean,nan
-follow,tangential 10 cm/s,EXP F1 edge recentre,err_max,nan
-follow,tangential 10 cm/s,EXP F1 edge recentre,causes,on_ping misses (sector): 24
-follow,tangential 15 cm/s,EXP F1 edge recentre,locked_pct,8.250
-follow,tangential 15 cm/s,EXP F1 edge recentre,losses_per_min,2.500
-follow,tangential 15 cm/s,EXP F1 edge recentre,err_mean,nan
-follow,tangential 15 cm/s,EXP F1 edge recentre,err_max,nan
-follow,tangential 15 cm/s,EXP F1 edge recentre,causes,on_ping misses (sector): 20
-follow,radial away 10 cm/s,EXP F1 edge recentre,locked_pct,26.083
-follow,radial away 10 cm/s,EXP F1 edge recentre,losses_per_min,6.667
-follow,radial away 10 cm/s,EXP F1 edge recentre,err_mean,0.000
-follow,radial away 10 cm/s,EXP F1 edge recentre,err_max,0.000
-follow,radial away 10 cm/s,EXP F1 edge recentre,causes,on_ping misses (sector): 8
-follow,tangential 5 cm/s,EXP F2 lead,locked_pct,98.175
-follow,tangential 5 cm/s,EXP F2 lead,losses_per_min,0.250
-follow,tangential 5 cm/s,EXP F2 lead,err_mean,1.230
-follow,tangential 5 cm/s,EXP F2 lead,err_max,9.370
-follow,tangential 5 cm/s,EXP F2 lead,causes,on_pass gate fail (sector): 2
-follow,tangential 10 cm/s,EXP F2 lead,locked_pct,8.213
-follow,tangential 10 cm/s,EXP F2 lead,losses_per_min,3.000
-follow,tangential 10 cm/s,EXP F2 lead,err_mean,nan
-follow,tangential 10 cm/s,EXP F2 lead,err_max,nan
-follow,tangential 10 cm/s,EXP F2 lead,causes,on_ping misses (sector): 24
-follow,tangential 15 cm/s,EXP F2 lead,locked_pct,8.250
-follow,tangential 15 cm/s,EXP F2 lead,losses_per_min,2.500
-follow,tangential 15 cm/s,EXP F2 lead,err_mean,nan
-follow,tangential 15 cm/s,EXP F2 lead,err_max,nan
-follow,tangential 15 cm/s,EXP F2 lead,causes,on_ping misses (sector): 20
-follow,radial away 10 cm/s,EXP F2 lead,locked_pct,26.083
-follow,radial away 10 cm/s,EXP F2 lead,losses_per_min,6.667
-follow,radial away 10 cm/s,EXP F2 lead,err_mean,0.000
-follow,radial away 10 cm/s,EXP F2 lead,err_max,0.000
-follow,radial away 10 cm/s,EXP F2 lead,causes,on_ping misses (sector): 8
-follow,tangential 5 cm/s,EXP (e) jump-in + lost 9,locked_pct,100.000
-follow,tangential 5 cm/s,EXP (e) jump-in + lost 9,losses_per_min,0.000
-follow,tangential 5 cm/s,EXP (e) jump-in + lost 9,err_mean,1.222
-follow,tangential 5 cm/s,EXP (e) jump-in + lost 9,err_max,9.085
-follow,tangential 5 cm/s,EXP (e) jump-in + lost 9,causes,
-follow,tangential 10 cm/s,EXP (e) jump-in + lost 9,locked_pct,89.975
-follow,tangential 10 cm/s,EXP (e) jump-in + lost 9,losses_per_min,0.500
-follow,tangential 10 cm/s,EXP (e) jump-in + lost 9,err_mean,2.989
-follow,tangential 10 cm/s,EXP (e) jump-in + lost 9,err_max,11.450
-follow,tangential 10 cm/s,EXP (e) jump-in + lost 9,causes,on_pass no cluster (sector): 4
-follow,tangential 15 cm/s,EXP (e) jump-in + lost 9,locked_pct,6.188
-follow,tangential 15 cm/s,EXP (e) jump-in + lost 9,losses_per_min,3.750
-follow,tangential 15 cm/s,EXP (e) jump-in + lost 9,err_mean,0.399
-follow,tangential 15 cm/s,EXP (e) jump-in + lost 9,err_max,1.274
-follow,tangential 15 cm/s,EXP (e) jump-in + lost 9,causes,on_pass no cluster (sector): 23; on_ping misses (sector): 7
-follow,radial away 10 cm/s,EXP (e) jump-in + lost 9,locked_pct,100.000
-follow,radial away 10 cm/s,EXP (e) jump-in + lost 9,losses_per_min,0.000
-follow,radial away 10 cm/s,EXP (e) jump-in + lost 9,err_mean,0.326
-follow,radial away 10 cm/s,EXP (e) jump-in + lost 9,err_max,6.000
-follow,radial away 10 cm/s,EXP (e) jump-in + lost 9,causes,
-resweep,still,"lost_pings 6, firmware",resweeps,24
-resweep,still,"lost_pings 6, firmware",kept,24
-resweep,still,"lost_pings 6, firmware",switched,0
-resweep,still,"lost_pings 6, firmware",lost_ping,0
-resweep,still,"lost_pings 6, firmware",lost_gate,0
-resweep,still,"lost_pings 6, firmware",lost_nocluster,0
-resweep,still,"lost_pings 6, firmware",locked_pct,100.000
-resweep,still,"lost_pings 6, firmware",causes,
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, firmware",resweeps,19
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, firmware",kept,11
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, firmware",switched,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, firmware",lost_ping,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, firmware",lost_gate,8
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, firmware",lost_nocluster,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, firmware",locked_pct,84.050
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, firmware",causes,on_pass gate fail (resweep): 8; on_pass gate fail (sector): 1
-resweep,tangential 5 cm/s,"lost_pings 6, firmware",resweeps,9
-resweep,tangential 5 cm/s,"lost_pings 6, firmware",kept,1
-resweep,tangential 5 cm/s,"lost_pings 6, firmware",switched,0
-resweep,tangential 5 cm/s,"lost_pings 6, firmware",lost_ping,8
-resweep,tangential 5 cm/s,"lost_pings 6, firmware",lost_gate,0
-resweep,tangential 5 cm/s,"lost_pings 6, firmware",lost_nocluster,0
-resweep,tangential 5 cm/s,"lost_pings 6, firmware",locked_pct,36.000
-resweep,tangential 5 cm/s,"lost_pings 6, firmware",causes,on_ping misses (resweep): 8; on_ping misses (sector): 14
-resweep,tangential 10 cm/s,"lost_pings 6, firmware",resweeps,0
-resweep,tangential 10 cm/s,"lost_pings 6, firmware",kept,0
-resweep,tangential 10 cm/s,"lost_pings 6, firmware",switched,0
-resweep,tangential 10 cm/s,"lost_pings 6, firmware",lost_ping,0
-resweep,tangential 10 cm/s,"lost_pings 6, firmware",lost_gate,0
-resweep,tangential 10 cm/s,"lost_pings 6, firmware",lost_nocluster,0
-resweep,tangential 10 cm/s,"lost_pings 6, firmware",locked_pct,9.350
-resweep,tangential 10 cm/s,"lost_pings 6, firmware",causes,on_ping misses (sector): 23; on_pass no cluster (sector): 2
-resweep,still,"lost_pings 6, (c) no on_ping in resweep",resweeps,24
-resweep,still,"lost_pings 6, (c) no on_ping in resweep",kept,24
-resweep,still,"lost_pings 6, (c) no on_ping in resweep",switched,0
-resweep,still,"lost_pings 6, (c) no on_ping in resweep",lost_ping,0
-resweep,still,"lost_pings 6, (c) no on_ping in resweep",lost_gate,0
-resweep,still,"lost_pings 6, (c) no on_ping in resweep",lost_nocluster,0
-resweep,still,"lost_pings 6, (c) no on_ping in resweep",locked_pct,100.000
-resweep,still,"lost_pings 6, (c) no on_ping in resweep",causes,
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (c) no on_ping in resweep",resweeps,19
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (c) no on_ping in resweep",kept,11
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (c) no on_ping in resweep",switched,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (c) no on_ping in resweep",lost_ping,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (c) no on_ping in resweep",lost_gate,8
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (c) no on_ping in resweep",lost_nocluster,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (c) no on_ping in resweep",locked_pct,84.050
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (c) no on_ping in resweep",causes,on_pass gate fail (resweep): 8; on_pass gate fail (sector): 1
-resweep,tangential 5 cm/s,"lost_pings 6, (c) no on_ping in resweep",resweeps,9
-resweep,tangential 5 cm/s,"lost_pings 6, (c) no on_ping in resweep",kept,1
-resweep,tangential 5 cm/s,"lost_pings 6, (c) no on_ping in resweep",switched,0
-resweep,tangential 5 cm/s,"lost_pings 6, (c) no on_ping in resweep",lost_ping,0
-resweep,tangential 5 cm/s,"lost_pings 6, (c) no on_ping in resweep",lost_gate,8
-resweep,tangential 5 cm/s,"lost_pings 6, (c) no on_ping in resweep",lost_nocluster,0
-resweep,tangential 5 cm/s,"lost_pings 6, (c) no on_ping in resweep",locked_pct,37.638
-resweep,tangential 5 cm/s,"lost_pings 6, (c) no on_ping in resweep",causes,on_pass gate fail (resweep): 8; on_ping misses (sector): 14
-resweep,tangential 10 cm/s,"lost_pings 6, (c) no on_ping in resweep",resweeps,0
-resweep,tangential 10 cm/s,"lost_pings 6, (c) no on_ping in resweep",kept,0
-resweep,tangential 10 cm/s,"lost_pings 6, (c) no on_ping in resweep",switched,0
-resweep,tangential 10 cm/s,"lost_pings 6, (c) no on_ping in resweep",lost_ping,0
-resweep,tangential 10 cm/s,"lost_pings 6, (c) no on_ping in resweep",lost_gate,0
-resweep,tangential 10 cm/s,"lost_pings 6, (c) no on_ping in resweep",lost_nocluster,0
-resweep,tangential 10 cm/s,"lost_pings 6, (c) no on_ping in resweep",locked_pct,9.350
-resweep,tangential 10 cm/s,"lost_pings 6, (c) no on_ping in resweep",causes,on_ping misses (sector): 23; on_pass no cluster (sector): 2
-resweep,still,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",resweeps,24
-resweep,still,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",kept,24
-resweep,still,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",switched,0
-resweep,still,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",lost_ping,0
-resweep,still,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",lost_gate,0
-resweep,still,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",lost_nocluster,0
-resweep,still,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",locked_pct,100.000
-resweep,still,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",causes,
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",resweeps,24
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",kept,16
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",switched,8
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",lost_ping,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",lost_gate,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",lost_nocluster,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",locked_pct,100.000
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",causes,
-resweep,tangential 5 cm/s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",resweeps,10
-resweep,tangential 5 cm/s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",kept,10
-resweep,tangential 5 cm/s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",switched,0
-resweep,tangential 5 cm/s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",lost_ping,0
-resweep,tangential 5 cm/s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",lost_gate,0
-resweep,tangential 5 cm/s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",lost_nocluster,0
-resweep,tangential 5 cm/s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",locked_pct,44.238
-resweep,tangential 5 cm/s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",causes,on_ping misses (sector): 21
-resweep,tangential 10 cm/s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",resweeps,0
-resweep,tangential 10 cm/s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",kept,0
-resweep,tangential 10 cm/s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",switched,0
-resweep,tangential 10 cm/s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",lost_ping,0
-resweep,tangential 10 cm/s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",lost_gate,0
-resweep,tangential 10 cm/s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",lost_nocluster,0
-resweep,tangential 10 cm/s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",locked_pct,9.350
-resweep,tangential 10 cm/s,"lost_pings 6, (a) (c) + gate widened 10.9 deg/s",causes,on_ping misses (sector): 23; on_pass no cluster (sector): 2
-resweep,still,"lost_pings 6, (b) (c) + nearest bearing",resweeps,24
-resweep,still,"lost_pings 6, (b) (c) + nearest bearing",kept,24
-resweep,still,"lost_pings 6, (b) (c) + nearest bearing",switched,0
-resweep,still,"lost_pings 6, (b) (c) + nearest bearing",lost_ping,0
-resweep,still,"lost_pings 6, (b) (c) + nearest bearing",lost_gate,0
-resweep,still,"lost_pings 6, (b) (c) + nearest bearing",lost_nocluster,0
-resweep,still,"lost_pings 6, (b) (c) + nearest bearing",locked_pct,100.000
-resweep,still,"lost_pings 6, (b) (c) + nearest bearing",causes,
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (b) (c) + nearest bearing",resweeps,24
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (b) (c) + nearest bearing",kept,24
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (b) (c) + nearest bearing",switched,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (b) (c) + nearest bearing",lost_ping,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (b) (c) + nearest bearing",lost_gate,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (b) (c) + nearest bearing",lost_nocluster,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (b) (c) + nearest bearing",locked_pct,100.000
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, (b) (c) + nearest bearing",causes,
-resweep,tangential 5 cm/s,"lost_pings 6, (b) (c) + nearest bearing",resweeps,10
-resweep,tangential 5 cm/s,"lost_pings 6, (b) (c) + nearest bearing",kept,10
-resweep,tangential 5 cm/s,"lost_pings 6, (b) (c) + nearest bearing",switched,0
-resweep,tangential 5 cm/s,"lost_pings 6, (b) (c) + nearest bearing",lost_ping,0
-resweep,tangential 5 cm/s,"lost_pings 6, (b) (c) + nearest bearing",lost_gate,0
-resweep,tangential 5 cm/s,"lost_pings 6, (b) (c) + nearest bearing",lost_nocluster,0
-resweep,tangential 5 cm/s,"lost_pings 6, (b) (c) + nearest bearing",locked_pct,44.238
-resweep,tangential 5 cm/s,"lost_pings 6, (b) (c) + nearest bearing",causes,on_ping misses (sector): 21
-resweep,tangential 10 cm/s,"lost_pings 6, (b) (c) + nearest bearing",resweeps,0
-resweep,tangential 10 cm/s,"lost_pings 6, (b) (c) + nearest bearing",kept,0
-resweep,tangential 10 cm/s,"lost_pings 6, (b) (c) + nearest bearing",switched,0
-resweep,tangential 10 cm/s,"lost_pings 6, (b) (c) + nearest bearing",lost_ping,0
-resweep,tangential 10 cm/s,"lost_pings 6, (b) (c) + nearest bearing",lost_gate,0
-resweep,tangential 10 cm/s,"lost_pings 6, (b) (c) + nearest bearing",lost_nocluster,0
-resweep,tangential 10 cm/s,"lost_pings 6, (b) (c) + nearest bearing",locked_pct,9.350
-resweep,tangential 10 cm/s,"lost_pings 6, (b) (c) + nearest bearing",causes,on_ping misses (sector): 23; on_pass no cluster (sector): 2
-resweep,still,"lost_pings 9, firmware",resweeps,24
-resweep,still,"lost_pings 9, firmware",kept,24
-resweep,still,"lost_pings 9, firmware",switched,0
-resweep,still,"lost_pings 9, firmware",lost_ping,0
-resweep,still,"lost_pings 9, firmware",lost_gate,0
-resweep,still,"lost_pings 9, firmware",lost_nocluster,0
-resweep,still,"lost_pings 9, firmware",locked_pct,100.000
-resweep,still,"lost_pings 9, firmware",causes,
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, firmware",resweeps,19
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, firmware",kept,11
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, firmware",switched,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, firmware",lost_ping,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, firmware",lost_gate,8
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, firmware",lost_nocluster,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, firmware",locked_pct,84.050
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, firmware",causes,on_pass gate fail (resweep): 8; on_pass gate fail (sector): 1
-resweep,tangential 5 cm/s,"lost_pings 9, firmware",resweeps,15
-resweep,tangential 5 cm/s,"lost_pings 9, firmware",kept,7
-resweep,tangential 5 cm/s,"lost_pings 9, firmware",switched,0
-resweep,tangential 5 cm/s,"lost_pings 9, firmware",lost_ping,5
-resweep,tangential 5 cm/s,"lost_pings 9, firmware",lost_gate,3
-resweep,tangential 5 cm/s,"lost_pings 9, firmware",lost_nocluster,0
-resweep,tangential 5 cm/s,"lost_pings 9, firmware",locked_pct,58.413
-resweep,tangential 5 cm/s,"lost_pings 9, firmware",causes,on_ping misses (resweep): 5; on_pass gate fail (resweep): 3; on_ping misses (sector): 7
-resweep,tangential 10 cm/s,"lost_pings 9, firmware",resweeps,7
-resweep,tangential 10 cm/s,"lost_pings 9, firmware",kept,0
-resweep,tangential 10 cm/s,"lost_pings 9, firmware",switched,0
-resweep,tangential 10 cm/s,"lost_pings 9, firmware",lost_ping,0
-resweep,tangential 10 cm/s,"lost_pings 9, firmware",lost_gate,7
-resweep,tangential 10 cm/s,"lost_pings 9, firmware",lost_nocluster,0
-resweep,tangential 10 cm/s,"lost_pings 9, firmware",locked_pct,29.612
-resweep,tangential 10 cm/s,"lost_pings 9, firmware",causes,on_pass gate fail (resweep): 7; on_ping misses (sector): 3; on_pass no cluster (sector): 10
-resweep,still,"lost_pings 9, (c) no on_ping in resweep",resweeps,24
-resweep,still,"lost_pings 9, (c) no on_ping in resweep",kept,24
-resweep,still,"lost_pings 9, (c) no on_ping in resweep",switched,0
-resweep,still,"lost_pings 9, (c) no on_ping in resweep",lost_ping,0
-resweep,still,"lost_pings 9, (c) no on_ping in resweep",lost_gate,0
-resweep,still,"lost_pings 9, (c) no on_ping in resweep",lost_nocluster,0
-resweep,still,"lost_pings 9, (c) no on_ping in resweep",locked_pct,100.000
-resweep,still,"lost_pings 9, (c) no on_ping in resweep",causes,
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (c) no on_ping in resweep",resweeps,19
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (c) no on_ping in resweep",kept,11
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (c) no on_ping in resweep",switched,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (c) no on_ping in resweep",lost_ping,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (c) no on_ping in resweep",lost_gate,8
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (c) no on_ping in resweep",lost_nocluster,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (c) no on_ping in resweep",locked_pct,84.050
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (c) no on_ping in resweep",causes,on_pass gate fail (resweep): 8; on_pass gate fail (sector): 1
-resweep,tangential 5 cm/s,"lost_pings 9, (c) no on_ping in resweep",resweeps,15
-resweep,tangential 5 cm/s,"lost_pings 9, (c) no on_ping in resweep",kept,7
-resweep,tangential 5 cm/s,"lost_pings 9, (c) no on_ping in resweep",switched,0
-resweep,tangential 5 cm/s,"lost_pings 9, (c) no on_ping in resweep",lost_ping,0
-resweep,tangential 5 cm/s,"lost_pings 9, (c) no on_ping in resweep",lost_gate,8
-resweep,tangential 5 cm/s,"lost_pings 9, (c) no on_ping in resweep",lost_nocluster,0
-resweep,tangential 5 cm/s,"lost_pings 9, (c) no on_ping in resweep",locked_pct,59.225
-resweep,tangential 5 cm/s,"lost_pings 9, (c) no on_ping in resweep",causes,on_pass gate fail (resweep): 8; on_ping misses (sector): 7
-resweep,tangential 10 cm/s,"lost_pings 9, (c) no on_ping in resweep",resweeps,7
-resweep,tangential 10 cm/s,"lost_pings 9, (c) no on_ping in resweep",kept,0
-resweep,tangential 10 cm/s,"lost_pings 9, (c) no on_ping in resweep",switched,0
-resweep,tangential 10 cm/s,"lost_pings 9, (c) no on_ping in resweep",lost_ping,0
-resweep,tangential 10 cm/s,"lost_pings 9, (c) no on_ping in resweep",lost_gate,7
-resweep,tangential 10 cm/s,"lost_pings 9, (c) no on_ping in resweep",lost_nocluster,0
-resweep,tangential 10 cm/s,"lost_pings 9, (c) no on_ping in resweep",locked_pct,29.612
-resweep,tangential 10 cm/s,"lost_pings 9, (c) no on_ping in resweep",causes,on_pass gate fail (resweep): 7; on_ping misses (sector): 3; on_pass no cluster (sector): 10
-resweep,still,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",resweeps,24
-resweep,still,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",kept,24
-resweep,still,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",switched,0
-resweep,still,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",lost_ping,0
-resweep,still,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",lost_gate,0
-resweep,still,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",lost_nocluster,0
-resweep,still,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",locked_pct,100.000
-resweep,still,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",causes,
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",resweeps,24
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",kept,16
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",switched,8
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",lost_ping,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",lost_gate,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",lost_nocluster,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",locked_pct,100.000
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",causes,
-resweep,tangential 5 cm/s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",resweeps,16
-resweep,tangential 5 cm/s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",kept,16
-resweep,tangential 5 cm/s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",switched,0
-resweep,tangential 5 cm/s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",lost_ping,0
-resweep,tangential 5 cm/s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",lost_gate,0
-resweep,tangential 5 cm/s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",lost_nocluster,0
-resweep,tangential 5 cm/s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",locked_pct,66.350
-resweep,tangential 5 cm/s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",causes,on_pass no cluster (sector): 7; on_ping misses (sector): 7
-resweep,tangential 10 cm/s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",resweeps,7
-resweep,tangential 10 cm/s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",kept,7
-resweep,tangential 10 cm/s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",switched,0
-resweep,tangential 10 cm/s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",lost_ping,0
-resweep,tangential 10 cm/s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",lost_gate,0
-resweep,tangential 10 cm/s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",lost_nocluster,0
-resweep,tangential 10 cm/s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",locked_pct,32.312
-resweep,tangential 10 cm/s,"lost_pings 9, (a) (c) + gate widened 10.9 deg/s",causes,on_pass no cluster (sector): 17; on_ping misses (sector): 3
-resweep,still,"lost_pings 9, (b) (c) + nearest bearing",resweeps,24
-resweep,still,"lost_pings 9, (b) (c) + nearest bearing",kept,24
-resweep,still,"lost_pings 9, (b) (c) + nearest bearing",switched,0
-resweep,still,"lost_pings 9, (b) (c) + nearest bearing",lost_ping,0
-resweep,still,"lost_pings 9, (b) (c) + nearest bearing",lost_gate,0
-resweep,still,"lost_pings 9, (b) (c) + nearest bearing",lost_nocluster,0
-resweep,still,"lost_pings 9, (b) (c) + nearest bearing",locked_pct,100.000
-resweep,still,"lost_pings 9, (b) (c) + nearest bearing",causes,
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (b) (c) + nearest bearing",resweeps,24
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (b) (c) + nearest bearing",kept,24
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (b) (c) + nearest bearing",switched,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (b) (c) + nearest bearing",lost_ping,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (b) (c) + nearest bearing",lost_gate,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (b) (c) + nearest bearing",lost_nocluster,0
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (b) (c) + nearest bearing",locked_pct,100.000
-resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, (b) (c) + nearest bearing",causes,
-resweep,tangential 5 cm/s,"lost_pings 9, (b) (c) + nearest bearing",resweeps,16
-resweep,tangential 5 cm/s,"lost_pings 9, (b) (c) + nearest bearing",kept,16
-resweep,tangential 5 cm/s,"lost_pings 9, (b) (c) + nearest bearing",switched,0
-resweep,tangential 5 cm/s,"lost_pings 9, (b) (c) + nearest bearing",lost_ping,0
-resweep,tangential 5 cm/s,"lost_pings 9, (b) (c) + nearest bearing",lost_gate,0
-resweep,tangential 5 cm/s,"lost_pings 9, (b) (c) + nearest bearing",lost_nocluster,0
-resweep,tangential 5 cm/s,"lost_pings 9, (b) (c) + nearest bearing",locked_pct,66.350
-resweep,tangential 5 cm/s,"lost_pings 9, (b) (c) + nearest bearing",causes,on_pass no cluster (sector): 7; on_ping misses (sector): 7
-resweep,tangential 10 cm/s,"lost_pings 9, (b) (c) + nearest bearing",resweeps,7
-resweep,tangential 10 cm/s,"lost_pings 9, (b) (c) + nearest bearing",kept,7
-resweep,tangential 10 cm/s,"lost_pings 9, (b) (c) + nearest bearing",switched,0
-resweep,tangential 10 cm/s,"lost_pings 9, (b) (c) + nearest bearing",lost_ping,0
-resweep,tangential 10 cm/s,"lost_pings 9, (b) (c) + nearest bearing",lost_gate,0
-resweep,tangential 10 cm/s,"lost_pings 9, (b) (c) + nearest bearing",lost_nocluster,0
-resweep,tangential 10 cm/s,"lost_pings 9, (b) (c) + nearest bearing",locked_pct,32.312
-resweep,tangential 10 cm/s,"lost_pings 9, (b) (c) + nearest bearing",causes,on_pass no cluster (sector): 17; on_ping misses (sector): 3
+follow,tangential 15 cm/s,sector_half 12,causes,on_pass no cluster (sector): 16
+follow,radial away 10 cm/s,sector_half 12,locked_pct,100.000
+follow,radial away 10 cm/s,sector_half 12,losses_per_min,0.000
+follow,radial away 10 cm/s,sector_half 12,err_mean,0.051
+follow,radial away 10 cm/s,sector_half 12,err_max,1.000
+follow,radial away 10 cm/s,sector_half 12,causes,
+follow,tangential 5 cm/s,EXP F1 edge recentre,locked_pct,100.000
+follow,tangential 5 cm/s,EXP F1 edge recentre,losses_per_min,0.000
+follow,tangential 5 cm/s,EXP F1 edge recentre,err_mean,1.621
+follow,tangential 5 cm/s,EXP F1 edge recentre,err_max,4.595
+follow,tangential 5 cm/s,EXP F1 edge recentre,causes,
+follow,tangential 10 cm/s,EXP F1 edge recentre,locked_pct,26.200
+follow,tangential 10 cm/s,EXP F1 edge recentre,losses_per_min,2.000
+follow,tangential 10 cm/s,EXP F1 edge recentre,err_mean,2.886
+follow,tangential 10 cm/s,EXP F1 edge recentre,err_max,6.856
+follow,tangential 10 cm/s,EXP F1 edge recentre,causes,on_pass no cluster (sector): 16
+follow,tangential 15 cm/s,EXP F1 edge recentre,locked_pct,21.975
+follow,tangential 15 cm/s,EXP F1 edge recentre,losses_per_min,3.000
+follow,tangential 15 cm/s,EXP F1 edge recentre,err_mean,3.706
+follow,tangential 15 cm/s,EXP F1 edge recentre,err_max,6.839
+follow,tangential 15 cm/s,EXP F1 edge recentre,causes,on_pass no cluster (sector): 16; on_ping misses (sector): 8
+follow,radial away 10 cm/s,EXP F1 edge recentre,locked_pct,100.000
+follow,radial away 10 cm/s,EXP F1 edge recentre,losses_per_min,0.000
+follow,radial away 10 cm/s,EXP F1 edge recentre,err_mean,0.014
+follow,radial away 10 cm/s,EXP F1 edge recentre,err_max,1.000
+follow,radial away 10 cm/s,EXP F1 edge recentre,causes,
+follow,tangential 5 cm/s,EXP F2 lead,locked_pct,100.000
+follow,tangential 5 cm/s,EXP F2 lead,losses_per_min,0.000
+follow,tangential 5 cm/s,EXP F2 lead,err_mean,0.964
+follow,tangential 5 cm/s,EXP F2 lead,err_max,3.203
+follow,tangential 5 cm/s,EXP F2 lead,causes,
+follow,tangential 10 cm/s,EXP F2 lead,locked_pct,61.675
+follow,tangential 10 cm/s,EXP F2 lead,losses_per_min,1.125
+follow,tangential 10 cm/s,EXP F2 lead,err_mean,2.112
+follow,tangential 10 cm/s,EXP F2 lead,err_max,7.446
+follow,tangential 10 cm/s,EXP F2 lead,causes,on_pass gate fail (sector): 6; on_pass no cluster (sector): 2; on_ping misses (sector): 1
+follow,tangential 15 cm/s,EXP F2 lead,locked_pct,10.200
+follow,tangential 15 cm/s,EXP F2 lead,losses_per_min,2.000
+follow,tangential 15 cm/s,EXP F2 lead,err_mean,4.549
+follow,tangential 15 cm/s,EXP F2 lead,err_max,6.771
+follow,tangential 15 cm/s,EXP F2 lead,causes,on_pass no cluster (sector): 16
+follow,radial away 10 cm/s,EXP F2 lead,locked_pct,100.000
+follow,radial away 10 cm/s,EXP F2 lead,losses_per_min,0.000
+follow,radial away 10 cm/s,EXP F2 lead,err_mean,0.027
+follow,radial away 10 cm/s,EXP F2 lead,err_max,1.000
+follow,radial away 10 cm/s,EXP F2 lead,causes,
+follow,tangential 5 cm/s,EXP (e) jump-in,locked_pct,100.000
+follow,tangential 5 cm/s,EXP (e) jump-in,losses_per_min,0.000
+follow,tangential 5 cm/s,EXP (e) jump-in,err_mean,0.897
+follow,tangential 5 cm/s,EXP (e) jump-in,err_max,3.153
+follow,tangential 5 cm/s,EXP (e) jump-in,causes,
+follow,tangential 10 cm/s,EXP (e) jump-in,locked_pct,100.000
+follow,tangential 10 cm/s,EXP (e) jump-in,losses_per_min,0.000
+follow,tangential 10 cm/s,EXP (e) jump-in,err_mean,2.875
+follow,tangential 10 cm/s,EXP (e) jump-in,err_max,6.114
+follow,tangential 10 cm/s,EXP (e) jump-in,causes,
+follow,tangential 15 cm/s,EXP (e) jump-in,locked_pct,6.487
+follow,tangential 15 cm/s,EXP (e) jump-in,losses_per_min,4.000
+follow,tangential 15 cm/s,EXP (e) jump-in,err_mean,0.399
+follow,tangential 15 cm/s,EXP (e) jump-in,err_max,1.274
+follow,tangential 15 cm/s,EXP (e) jump-in,causes,on_pass no cluster (sector): 24; on_ping misses (sector): 8
+follow,radial away 10 cm/s,EXP (e) jump-in,locked_pct,100.000
+follow,radial away 10 cm/s,EXP (e) jump-in,losses_per_min,0.000
+follow,radial away 10 cm/s,EXP (e) jump-in,err_mean,0.025
+follow,radial away 10 cm/s,EXP (e) jump-in,err_max,1.000
+follow,radial away 10 cm/s,EXP (e) jump-in,causes,
+resweep,still,"lost_pings 6, firmware (b)+(c)",resweeps,24
+resweep,still,"lost_pings 6, firmware (b)+(c)",kept,24
+resweep,still,"lost_pings 6, firmware (b)+(c)",switched,0
+resweep,still,"lost_pings 6, firmware (b)+(c)",lost_ping,0
+resweep,still,"lost_pings 6, firmware (b)+(c)",lost_gate,0
+resweep,still,"lost_pings 6, firmware (b)+(c)",lost_nocluster,0
+resweep,still,"lost_pings 6, firmware (b)+(c)",locked_pct,100.000
+resweep,still,"lost_pings 6, firmware (b)+(c)",causes,
+resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, firmware (b)+(c)",resweeps,24
+resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, firmware (b)+(c)",kept,24
+resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, firmware (b)+(c)",switched,0
+resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, firmware (b)+(c)",lost_ping,0
+resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, firmware (b)+(c)",lost_gate,0
+resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, firmware (b)+(c)",lost_nocluster,0
+resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, firmware (b)+(c)",locked_pct,100.000
+resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 6, firmware (b)+(c)",causes,
+resweep,tangential 5 cm/s,"lost_pings 6, firmware (b)+(c)",resweeps,8
+resweep,tangential 5 cm/s,"lost_pings 6, firmware (b)+(c)",kept,0
+resweep,tangential 5 cm/s,"lost_pings 6, firmware (b)+(c)",switched,0
+resweep,tangential 5 cm/s,"lost_pings 6, firmware (b)+(c)",lost_ping,0
+resweep,tangential 5 cm/s,"lost_pings 6, firmware (b)+(c)",lost_gate,8
+resweep,tangential 5 cm/s,"lost_pings 6, firmware (b)+(c)",lost_nocluster,0
+resweep,tangential 5 cm/s,"lost_pings 6, firmware (b)+(c)",locked_pct,35.400
+resweep,tangential 5 cm/s,"lost_pings 6, firmware (b)+(c)",causes,on_pass gate fail (resweep): 8; on_ping misses (sector): 16
+resweep,tangential 10 cm/s,"lost_pings 6, firmware (b)+(c)",resweeps,0
+resweep,tangential 10 cm/s,"lost_pings 6, firmware (b)+(c)",kept,0
+resweep,tangential 10 cm/s,"lost_pings 6, firmware (b)+(c)",switched,0
+resweep,tangential 10 cm/s,"lost_pings 6, firmware (b)+(c)",lost_ping,0
+resweep,tangential 10 cm/s,"lost_pings 6, firmware (b)+(c)",lost_gate,0
+resweep,tangential 10 cm/s,"lost_pings 6, firmware (b)+(c)",lost_nocluster,0
+resweep,tangential 10 cm/s,"lost_pings 6, firmware (b)+(c)",locked_pct,8.200
+resweep,tangential 10 cm/s,"lost_pings 6, firmware (b)+(c)",causes,on_ping misses (sector): 24
+resweep,still,"lost_pings 9, firmware (b)+(c)",resweeps,24
+resweep,still,"lost_pings 9, firmware (b)+(c)",kept,24
+resweep,still,"lost_pings 9, firmware (b)+(c)",switched,0
+resweep,still,"lost_pings 9, firmware (b)+(c)",lost_ping,0
+resweep,still,"lost_pings 9, firmware (b)+(c)",lost_gate,0
+resweep,still,"lost_pings 9, firmware (b)+(c)",lost_nocluster,0
+resweep,still,"lost_pings 9, firmware (b)+(c)",locked_pct,100.000
+resweep,still,"lost_pings 9, firmware (b)+(c)",causes,
+resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, firmware (b)+(c)",resweeps,24
+resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, firmware (b)+(c)",kept,24
+resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, firmware (b)+(c)",switched,0
+resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, firmware (b)+(c)",lost_ping,0
+resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, firmware (b)+(c)",lost_gate,0
+resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, firmware (b)+(c)",lost_nocluster,0
+resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, firmware (b)+(c)",locked_pct,100.000
+resweep,still + closer object at 140deg 30cm from 15 s,"lost_pings 9, firmware (b)+(c)",causes,
+resweep,tangential 5 cm/s,"lost_pings 9, firmware (b)+(c)",resweeps,16
+resweep,tangential 5 cm/s,"lost_pings 9, firmware (b)+(c)",kept,8
+resweep,tangential 5 cm/s,"lost_pings 9, firmware (b)+(c)",switched,0
+resweep,tangential 5 cm/s,"lost_pings 9, firmware (b)+(c)",lost_ping,0
+resweep,tangential 5 cm/s,"lost_pings 9, firmware (b)+(c)",lost_gate,8
+resweep,tangential 5 cm/s,"lost_pings 9, firmware (b)+(c)",lost_nocluster,0
+resweep,tangential 5 cm/s,"lost_pings 9, firmware (b)+(c)",locked_pct,60.900
+resweep,tangential 5 cm/s,"lost_pings 9, firmware (b)+(c)",causes,on_pass gate fail (resweep): 8; on_ping misses (sector): 8
+resweep,tangential 10 cm/s,"lost_pings 9, firmware (b)+(c)",resweeps,8
+resweep,tangential 10 cm/s,"lost_pings 9, firmware (b)+(c)",kept,0
+resweep,tangential 10 cm/s,"lost_pings 9, firmware (b)+(c)",switched,0
+resweep,tangential 10 cm/s,"lost_pings 9, firmware (b)+(c)",lost_ping,0
+resweep,tangential 10 cm/s,"lost_pings 9, firmware (b)+(c)",lost_gate,8
+resweep,tangential 10 cm/s,"lost_pings 9, firmware (b)+(c)",lost_nocluster,0
+resweep,tangential 10 cm/s,"lost_pings 9, firmware (b)+(c)",locked_pct,29.150
+resweep,tangential 10 cm/s,"lost_pings 9, firmware (b)+(c)",causes,on_pass gate fail (resweep): 8; on_pass no cluster (sector): 8
+sc8_breakdown,"tangential 5 cm/s, resweeps on",firmware,pct_sector,29.788
+sc8_breakdown,"tangential 5 cm/s, resweeps on",firmware,pct_walk-in after lock,4.900
+sc8_breakdown,"tangential 5 cm/s, resweeps on",firmware,pct_walk-in after resweep,4.800
+sc8_breakdown,"tangential 5 cm/s, resweeps on",firmware,pct_resweep,21.413
+sc8_breakdown,"tangential 5 cm/s, resweeps on",firmware,pct_unlocked,39.100
+sc8_breakdown,"tangential 5 cm/s, resweeps on",firmware,pct_unlocked_after on_pass gate fail in resweep,22.500
+sc8_breakdown,"tangential 5 cm/s, resweeps on",firmware,pct_unlocked_after on_ping misses in the 1st sector pass after a resweep,16.600
+sc8_breakdown,"tangential 5 cm/s, resweeps on",firmware,losses on_pass gate fail in resweep,8
+sc8_breakdown,"tangential 5 cm/s, resweeps on",firmware,losses on_ping misses in the 1st sector pass after a resweep,8
+sc8_breakdown,"tangential 5 cm/s, resweeps on",firmware,resweeps,16
+sc8_breakdown,"tangential 5 cm/s, resweeps on",firmware,kept,8
+sc8_breakdown,"tangential 5 cm/s, resweeps on",firmware,switched,0
+sc8_breakdown,"tangential 5 cm/s, resweeps on",firmware,deferred,0
+sc8_breakdown,"tangential 5 cm/s, resweeps on",EXP defer > 3 deg/s,pct_sector,30.600
+sc8_breakdown,"tangential 5 cm/s, resweeps on",EXP defer > 3 deg/s,pct_walk-in after lock,4.400
+sc8_breakdown,"tangential 5 cm/s, resweeps on",EXP defer > 3 deg/s,pct_walk-in after resweep,0.000
+sc8_breakdown,"tangential 5 cm/s, resweeps on",EXP defer > 3 deg/s,pct_resweep,25.200
+sc8_breakdown,"tangential 5 cm/s, resweeps on",EXP defer > 3 deg/s,pct_unlocked,39.800
+sc8_breakdown,"tangential 5 cm/s, resweeps on",EXP defer > 3 deg/s,pct_unlocked_after on_pass gate fail in resweep,39.800
+sc8_breakdown,"tangential 5 cm/s, resweeps on",EXP defer > 3 deg/s,losses on_pass gate fail in resweep,16
+sc8_breakdown,"tangential 5 cm/s, resweeps on",EXP defer > 3 deg/s,resweeps,16
+sc8_breakdown,"tangential 5 cm/s, resweeps on",EXP defer > 3 deg/s,kept,0
+sc8_breakdown,"tangential 5 cm/s, resweeps on",EXP defer > 3 deg/s,switched,0
+sc8_breakdown,"tangential 5 cm/s, resweeps on",EXP defer > 3 deg/s,deferred,24
+sc8_speed,tangential 2 cm/s,firmware,locked_pct,100.000
+sc8_speed,tangential 2 cm/s,firmware,worst_run_pct,100.000
+sc8_speed,tangential 2 cm/s,firmware,move_s,60.000
+sc8_speed,tangential 2 cm/s,firmware,resweeps,24
+sc8_speed,tangential 2 cm/s,firmware,kept,24
+sc8_speed,tangential 2 cm/s,firmware,switched,0
+sc8_speed,tangential 2 cm/s,firmware,losses,0
+sc8_speed,tangential 2 cm/s,firmware,deferred,0
+sc8_speed,tangential 2 cm/s,firmware,causes,
+sc8_speed,tangential 3 cm/s,firmware,locked_pct,84.800
+sc8_speed,tangential 3 cm/s,firmware,worst_run_pct,83.400
+sc8_speed,tangential 3 cm/s,firmware,move_s,60.000
+sc8_speed,tangential 3 cm/s,firmware,resweeps,24
+sc8_speed,tangential 3 cm/s,firmware,kept,16
+sc8_speed,tangential 3 cm/s,firmware,switched,0
+sc8_speed,tangential 3 cm/s,firmware,losses,8
+sc8_speed,tangential 3 cm/s,firmware,deferred,0
+sc8_speed,tangential 3 cm/s,firmware,causes,on_pass gate fail (resweep): 8
+sc8_speed,tangential 4 cm/s,firmware,locked_pct,51.700
+sc8_speed,tangential 4 cm/s,firmware,worst_run_pct,51.700
+sc8_speed,tangential 4 cm/s,firmware,move_s,60.000
+sc8_speed,tangential 4 cm/s,firmware,resweeps,8
+sc8_speed,tangential 4 cm/s,firmware,kept,8
+sc8_speed,tangential 4 cm/s,firmware,switched,0
+sc8_speed,tangential 4 cm/s,firmware,losses,16
+sc8_speed,tangential 4 cm/s,firmware,deferred,0
+sc8_speed,tangential 4 cm/s,firmware,causes,on_ping misses (sector): 16
+sc8_speed,tangential 5 cm/s,firmware,locked_pct,60.900
+sc8_speed,tangential 5 cm/s,firmware,worst_run_pct,60.900
+sc8_speed,tangential 5 cm/s,firmware,move_s,60.000
+sc8_speed,tangential 5 cm/s,firmware,resweeps,16
+sc8_speed,tangential 5 cm/s,firmware,kept,8
+sc8_speed,tangential 5 cm/s,firmware,switched,0
+sc8_speed,tangential 5 cm/s,firmware,losses,16
+sc8_speed,tangential 5 cm/s,firmware,deferred,0
+sc8_speed,tangential 5 cm/s,firmware,causes,on_pass gate fail (resweep): 8; on_ping misses (sector): 8
+sc8_speed,tangential 6 cm/s,firmware,locked_pct,55.775
+sc8_speed,tangential 6 cm/s,firmware,worst_run_pct,45.100
+sc8_speed,tangential 6 cm/s,firmware,move_s,60.000
+sc8_speed,tangential 6 cm/s,firmware,resweeps,13
+sc8_speed,tangential 6 cm/s,firmware,kept,5
+sc8_speed,tangential 6 cm/s,firmware,switched,0
+sc8_speed,tangential 6 cm/s,firmware,losses,27
+sc8_speed,tangential 6 cm/s,firmware,deferred,0
+sc8_speed,tangential 6 cm/s,firmware,causes,on_pass gate fail (resweep): 8; on_ping misses (sector): 18; on_pass no cluster (sector): 1
+sc8_speed,tangential 8 cm/s,firmware,locked_pct,33.488
+sc8_speed,tangential 8 cm/s,firmware,worst_run_pct,33.400
+sc8_speed,tangential 8 cm/s,firmware,move_s,60.000
+sc8_speed,tangential 8 cm/s,firmware,resweeps,8
+sc8_speed,tangential 8 cm/s,firmware,kept,0
+sc8_speed,tangential 8 cm/s,firmware,switched,0
+sc8_speed,tangential 8 cm/s,firmware,losses,16
+sc8_speed,tangential 8 cm/s,firmware,deferred,0
+sc8_speed,tangential 8 cm/s,firmware,causes,on_pass gate fail (resweep): 8; on_ping misses (sector): 8
+sc8_speed,tangential 10 cm/s,firmware,locked_pct,29.100
+sc8_speed,tangential 10 cm/s,firmware,worst_run_pct,29.100
+sc8_speed,tangential 10 cm/s,firmware,move_s,60.000
+sc8_speed,tangential 10 cm/s,firmware,resweeps,8
+sc8_speed,tangential 10 cm/s,firmware,kept,0
+sc8_speed,tangential 10 cm/s,firmware,switched,0
+sc8_speed,tangential 10 cm/s,firmware,losses,16
+sc8_speed,tangential 10 cm/s,firmware,deferred,0
+sc8_speed,tangential 10 cm/s,firmware,causes,on_pass gate fail (resweep): 8; on_pass no cluster (sector): 8
+sc8_speed,radial away 5 cm/s,firmware,locked_pct,100.000
+sc8_speed,radial away 5 cm/s,firmware,worst_run_pct,100.000
+sc8_speed,radial away 5 cm/s,firmware,move_s,19.000
+sc8_speed,radial away 5 cm/s,firmware,resweeps,8
+sc8_speed,radial away 5 cm/s,firmware,kept,8
+sc8_speed,radial away 5 cm/s,firmware,switched,0
+sc8_speed,radial away 5 cm/s,firmware,losses,0
+sc8_speed,radial away 5 cm/s,firmware,deferred,0
+sc8_speed,radial away 5 cm/s,firmware,causes,
+sc8_speed,radial away 10 cm/s,firmware,locked_pct,100.000
+sc8_speed,radial away 10 cm/s,firmware,worst_run_pct,100.000
+sc8_speed,radial away 10 cm/s,firmware,move_s,9.500
+sc8_speed,radial away 10 cm/s,firmware,resweeps,0
+sc8_speed,radial away 10 cm/s,firmware,kept,0
+sc8_speed,radial away 10 cm/s,firmware,switched,0
+sc8_speed,radial away 10 cm/s,firmware,losses,0
+sc8_speed,radial away 10 cm/s,firmware,deferred,0
+sc8_speed,radial away 10 cm/s,firmware,causes,
+sc8_speed,still,firmware,locked_pct,100.000
+sc8_speed,still,firmware,worst_run_pct,100.000
+sc8_speed,still,firmware,move_s,60.000
+sc8_speed,still,firmware,resweeps,24
+sc8_speed,still,firmware,kept,24
+sc8_speed,still,firmware,switched,0
+sc8_speed,still,firmware,losses,0
+sc8_speed,still,firmware,deferred,0
+sc8_speed,still,firmware,causes,
+sc8_speed,tangential 2 cm/s,EXP defer > 3 deg/s,locked_pct,100.000
+sc8_speed,tangential 2 cm/s,EXP defer > 3 deg/s,worst_run_pct,100.000
+sc8_speed,tangential 2 cm/s,EXP defer > 3 deg/s,move_s,60.000
+sc8_speed,tangential 2 cm/s,EXP defer > 3 deg/s,resweeps,24
+sc8_speed,tangential 2 cm/s,EXP defer > 3 deg/s,kept,24
+sc8_speed,tangential 2 cm/s,EXP defer > 3 deg/s,switched,0
+sc8_speed,tangential 2 cm/s,EXP defer > 3 deg/s,losses,0
+sc8_speed,tangential 2 cm/s,EXP defer > 3 deg/s,deferred,1
+sc8_speed,tangential 2 cm/s,EXP defer > 3 deg/s,causes,
+sc8_speed,tangential 3 cm/s,EXP defer > 3 deg/s,locked_pct,86.087
+sc8_speed,tangential 3 cm/s,EXP defer > 3 deg/s,worst_run_pct,83.400
+sc8_speed,tangential 3 cm/s,EXP defer > 3 deg/s,move_s,60.000
+sc8_speed,tangential 3 cm/s,EXP defer > 3 deg/s,resweeps,23
+sc8_speed,tangential 3 cm/s,EXP defer > 3 deg/s,kept,16
+sc8_speed,tangential 3 cm/s,EXP defer > 3 deg/s,switched,0
+sc8_speed,tangential 3 cm/s,EXP defer > 3 deg/s,losses,8
+sc8_speed,tangential 3 cm/s,EXP defer > 3 deg/s,deferred,27
+sc8_speed,tangential 3 cm/s,EXP defer > 3 deg/s,causes,on_pass gate fail (resweep): 7; on_ping misses (sector): 1
+sc8_speed,tangential 4 cm/s,EXP defer > 3 deg/s,locked_pct,53.400
+sc8_speed,tangential 4 cm/s,EXP defer > 3 deg/s,worst_run_pct,53.400
+sc8_speed,tangential 4 cm/s,EXP defer > 3 deg/s,move_s,60.000
+sc8_speed,tangential 4 cm/s,EXP defer > 3 deg/s,resweeps,8
+sc8_speed,tangential 4 cm/s,EXP defer > 3 deg/s,kept,0
+sc8_speed,tangential 4 cm/s,EXP defer > 3 deg/s,switched,0
+sc8_speed,tangential 4 cm/s,EXP defer > 3 deg/s,losses,16
+sc8_speed,tangential 4 cm/s,EXP defer > 3 deg/s,deferred,16
+sc8_speed,tangential 4 cm/s,EXP defer > 3 deg/s,causes,on_pass gate fail (resweep): 8; on_ping misses (sector): 8
+sc8_speed,tangential 5 cm/s,EXP defer > 3 deg/s,locked_pct,60.150
+sc8_speed,tangential 5 cm/s,EXP defer > 3 deg/s,worst_run_pct,60.000
+sc8_speed,tangential 5 cm/s,EXP defer > 3 deg/s,move_s,60.000
+sc8_speed,tangential 5 cm/s,EXP defer > 3 deg/s,resweeps,16
+sc8_speed,tangential 5 cm/s,EXP defer > 3 deg/s,kept,0
+sc8_speed,tangential 5 cm/s,EXP defer > 3 deg/s,switched,0
+sc8_speed,tangential 5 cm/s,EXP defer > 3 deg/s,losses,16
+sc8_speed,tangential 5 cm/s,EXP defer > 3 deg/s,deferred,24
+sc8_speed,tangential 5 cm/s,EXP defer > 3 deg/s,causes,on_pass gate fail (resweep): 16
+sc8_speed,tangential 6 cm/s,EXP defer > 3 deg/s,locked_pct,73.775
+sc8_speed,tangential 6 cm/s,EXP defer > 3 deg/s,worst_run_pct,44.900
+sc8_speed,tangential 6 cm/s,EXP defer > 3 deg/s,move_s,60.000
+sc8_speed,tangential 6 cm/s,EXP defer > 3 deg/s,resweeps,4
+sc8_speed,tangential 6 cm/s,EXP defer > 3 deg/s,kept,0
+sc8_speed,tangential 6 cm/s,EXP defer > 3 deg/s,switched,0
+sc8_speed,tangential 6 cm/s,EXP defer > 3 deg/s,losses,6
+sc8_speed,tangential 6 cm/s,EXP defer > 3 deg/s,deferred,472
+sc8_speed,tangential 6 cm/s,EXP defer > 3 deg/s,causes,on_pass gate fail (resweep): 4; on_ping misses (sector): 2
+sc8_speed,tangential 8 cm/s,EXP defer > 3 deg/s,locked_pct,39.700
+sc8_speed,tangential 8 cm/s,EXP defer > 3 deg/s,worst_run_pct,39.700
+sc8_speed,tangential 8 cm/s,EXP defer > 3 deg/s,move_s,60.000
+sc8_speed,tangential 8 cm/s,EXP defer > 3 deg/s,resweeps,8
+sc8_speed,tangential 8 cm/s,EXP defer > 3 deg/s,kept,0
+sc8_speed,tangential 8 cm/s,EXP defer > 3 deg/s,switched,0
+sc8_speed,tangential 8 cm/s,EXP defer > 3 deg/s,losses,16
+sc8_speed,tangential 8 cm/s,EXP defer > 3 deg/s,deferred,97
+sc8_speed,tangential 8 cm/s,EXP defer > 3 deg/s,causes,on_pass gate fail (resweep): 8; on_pass no cluster (sector): 8
+sc8_speed,tangential 10 cm/s,EXP defer > 3 deg/s,locked_pct,52.075
+sc8_speed,tangential 10 cm/s,EXP defer > 3 deg/s,worst_run_pct,36.100
+sc8_speed,tangential 10 cm/s,EXP defer > 3 deg/s,move_s,60.000
+sc8_speed,tangential 10 cm/s,EXP defer > 3 deg/s,resweeps,6
+sc8_speed,tangential 10 cm/s,EXP defer > 3 deg/s,kept,0
+sc8_speed,tangential 10 cm/s,EXP defer > 3 deg/s,switched,0
+sc8_speed,tangential 10 cm/s,EXP defer > 3 deg/s,losses,12
+sc8_speed,tangential 10 cm/s,EXP defer > 3 deg/s,deferred,245
+sc8_speed,tangential 10 cm/s,EXP defer > 3 deg/s,causes,on_pass gate fail (resweep): 6; on_pass no cluster (sector): 6
+sc8_speed,radial away 5 cm/s,EXP defer > 3 deg/s,locked_pct,100.000
+sc8_speed,radial away 5 cm/s,EXP defer > 3 deg/s,worst_run_pct,100.000
+sc8_speed,radial away 5 cm/s,EXP defer > 3 deg/s,move_s,19.000
+sc8_speed,radial away 5 cm/s,EXP defer > 3 deg/s,resweeps,8
+sc8_speed,radial away 5 cm/s,EXP defer > 3 deg/s,kept,8
+sc8_speed,radial away 5 cm/s,EXP defer > 3 deg/s,switched,0
+sc8_speed,radial away 5 cm/s,EXP defer > 3 deg/s,losses,0
+sc8_speed,radial away 5 cm/s,EXP defer > 3 deg/s,deferred,0
+sc8_speed,radial away 5 cm/s,EXP defer > 3 deg/s,causes,
+sc8_speed,radial away 10 cm/s,EXP defer > 3 deg/s,locked_pct,100.000
+sc8_speed,radial away 10 cm/s,EXP defer > 3 deg/s,worst_run_pct,100.000
+sc8_speed,radial away 10 cm/s,EXP defer > 3 deg/s,move_s,9.500
+sc8_speed,radial away 10 cm/s,EXP defer > 3 deg/s,resweeps,0
+sc8_speed,radial away 10 cm/s,EXP defer > 3 deg/s,kept,0
+sc8_speed,radial away 10 cm/s,EXP defer > 3 deg/s,switched,0
+sc8_speed,radial away 10 cm/s,EXP defer > 3 deg/s,losses,0
+sc8_speed,radial away 10 cm/s,EXP defer > 3 deg/s,deferred,0
+sc8_speed,radial away 10 cm/s,EXP defer > 3 deg/s,causes,
+sc8_speed,still,EXP defer > 3 deg/s,locked_pct,100.000
+sc8_speed,still,EXP defer > 3 deg/s,worst_run_pct,100.000
+sc8_speed,still,EXP defer > 3 deg/s,move_s,60.000
+sc8_speed,still,EXP defer > 3 deg/s,resweeps,24
+sc8_speed,still,EXP defer > 3 deg/s,kept,24
+sc8_speed,still,EXP defer > 3 deg/s,switched,0
+sc8_speed,still,EXP defer > 3 deg/s,losses,0
+sc8_speed,still,EXP defer > 3 deg/s,deferred,0
+sc8_speed,still,EXP defer > 3 deg/s,causes,
+sc8_phase,"tangential 2 cm/s, start 10-19 s",firmware,locked_pct_mean,100.000
+sc8_phase,"tangential 2 cm/s, start 10-19 s",firmware,locked_pct_worst,100.000
+sc8_phase,"tangential 2.5 cm/s, start 10-19 s",firmware,locked_pct_mean,88.790
+sc8_phase,"tangential 2.5 cm/s, start 10-19 s",firmware,locked_pct_worst,80.700
+sc8_phase,"tangential 3 cm/s, start 10-19 s",firmware,locked_pct_mean,77.490
+sc8_phase,"tangential 3 cm/s, start 10-19 s",firmware,locked_pct_worst,70.400
