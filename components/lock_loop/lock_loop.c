@@ -22,13 +22,14 @@
  *  - SECTOR pass end: on_pass; still LOCKED -> recentre on the target (new
  *    limits); and if resweep_ms > 0 and now - last_full_ms >= resweep_ms,
  *    start a RESWEEP. Lost -> FULL.
- *  - RESWEEP: the servo is at a sector end, so its first pass end is only a
- *    leg to the next arc end in its direction, not a whole pass. on_pass runs only
- *    at a pass end where the bin at the OPPOSITE arc end is no older than the
- *    max age, i.e. the servo has just swept the whole arc. No extra state:
- *    the map shows it. (Needs resweep_ms longer than one full pass, or the
- *    far end could still be fresh from the last resweep.) Then still LOCKED
- *    -> back to a sector on the target; lost -> FULL. last_full_ms = now.
+ *  - RESWEEP (resweep_turned, Joe 27/11): the servo starts at a sector end,
+ *    so the first arc end it reaches is only a turnaround: no on_pass there
+ *    (on_ping still runs), resweep_turned = true. The next pass end closes a
+ *    complete end-to-end pass and runs on_pass. A resweep that starts AT an
+ *    arc end (sector clamped to the arc) is complete at its first pass end,
+ *    so resweep_turned starts true. Holds for any resweep_ms. Then still
+ *    LOCKED -> back to a sector on the target; lost -> FULL.
+ *    last_full_ms = now.
  *  - FULL pass ends (searching) always run on_pass, even a partial first
  *    pass after a loss: it only sees fewer bins.
  *  - reset: tracker reset, FULL keeping the angle, last_full_ms and
@@ -45,10 +46,17 @@ static void use_limits(lock_loop_t *ll)
     target_track_set_limits(&ll->track, lo, hi);
 }
 
+static bool at_arc_end(const lock_loop_t *ll)
+{
+    return ll->plan.angle_deg <= ll->plan.cfg.min_deg + 1e-3f ||
+           ll->plan.angle_deg >= ll->plan.cfg.max_deg - 1e-3f;
+}
+
 static void go_full(lock_loop_t *ll, lock_plan_t kind)
 {
     sweep_plan_full(&ll->plan);
     ll->kind = kind;
+    ll->resweep_turned = (kind == LOCK_PLAN_RESWEEP) && at_arc_end(ll);
     use_limits(ll);
 }
 
@@ -84,20 +92,12 @@ void lock_loop_init(lock_loop_t *ll, const lock_loop_cfg_t *cfg, float start_deg
     ll->kind = LOCK_PLAN_FULL;
     ll->last_full_ms = 0;
     ll->locked_at_ms = 0;
+    ll->resweep_turned = false;
 }
 
 float lock_loop_next_angle(lock_loop_t *ll)
 {
     return sweep_plan_next(&ll->plan, ll->plan.cfg.step_deg);
-}
-
-/* RESWEEP: has the servo just covered the whole arc? (see the rules above) */
-static bool whole_arc_swept(const lock_loop_t *ll, const scan_map_t *map, uint32_t now_ms,
-                            uint32_t max_age)
-{
-    float far = (ll->plan.angle_deg <= ll->plan.cfg.min_deg + 1e-3f) ? ll->plan.cfg.max_deg
-                                                                    : ll->plan.cfg.min_deg;
-    return scan_map_age_ms(map, scan_map_bin(map, far), now_ms) <= max_age;
 }
 
 track_state_t lock_loop_on_reading(lock_loop_t *ll, const scan_map_t *map, uint32_t now_ms,
@@ -112,10 +112,11 @@ track_state_t lock_loop_on_reading(lock_loop_t *ll, const scan_map_t *map, uint3
         return ll->track.state;
     }
 
-    const uint32_t max_age = max_age_ms(ll);
-    if (ll->kind == LOCK_PLAN_RESWEEP && !whole_arc_swept(ll, map, now_ms, max_age)) {
-        return ll->track.state;                      /* only the leg to the arc end */
+    if (ll->kind == LOCK_PLAN_RESWEEP && !ll->resweep_turned) {
+        ll->resweep_turned = true;                   /* turnaround: only a leg */
+        return ll->track.state;
     }
+    const uint32_t max_age = max_age_ms(ll);
 
     const track_state_t st = target_track_on_pass(&ll->track, map, now_ms, max_age);
     switch (ll->kind) {

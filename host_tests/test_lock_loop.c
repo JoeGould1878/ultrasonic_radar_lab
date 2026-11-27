@@ -6,7 +6,8 @@
  * within +/-7 deg of the beam, no noise), 60 ms per ping, the real sweep
  * config (15..165, 2 deg). Checks: lock after two full passes, the sector
  * and tracker limits, walk-in without jumps, recentring, resweep (whole arc,
- * partial leg skipped), fast loss on removal, arc-end clipping, reset.
+ * turnaround leg skipped, started at an arc end, resweep_ms shorter than a
+ * pass), fast loss on removal, arc-end clipping, reset.
  * The noisy, scene-based measurements are in sim/lock_sim.py.
  */
 #include <math.h>
@@ -219,6 +220,78 @@ static void test_resweep(void)
     CHECK(lock_loop_plan(&w.ll) == LOCK_PLAN_FULL);
 }
 
+/* Run one resweep from its start to its end; returns pings taken, -1 if none. */
+static int one_resweep(float *start_angle)
+{
+    int n = 0;
+    while (lock_loop_plan(&w.ll) != LOCK_PLAN_RESWEEP && n < 2000) { ping(); n++; }
+    if (lock_loop_plan(&w.ll) != LOCK_PLAN_RESWEEP) return -1;
+    *start_angle = w.last_angle;
+    /* The start angle was pinged by the sector pass that just ended (it is
+     * in the map, fresh), so it counts as covered by this resweep. */
+    w.min_seen = w.max_seen = w.last_angle;
+    n = 0;
+    while (lock_loop_plan(&w.ll) == LOCK_PLAN_RESWEEP && n < 400) { ping(); n++; }
+    return n;
+}
+
+static void test_resweep_from_arc_end(void)
+{
+    printf("resweep starting at an arc end: no turnaround, one pass\n");
+    lock_loop_cfg_t c = cfg();
+    c.resweep_ms = 1;                       /* a resweep at every chance */
+    int from_end = 0, from_mid = 0;
+    /* Sector 15..35. Locking at 165 (start 165) puts every sector pass end,
+     * and so every resweep start, at 15 (an arc end); locking at 15 (start
+     * 15) puts them at 35 (mid-arc). Run both. */
+    for (int r = 0; r < 8; r++) {
+        if (r == 0 || r == 4) {
+            start(&c, r == 0 ? 165.0f : 15.0f);
+            w.obj[0] = (obj_t){.bearing = 18.0f, .dist = 50.0f, .present = true};
+            CHECK(run_until_locked(400) > 0);
+        }
+        float a0;
+        int n = one_resweep(&a0);
+        CHECK(n > 0);
+        CHECK_NEAR(w.min_seen, 15.0, 1e-3);           /* always the whole arc */
+        CHECK_NEAR(w.max_seen, 165.0, 1e-3);
+        if (a0 <= 15.001f || a0 >= 164.999f) {
+            from_end++;
+            CHECK(n == 75);                           /* already complete */
+        } else {
+            from_mid++;
+            CHECK(n > 75 && n <= 150);                /* leg + one complete pass */
+        }
+        CHECK(lock_loop_track(&w.ll)->state == TRACK_LOCKED);
+    }
+    CHECK(from_end > 0);                              /* both cases were exercised */
+    CHECK(from_mid > 0);
+    CHECK(w.big_steps == 0);
+}
+
+static void test_resweep_short_interval(void)
+{
+    printf("resweep_ms shorter than a pass: still a complete pass each time\n");
+    lock_loop_cfg_t c = cfg();
+    c.resweep_ms = 1;
+    start(&c, 15.0f);
+    w.obj[0] = (obj_t){.bearing = 90.0f, .dist = 50.0f, .present = true};
+    CHECK(run_until_locked(400) > 0);
+    for (int r = 0; r < 4; r++) {
+        float a0;
+        int n = one_resweep(&a0);
+        /* Starts at a sector end (75 or 105): 30-step leg to the arc end,
+         * turnaround, then 75 steps end to end. A check on the map instead
+         * of resweep_turned would stop after the leg here (n = 30), because
+         * the far end is still fresh from the previous resweep. */
+        CHECK(n == 105);
+        CHECK_NEAR(w.min_seen, 15.0, 1e-3);
+        CHECK_NEAR(w.max_seen, 165.0, 1e-3);
+        CHECK(lock_loop_track(&w.ll)->state == TRACK_LOCKED);
+    }
+    CHECK(w.big_steps == 0);
+}
+
 static void test_arc_end(void)
 {
     printf("target near the arc end: sector clamped, edge flag\n");
@@ -261,6 +334,8 @@ int main(void)
     test_removed();
     test_follow();
     test_resweep();
+    test_resweep_from_arc_end();
+    test_resweep_short_interval();
     test_arc_end();
     test_reset();
     return TEST_RESULT();
