@@ -13,6 +13,9 @@
  * dist_cm (D-PROTO-NULL): OK -> 1 decimal place, e.g. "52.3"; NOECHO and
  * FAIL -> "-", never a number, so a reader can't draw a fake 0 cm object.
  *
+ * D-OWN: call only from scan_task; each line is written with a single call,
+ * so lines never interleave and no mutex is needed.
+ *
  * Design: Joe Gould, drafted with Claude (Anthropic)
  */
 #pragma once

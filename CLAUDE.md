@@ -38,4 +38,4 @@ python tools/radar_view.py --port /dev/ttyACM0      # or --file / --sim
 
 - `components/` never include from `main/`.
 - Pure components (`scan_map`, `sweep_plan`, `target_track`, `mode_fsm`, `lock_loop`) include only the C standard library, so they build on the laptop.
-- Only `scan_task` touches `servo` and `hcsr04`; only `input_task` touches `joystick`/`button`.
+- Only `scan_task` touches `servo` and `hcsr04`; only `input_task` touches `joystick`/`button`; only `scan_task` calls `mode_fsm` and `serial_out` (D-OWN; `input_task` posts events with `scan_task_post_event()`).

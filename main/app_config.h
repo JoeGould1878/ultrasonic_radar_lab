@@ -103,3 +103,7 @@
 #define APP_SCAN_TASK_PRIO        6
 #define APP_INPUT_TASK_PRIO       5
 #define APP_INPUT_POLL_MS        10
+/* Events input_task can have queued for scan_task (D-OWN). Presses are >= 100 ms
+ * apart after debounce and scan_task drains every ping (~60 ms), so 4 is ample;
+ * a full queue drops the event and counts it. */
+#define APP_INPUT_EVT_QUEUE_LEN   4   /* PROPOSED */
