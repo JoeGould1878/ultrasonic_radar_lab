@@ -101,10 +101,17 @@ DESIGN (outline; filled in by PLAN tasks D1-D9 and S1-S6)
                fallback: the Web Serial page (section 8, R16).
      Evidence: decision log; display spec in docs/PLAN.md.
 
+   D-MODES  Which modes (27 Nov; team agreed)
+     Options:  SWEEP plus LOCK and MANUAL / LOCK only / MANUAL only / neither.
+     Criteria: the brief's essential scanner first; extensions by value and
+               risk (LOCK matches the brief's "rescan a region where an
+               object has been detected").
+     Chosen:   SWEEP essential; MANUAL then LOCK desirable, in that order.
+               MANUAL is simple and reuses the sweep code; LOCK has the most
+               to test (SC8).
+     Evidence: CONCEIVE section 6; decision log.
+
    Still open (docs/PLAN.md "Options under consideration"):
-     D-MODES    which modes beyond SWEEP (LOCK, MANUAL). Note: CONCEIVE
-                records the three modes as agreed by the team on 27 Nov, but
-                the log still lists this as open.
      D-MODEBTN  how modes are switched (joystick press / separate button /
                 from the page).
      D-STATUS   how no-echo and failed readings are shown. The display spec
@@ -253,17 +260,20 @@ DESIGN (outline; filled in by PLAN tasks D1-D9 and S1-S6)
                    3.3 V HC-SR04P (B4 decides).
        Test:       B2 (measure ECHO at the GPIO, <= 3.3 V).
 
-   R14 GPIO47 may not be a 3.3 V pin on our module
+   R14 ECHO on a pin that may not be 3.3 V (was GPIO47)
        Cause:      on the ESP32-S3, GPIO47 and GPIO48 are in the flash/PSRAM
                    supply domain (VDD_SPI), which is 1.8 V on modules with
-                   1.8 V memory. To confirm against the ESP32-S3 datasheet
-                   and our module's variant.
+                   1.8 V memory (from memory of the ESP32-S3 datasheet; not
+                   re-checked).
        Effect:     a 3.3 V ECHO into a 1.8 V pin could damage it, or the
                    level is read wrongly.
        L / S:      Low-Med (depends on the module) / High.
-       Mitigation: check at D6 before wiring; if in doubt, move ECHO to a
-                   plain 3.3 V GPIO.
-       Test:       none in LAB_TESTS; a D6 check (datasheet + module marking).
+       Mitigation: done on paper, 27 Nov (Joe): ECHO moved to GPIO 9, a plain
+                   3.3 V pin, not a strapping pin, freed when the screen pins
+                   were removed (APP_PIN_US_ECHO, PROPOSED). The risk is now
+                   only that D6 changes the pin back without this check.
+       Test:       D6 pin check (no LAB_TESTS test); B2 measures ECHO at the
+                   GPIO.
 
    R15 Flexing sensor wires break
        Cause:      the sensor rides on the servo, so its 4 wires bend on

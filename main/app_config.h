@@ -19,7 +19,7 @@
 /* HC-SR04 at 5 V. ECHO is a 5 V output: 1 kΩ series + 2 kΩ to GND -> 3.3 V.
  * (If the kit has the HC-SR04P / 3.3 V version, power it at 3.3 V, no divider.) */
 #define APP_PIN_US_TRIG          21   /* PROPOSED */
-#define APP_PIN_US_ECHO          47   /* PROPOSED, via divider */
+#define APP_PIN_US_ECHO           9   /* PROPOSED, via divider; was 47 (DESIGN.txt R14) */
 
 /* SG90 servo signal (LEDC PWM, 50 Hz). Servo power from 5 V with a
  * 470–1000 µF capacitor at the servo; common ground with the ESP32. */
