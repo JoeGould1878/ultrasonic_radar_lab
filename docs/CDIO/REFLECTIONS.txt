@@ -13,3 +13,62 @@ Session 1 (Thu 26 Nov 2026)
   - Surprised by: [fill in]
   - Next: GitHub repo, timing model (S1), review Conceive with the team.
   - Evidence: docs/CDIO/CONCEIVE.txt, docs/PLAN.md, git log.
+
+
+CONCEIVE REFLECTION (Canvas)
+Draft, Fri 27 Nov 2026. Questions copied from the Canvas quiz (3 essay
+questions, at least 20 words each). Sources: docs/CDIO/CONCEIVE.txt sections
+in brackets.
+
+Q1. Who are the intended users and other stakeholders, what do they need from
+the product, and whose perspective might be easily overlooked? How should
+this influence the project's success criteria?
+
+  Our main users are students in a teaching lab. They need to see where
+  objects are and learn what sonar can and cannot detect. Lab staff need a
+  demo that is quick to set up and robust on a bench, and our team needs
+  something we can build and test in 6 sessions (CONCEIVE section 2).
+  The easily overlooked ones are people who aren't using it: people being
+  scanned, who shouldn't be monitored without knowing, and other teams
+  nearby, whose 40 kHz sensors can cross-talk with ours. Users with colour
+  blindness or low vision are also easy to forget on a red/green radar
+  screen. This shaped the success criteria: SC6 requires echo / no echo /
+  failed to be told apart without colour, and a STALE warning within 1.5 s;
+  SC10 is tested by someone outside the team with no explanation; and the
+  60 ms ping gap and the T-XTALK test come from the other teams' needs.
+
+Q2. What assumptions are you making about users' physical, sensory,
+cognitive, digital or financial circumstances, or about the environment in
+which the product will be used? Could any of these assumptions create a
+usability or accessibility barrier?
+
+  Sensory: we assume users can see a screen. We don't rely on colour or
+  sound (every status has a shape and text), but a blind user could not
+  use it. Physical: MANUAL mode assumes fine control of a joystick.
+  Cognitive: we assume users can read a polar plot and know that "no echo"
+  does not mean "nothing there"; SC10 tests this with an outsider. Digital:
+  the display may need a PC, maybe with software installed, which a locked
+  lab PC may not allow. The display is not decided yet (after S4 and B4),
+  partly for this reason. Financial: kit parts only, nothing to buy.
+  Environment: indoors, still air, about 20 C, objects 5 to 150 cm, but a
+  noisy room with other teams' sensors (section 4). Outside that, results
+  are not covered: our S2 simulation shows a board tilted more than about
+  35 to 40 degrees gives no echo (docs/evidence/sim/s2_summary.txt).
+
+Q3. What potential safety, ethical, privacy, security or sustainability issue
+could arise from the proposed product or its possible use? Select the most
+relevant issue and define one requirement that could address it from the
+outset.
+
+  The most relevant issue is over-trust. A radar-style screen looks
+  authoritative, but ultrasound misses soft, thin or angled objects, and a
+  point can be old. If someone reads "no point drawn" as "clear", that is a
+  wrong conclusion in a lab and would be a collision in an
+  obstacle-avoidance product (CONCEIVE section 7). Our requirement, SC6:
+  the display tells echo, no echo and sensor failure apart without colour,
+  visibly fades points older than one pass, and shows a STALE warning
+  within 1.5 s if readings stop. It never says "clear", only "no echo".
+  Tested by T-FAULT and T-STALE. We already applied this in the serial
+  protocol: a missed echo is sent as "-", never as 0 cm (decision
+  D-PROTO-NULL). Privacy is the second issue: no logging unless the user
+  starts it, and data stays on the device or USB link (section 9).
