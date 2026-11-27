@@ -137,7 +137,176 @@ DESIGN (outline; filled in by PLAN tasks D1-D9 and S1-S6)
    Success criterion -> test -> pass level (from docs/LAB_TESTS.md).
 
 8. RISKS AND FAILURE MODES (D8)
-   Risk | effect | mitigation | test that checks it.
+   Draft, 27 Nov 2026. Starts from CONCEIVE section 7, plus the electrical
+   and display risks. L = likelihood, S = severity, each Low / Med / High:
+   our own estimate, to revisit after the tests. "Test" names the test in
+   docs/LAB_TESTS.md that checks it.
+
+   Sensing (CONCEIVE section 7)
+
+   R1  Beam smear: a thin object is drawn across several angles
+       Cause:      about 15 degree beam (about 26 cm wide at 1 m).
+       Effect:     wrong or wide bearing; SC3 missed.
+       L / S:      High / Med (S2: a thin tube smears over 7-8 bins).
+       Mitigation: edge-midpoint bearing in target_track, bridging one-bin
+                   gaps; 2 degree step gives 7 readings to work with (D-STEP).
+       Test:       T-ANG.
+
+   R2  Two objects close together merge into one
+       Cause:      beam width.
+       Effect:     the user sees one object where there are two.
+       L / S:      Med / Low (a known limit, shown on purpose at the demo).
+       Mitigation: stated as a limit (CONCEIVE section 7); S2 predicts merging
+                   below about 17-18 degrees.
+       Test:       T-TWO.
+
+   R3  Angled flat surface gives no echo (specular reflection)
+       Cause:      sound bounces away from a smooth surface at an angle.
+       Effect:     a wall or box is invisible: "no echo" taken as "clear".
+       L / S:      High / High (the most misleading failure).
+       Mitigation: the display never says "clear"; NOECHO is drawn as its own
+                   mark (faint dash at max range, display spec); S2 predicts
+                   no echo beyond about 40 degrees tilt at 50 cm, 35 at 100 cm.
+       Test:       T-MAT (tilted T2).
+
+   R4  Soft materials absorb the sound
+       Cause:      cloth, foam, clothing.
+       Effect:     object missed, as R3.
+       L / S:      Med / High.
+       Mitigation: as R3; recorded as a limit.
+       Test:       T-MAT (T4).
+
+   R5  Small target smaller than the datasheet assumes
+       Cause:      the datasheet's 3 mm accuracy assumes a flat, smooth target
+                   of at least 0.5 m^2; our SC1 target is a 5 cm tube.
+       Effect:     weaker echo, dropouts, worse accuracy than the datasheet.
+       L / S:      Med / Med.
+       Mitigation: SC1 judged on our own measurements, not the datasheet.
+       Test:       T-DIST (T1 part), T-MAT.
+
+   R6  Objects at the arc ends get a biased bearing
+       Cause:      only half the smear is seen at 15 and 165 degrees.
+       Effect:     bearing pulled about 4.5 degrees inward (worst 5.0, S2).
+       L / S:      High (whenever something is at the end) / Low.
+       Mitigation: D-EDGE: edge flag, bearing shown as low confidence.
+       Test:       T-ANG at 15 and 165 degrees.
+
+   R7  Moving objects are in the wrong place; SWEEP can't follow a walker
+       Cause:      a point is revisited only every 1-2 passes (4.5-9 s).
+       Effect:     old position shown as current.
+       L / S:      High / Med.
+       Mitigation: fading by passes (D-FADE); LOCK revisits a narrow sector
+                   much more often.
+       Test:       T-MOVE, T-LOCK.
+
+   R8  Old point shown as current; readings stop without anyone noticing
+       Cause:      fading too slow, or the data stream stops (cable, crash).
+       Effect:     user trusts an out-of-date picture.
+       L / S:      Med / High.
+       Mitigation: fading (D-FADE); global STALE banner after 1.5 s with no
+                   reading (APP_STALE_MS), also when the port or socket drops.
+       Test:       T-STALE.
+
+   R9  Wrong angle because the servo has not settled
+       Cause:      pinging before the servo stops (the Lab-in-a-Box bug).
+       Effect:     object drawn where it is not; jumps between passes.
+       L / S:      Med / Med.
+       Mitigation: stop-and-ping with a settle time (D-SCAN, D-ANGLE-TAG);
+                   B1 measures the real settle time.
+       Test:       T-MATCH, T-ANG.
+
+   R10 Cross-talk from other teams' sensors, or a late echo
+       Cause:      every HC-SR04 uses 40 kHz; a far echo arriving after the
+                   next ping.
+       Effect:     phantom objects.
+       L / S:      Med (a busy lab) / Med.
+       Mitigation: 60 ms ping gap (D-GAP); echoes beyond the timeout ignored.
+       Test:       T-XTALK.
+
+   R11 Speed of sound changes with temperature
+       Cause:      about 0.17 % per degree C.
+       Effect:     distances shift slightly (about 0.5 cm at 150 cm for 2 C).
+       L / S:      Low / Low.
+       Mitigation: record the room temperature with T-DIST.
+       Test:       T-DIST (note only).
+
+   Electrical
+
+   R12 Servo current through the board's 5 V / USB causes a brown-out
+       Cause:      the SG90 draws a current spike when it starts and when it
+                   stalls; it is fed from the board's 5 V pin, which comes
+                   from the PC's USB port (500 mA for USB 2.0). Exact figures
+                   come from the SG90 datasheet in D4.
+       Effect:     ESP32 resets mid-sweep, or the sensor reads wrongly.
+       L / S:      Med / High.
+       Mitigation: 470-1000 uF bulk capacitor at the servo (value from D4);
+                   servo moves first at start-up (main.c order); servo
+                   released when paused; separate supply if B1 shows resets.
+       Test:       B1 (watch for resets), T-POWER (current per mode).
+
+   R13 5 V ECHO on a GPIO (only if the kit sensor is the 5 V HC-SR04)
+       Cause:      the 5 V HC-SR04's ECHO output is 5 V; ESP32-S3 pins are
+                   3.3 V.
+       Effect:     damaged GPIO or chip.
+       L / S:      High without the divider / High.
+       Mitigation: 1 k / 2 k divider to 3.3 V; no divider if the kit has the
+                   3.3 V HC-SR04P (B4 decides).
+       Test:       B2 (measure ECHO at the GPIO, <= 3.3 V).
+
+   R14 GPIO47 may not be a 3.3 V pin on our module
+       Cause:      on the ESP32-S3, GPIO47 and GPIO48 are in the flash/PSRAM
+                   supply domain (VDD_SPI), which is 1.8 V on modules with
+                   1.8 V memory. To confirm against the ESP32-S3 datasheet
+                   and our module's variant.
+       Effect:     a 3.3 V ECHO into a 1.8 V pin could damage it, or the
+                   level is read wrongly.
+       L / S:      Low-Med (depends on the module) / High.
+       Mitigation: check at D6 before wiring; if in doubt, move ECHO to a
+                   plain 3.3 V GPIO.
+       Test:       none in LAB_TESTS; a D6 check (datasheet + module marking).
+
+   R15 Flexing sensor wires break
+       Cause:      the sensor rides on the servo, so its 4 wires bend on
+                   every sweep.
+       Effect:     intermittent FAIL readings or a dead sensor.
+       L / S:      Med (over a long demo) / Med.
+       Mitigation: service loop, strain relief, connector (D5); FAIL shown,
+                   not hidden.
+       Test:       T-FAULT (unplug), I11 (T-DIST re-run after the mount).
+
+   Display and use
+
+   R16 The lab PC can't run Python (no pyserial, no install rights)
+       Cause:      locked-down lab PCs.
+       Effect:     no core display at the demo.
+       L / S:      Med (unknown) / High.
+       Mitigation: check in session 2 (PLAN Open questions); fallback: a Web
+                   Serial page in Chrome, nothing to install; or our own
+                   laptop.
+       Test:       none in LAB_TESTS; a session 2 check.
+
+   R17 Sensor fails or is unplugged; reading shown as 0 cm
+       Cause:      loose wire, dead sensor.
+       Effect:     fake object at 0 cm.
+       L / S:      Med / High.
+       Mitigation: FAIL status, "-" not 0 (D-PROTO-NULL); FAIL drawn as a
+                   cross; FAULT banner.
+       Test:       T-FAULT, B2.
+
+   R18 Over-trust of a radar-style display
+       Cause:      it looks authoritative.
+       Effect:     users trust missed or old data.
+       L / S:      Med / High.
+       Mitigation: the display spec: statuses by shape, fading, STALE banner,
+                   never "clear" (CONCEIVE sections 7 and 9).
+       Test:       O2 (outsider can tell which points are old).
+
+   R19 Animals hear 40 kHz
+       Cause:      40 kHz is within the hearing of cats and some dogs.
+       Effect:     distress to pets nearby.
+       L / S:      Low (in a lab) / Low.
+       Mitigation: don't leave it running near pets (CONCEIVE section 9).
+       Test:       none (operating rule).
 
 9. DECISIONS
    Summary of the decision log in docs/PLAN.md.
