@@ -20,6 +20,11 @@
  *   every resweep_ms       one full pass while still LOCKED (sees the rest of
  *                          the area; the brief's "rescan" extension), then
  *                          back to the sector if the target is still found.
+ *                          A resweep starts at a sector end, usually mid-arc,
+ *                          so the first arc end it reaches is a turnaround
+ *                          (on_ping still runs, no on_pass) and one complete
+ *                          end-to-end pass is judged after it. If it starts
+ *                          at an arc end, that first pass is already complete.
  *   lost                   back to a full sweep, tracker limits = the arc.
  *
  * Use, once per ping (scan_task in LOCK mode, or the simulator):
@@ -63,7 +68,18 @@ typedef struct {
     lock_plan_t     kind;
     uint32_t        last_full_ms; /**< end of the last full pass (resweep timer) */
     uint32_t        locked_at_ms; /**< when the current lock started */
+    bool            resweep_turned; /**< RESWEEP: the turnaround arc end has been
+                                         reached (or the resweep started at an
+                                         arc end), so the next pass end closes a
+                                         complete end-to-end pass */
 } lock_loop_t;
+/* Why resweep_turned (S3, 27/11, Joe approved): without it a resweep that
+ * starts mid-arc would be judged at the first arc end after sweeping only
+ * part of the arc, and the far side's bins (from the last resweep) are older
+ * than the max age, so it would not see "the rest of the area". A check on
+ * the map instead (is the far end fresh?) needs no field but is only right
+ * while resweep_ms is longer than one full pass; the field holds for any
+ * resweep_ms. */
 
 /** Start in a full sweep (SEARCHING) from start_deg. */
 void lock_loop_init(lock_loop_t *ll, const lock_loop_cfg_t *cfg, float start_deg);
