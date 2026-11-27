@@ -1,8 +1,10 @@
 MINI-CHALLENGE 3: SCANNING ULTRASONIC SONAR
 CONCEIVE
 Draft 1, Thu 26 Nov 2026. Written by Joe Gould with Claude (Anthropic) as a drafting aid.
+Draft 2, Fri 27 Nov 2026: team review applied (team agreed, 27 Nov).
 
-Items marked [CHECK] need Joe to confirm. Items marked [TEAM] need the team to agree.
+Items marked [CHECK] need Joe to confirm. Items marked [KIT] are confirmed at B4
+when the box arrives.
 Numbers marked PROPOSED are targets we set now and test later (docs/LAB_TESTS.md).
 
 
@@ -20,14 +22,14 @@ how old each point is, when nothing echoed back, and when the sensor has failed.
 A radar-looking screen invites people to trust it more than an ultrasonic sensor
 deserves, so the display should show the sensor's limits rather than hide them.
 
-Proposed: three modes, switched by pressing the joystick [TEAM] (the button
-choice is still open):
+Three modes. How the user switches between them (for example by pressing the
+joystick) is still open: it is a design decision in D2.
   SWEEP  - automatic back-and-forth scan (the core product)
   LOCK   - scans until it confirms an object, then sweeps a narrow sector
            around it and follows it, with a full re-scan every few seconds
   MANUAL - the joystick points the sensor like a torch, with a live distance
 
-[TEAM] Alternative framing we considered: obstacle awareness for a small robot
+Alternative framing we considered: obstacle awareness for a small robot
 or a blind spot. We chose the teaching-lab framing because the brief rewards
 evidence and explained limits, and because ultrasonic sensing is not reliable
 enough for safety-critical obstacle detection (see section 7).
@@ -108,7 +110,7 @@ and limits, and an honest display (age + three statuses).
 - A noisy room with other teams running the same sensors.
 - Parts: only what is in the component box (expected: HC-SR04, SG90 servo,
   joystick, and a screen of unknown type) plus our ESP32-S3 board.
-  [CHECK] when the box arrives.
+  [KIT] confirmed at B4 when the box arrives.
 - Display: NOT decided. The kit screen may be a long character LCD (16x2
   style), which cannot show positions. Other options: a PC over USB, or a web
   page served by the ESP32 that a PC and a phone can both open. We will
@@ -121,7 +123,7 @@ and limits, and an honest display (age + three statuses).
 5. SUCCESS CRITERIA
 -------------------
 
-All PROPOSED. [TEAM] to confirm. Each one has a test in docs/LAB_TESTS.md.
+Agreed by the team, 27 Nov 2026. Each one has a test in docs/LAB_TESTS.md.
 
 ID   | Criterion                                                      | Test
 -----|----------------------------------------------------------------|---------
@@ -177,7 +179,7 @@ DESIRABLE (extensions, in this order):
   - Smoothing that removes flicker without hiding real changes
   - A display that needs no PC software (kit screen if it is graphic, or
     a web page)
-  [TEAM] order to be agreed.
+  Order agreed by the team, 27 Nov 2026.
 
 STRETCH (only if all of the above is tested):
   - A phone view (live view, connection status, warning when data is no
@@ -223,6 +225,10 @@ Limitations we expect, which we will demonstrate and measure:
   - A flat board tilted more than about 35 to 40 degrees from the sensor gives
     no echo, so "no echo" does not mean "clear" (S2; T-MAT checks).
     Evidence: docs/evidence/sim/s2_summary.txt.
+  - The datasheet's accuracy (up to 3 mm) assumes a target of at least
+    0.5 m^2 that is flat and smooth. Our SC1 target (a 5 cm tube) is far
+    smaller than that, so the datasheet figures don't cover it. Our own
+    T-DIST and T-MAT measurements are the evidence for SC1, not the datasheet.
   - Every HC-SR04 uses 40 kHz, so a nearby team's sensor can cause false echoes.
   - Speed of sound changes with temperature (about 0.17 % per degree C), which
     shifts distances slightly.
@@ -304,13 +310,15 @@ Sustainability (Week 8 lecture: energy, materials, e-waste, repairability)
   - Mount held with screws and plug-in connectors, so it is repairable.
 
 
-10. OPEN QUESTIONS FOR THE TEAM
--------------------------------
-  - [TEAM] Agree the purpose and success criteria above.
-  - [CHECK] Kit contents (sensor version, servo model, what the screen is).
-  - [TEAM] Where the radar is displayed (kit screen / PC / web page).
-  - [TEAM] Who owns which part (suggested: sensor + servo + mount /
-    display + viewer / modes + lock-on + testing).
+10. TEAM AGREEMENTS AND OPEN QUESTIONS
+--------------------------------------
+  - Purpose and success criteria: agreed by the team, 27 Nov 2026.
+  - [KIT] Kit contents (sensor version, servo model, what the screen is):
+    confirmed at B4 when the box arrives.
+  - Where the radar is displayed (kit screen / PC / web page): agreed that it
+    is decided after S4 (display prototype on simulated data) and B4
+    (identify the kit screen).
+  - Roles: shared. Everyone works on every part; no fixed owners.
 
 
 SOURCES
@@ -319,6 +327,8 @@ SOURCES
   Zalinge, 2026); Week 9a lecture slides (van Zalinge).
 - J. Wang, ESP32 Wi-Fi Ultrasonic Radar Prototype, CDIO Lab-in-a-Box blog, Jul
   2026: https://cdioatc.blogspot.com/2026/07/esp32-wifi-ultrasonic-radar-prototype.html
-- HC-SR04 datasheet (range 2-400 cm, 15 degree measuring angle, 10 us trigger,
-  60 ms measurement cycle recommended). [CHECK] cite the exact version used.
+- ElecFreaks, Ultrasonic Ranging Module HC-SR04 datasheet (no version number;
+  PDF dated 11 May 2011): range 2-400 cm, 15 degree measuring angle, 10 us
+  trigger, "over 60ms measurement cycle", uS/58 = cm.
+  https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf
 - Week 8a lecture, Sustainability in EEE design.
