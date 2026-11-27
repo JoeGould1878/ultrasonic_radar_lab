@@ -48,8 +48,11 @@ usability or accessibility barrier?
   Cognitive: we assume users can read a polar plot and know that "no echo"
   does not mean "nothing there"; SC10 tests this with an outsider. Digital:
   the display may need a PC, maybe with software installed, which a locked
-  lab PC may not allow. The display is not decided yet (after S4 and B4),
-  partly for this reason. Financial: kit parts only, nothing to buy.
+  lab PC may not allow. We decided on a PC view over USB first, then a web
+  page served by the ESP32 (D-DISPLAY). The risk is that the PC view needs
+  Python and pyserial on the lab PC; we check that in session 2, and the
+  fallback is a Web Serial page in Chrome, which needs no install.
+  Financial: kit parts only, nothing to buy.
   Environment: indoors, still air, about 20 C, objects 5 to 150 cm, but a
   noisy room with other teams' sensors (section 4). Outside that, results
   are not covered: our S2 simulation shows a board tilted more than about
