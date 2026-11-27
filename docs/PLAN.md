@@ -64,9 +64,9 @@ An **"honest" desk-scale sonar for a teaching lab**. It scans a 150° arc out to
 ## Phase C: Conceive (this week)
 
 - [x] **C1** Draft `docs/CDIO/CONCEIVE.txt` (purpose, users, similar products, success criteria, essential vs desirable, is ultrasonic appropriate, sonar vs radar, risks, ethics, sustainability).
-- [ ] **C2** [JOE] Read C1 and fix anything marked `[CHECK]`. [TEAM] Agree the purpose and success criteria when the team is back.
-- [ ] **C3** Read the remaining brief resources (Arduino Project Hub page, How To Mechatronics video description) and add anything new to C1's "similar projects" table. Don't copy code; note ideas and credit them.
-- [ ] **C4** Canvas Conceive reflection: draft answers from C1, in "we" voice, flag anything that needs the team's confirmation.
+- [x] **C2** [JOE] Read C1 and fix anything marked `[CHECK]`. [TEAM] Agree the purpose and success criteria when the team is back.
+- [x] **C3** Read the remaining brief resources (Arduino Project Hub page, How To Mechatronics video description) and add anything new to C1's "similar projects" table. Don't copy code; note ideas and credit them.
+- [x] **C4** Canvas Conceive reflection: draft answers from C1, in "we" voice, flag anything that needs the team's confirmation.
 
 ## Phase D: Design (this week, finalise when the kit arrives)
 
@@ -244,8 +244,9 @@ Only decisions actually made go here, each with its reason/evidence. Everything 
 - Week 9a lecture slides, *Ultrasonic Radar* (H. van Zalinge): expectations on design, simulation, case design
 - CDIO Lab-in-a-Box: *ESP32 Wi-Fi Ultrasonic Radar Prototype* (J. Wang, Jul 2026): https://cdioatc.blogspot.com/2026/07/esp32-wifi-ultrasonic-radar-prototype.html
 - Lab-in-a-Box companion blog (Z. Wang): https://wang66666.blogspot.com/ (speed-detector projects; related, not the spec)
-- Arduino Project Hub: *Building an Ultrasonic Radar Using Arduino and Processing*: https://projecthub.arduino.cc/diegogalvan_1294/building-an-ultrasonic-radar-using-arduino-and-processing-59053e (still to read: C3)
-- How To Mechatronics, Arduino Radar demo: https://www.youtube.com/watch?v=8NboJtVqWRw
+- Arduino Project Hub: *Building an Ultrasonic Radar Using Arduino and Processing*: https://projecthub.arduino.cc/diegogalvan_1294/building-an-ultrasonic-radar-using-arduino-and-processing-59053e
+- How To Mechatronics, *Arduino Radar Project* (D. Nedelkovski): https://howtomechatronics.com/projects/arduino-radar-project/ (demo video, not watched: https://www.youtube.com/watch?v=8NboJtVqWRw)
+- HC-SR04 datasheet (ElecFreaks, PDF dated 11 May 2011): https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf
 - Processing Serial library: https://processing.org/reference/libraries/serial/
 - Espressif Arduino-ESP32 Wi-Fi docs: https://docs.espressif.com/projects/arduino-esp32/en/latest/api/wifi.html
 - AI use: plan, interfaces and drafts developed by Joe Gould with Claude (Anthropic); every decision recorded above.

@@ -53,7 +53,8 @@ usability or accessibility barrier?
   Environment: indoors, still air, about 20 C, objects 5 to 150 cm, but a
   noisy room with other teams' sensors (section 4). Outside that, results
   are not covered: our S2 simulation shows a board tilted more than about
-  35 to 40 degrees gives no echo (docs/evidence/sim/s2_summary.txt).
+  40 degrees in our simulation (30 to 45 depending on the assumed beam edge)
+  gives no echo (docs/evidence/sim/s2_summary.txt).
 
 Q3. What potential safety, ethical, privacy, security or sustainability issue
 could arise from the proposed product or its possible use? Select the most
