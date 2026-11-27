@@ -1,0 +1,116 @@
+S4 PC RADAR VIEW: DRAWING LIBRARY, REDRAW RATE, SCREENSHOTS
+(docs/PLAN.md task S4; Display spec; SC6, SC7, T-LAT, T-FAULT)
+Tools: tools/radar_view.py, radar_model.py, radar_draw.py, bench_matplotlib.py
+Measured 27 Nov 2026 on Joe's laptop. Raw numbers: s4_fps_raw.txt
+
+QUESTION
+  Which library can draw the Display spec's picture at least 20 times a
+  second (the old APP_DISPLAY_FPS; SC7 leaves the display at most 50 ms of
+  the 200 ms ping-to-screen budget) on this laptop: matplotlib (already a
+  dependency) or pygame (new)? And does the picture follow the spec on S2
+  data: fade, arc ends, FAIL readings, greyscale?
+
+METHOD
+  1. pygame: tools/radar_view.py --sim <scene> --speed 4 --bench 10. The
+     real view, in a real window on the X11 desktop, draw loop uncapped,
+     fed live from sim/scene.py at 4x speed so all 76 bins are filled
+     after about 1 s. Time per frame = draw + display flip + event handling
+     + reading the queued lines. First 5 frames dropped. 3 runs each of:
+       (a) 1000x700 window, t1_b90_r50
+       (b) 1920x1080 window (larger than the 1366x768 screen), large text,
+           t1_noisy (the busiest scene: dropouts and ghosts)
+  2. matplotlib: tools/bench_matplotlib.py, the same picture (wedges, rings,
+     bearing lines, 76 bins with per-bin alpha, beam, status text) at
+     1000x700, Agg backend, off-screen. 3 runs of 8 s each:
+       A  full redraw (rebuild every artist each frame, like the pygame view)
+       B  update only (artists built once, data/colours changed, then draw)
+     Agg is a best case for matplotlib: it leaves out the copy to a window.
+  3. Screenshots: --file <S2 log> --at <t_ms> --screenshot (headless, the same
+     drawing code as the window), at moments picked from the sweep timing
+     (pass 0 = 0-4440 ms going up, pass 1 = 4500-8940 ms going down, pass 2
+     from 9000 ms going up).
+
+RESULT: FRAME RATE (floor: 20 fps, i.e. 50 ms per frame)
+                                     mean fps   p95 fps   worst frame   frames > 50 ms
+  pygame (a) 1000x700, 3 runs        197-208    119-134   15-41 ms      0 of 6055
+  pygame (b) 1920x1080 large, 3 runs 164-176     92-113   16-40 ms      0 of 5082
+  matplotlib A full redraw, 3 runs    15-29       7-24    75-259 ms     many
+  matplotlib B update only, 3 runs    47-59      25-41    54-81 ms      some (worst > 50)
+  -> pygame: about 5x the floor at p95, and no frame over 50 ms in 11 000
+     frames. matplotlib full redraw is at or below the floor; even
+     update-only has frames over 50 ms, before any window copy.
+  Latency the view adds (T-LAT budget 50 ms): lines are drained every frame
+  and the loop is capped at 60 fps, so a line waits at most one frame
+  period (16.7 ms) plus one draw (p95 under 11 ms): about 28 ms.
+
+DECISION (for Joe to confirm): pygame 2.6.1, pinned in requirements.txt.
+  1. Measured: meets the 20 fps floor with a wide margin; matplotlib does not
+     reliably.
+  2. This Python (Debian 13 venv) has no tkinter, so a matplotlib window
+     would also need Qt or GTK installed: a bigger dependency than pygame.
+  3. sim/scene.py and sim/sweep_timing.py force matplotlib's Agg backend when
+     imported, so --sim and the config reader would switch an interactive
+     matplotlib view off. pygame is not affected.
+  4. pygame's wheel includes SDL, so pip install -r requirements.txt is the
+     whole set-up on the lab PC (the D-DISPLAY risk; see Open questions).
+  Cost: one new dependency (22 MB installed). matplotlib stays for the sims.
+
+RESULT: SCREENSHOTS (1000x700)
+  s4_t1_b90_r50_mid_arc.png   tube at 90 deg, 50 cm, t = 11 800 ms (pass 2, beam
+      at 107 deg just past it). The tube smears across 83-97 deg as S2
+      predicts, drawn fresh; NOECHO dashes along the max ring elsewhere; the
+      not-scanned wedges are grey and labelled.
+  s4_t1_b15_r50_arc_end.png   tube at 15 deg, 50 cm, t = 8 400 ms (pass 1, beam at
+      35 deg coming down). The end cluster was last measured at t = 0-240 ms,
+      so it is drawn at 38-40 % brightness (a 2-pass revisit at the ends,
+      S1/D-FADE). Only half the smear is inside the arc: the D-EDGE case. No
+      low-confidence mark is drawn, as the T line has no edge field yet.
+  s4_t1_fault.png             t1_fault at t = 7 500 ms, beam at 65 deg inside the
+      1 s FAIL window: crosses on the outer ring from 89 down to 65 deg, the
+      strip says "failed", the tube dots at 90 deg are from pass 0.
+  s4_t1_fault_greyscale.png   the same frame in greyscale (Display spec
+      accessibility check): dot / dash / cross are still told apart by shape.
+  The parser tests (tools/test_radar_view.py, 18 tests) also check S1's
+  numbers through the viewer on the t1_b90_r50 log: bins near the middle
+  are redrawn at 0.66-0.68 brightness, end bins at 0.33.
+
+ASSUMPTIONS
+  A1  Frame cost is dominated by drawing; 76 bins at most (2 deg step over
+      0-180 is 90 bins, still trivial). A LOCK bracket adds a few lines.
+  A2  On battery power (power_supply online = 0) with the normal desktop
+      running: a slower case than mains. A lab PC is likely faster.
+  A3  --sim at 4x feeds about 67 lines/s, 4x the real ping rate (16.7/s),
+      so parsing load in the benchmark is higher than live.
+  A4  The view's own latency excludes USB serial and OS buffering; the
+      serial reader thread hands each line to the draw loop immediately.
+  A5  Age is device time (t_ms of the latest line + wall time since), and a
+      "pass" is the S1 model's full-arc pass time (4.5 s). In LOCK and
+      MANUAL the real revisit time differs; the fade still means "not
+      re-measured for N x 4.5 s".
+
+WHAT HARDWARE MUST CONFIRM
+  T-LAT (SC7): ping to screen within 200 ms with the real USB serial link at
+      921600 baud: timestamp the line in firmware, film the screen, or log
+      arrival time against t_ms.
+  B1: which side 0 deg is on (drawn on the RIGHT, as in S2; PROPOSED).
+  Session 2 (open question): the lab PC runs Python + pygame + pyserial and
+      reaches 20 fps; re-run --bench there.
+  O2 (SC6): users judge the fade (67 % / 33 % on redraw), the NOECHO dash
+      and the FAIL cross on the real screen and in greyscale.
+  T-FAULT: the firmware sends M ...,1 on a sensor fault so the SENSOR FAULT
+      banner shows. S2 does not model the fault state machine, so the S2
+      t1_fault log never raises it; only the FAIL crosses show there.
+  T-STALE: unplug the USB cable while running; the STALE banner must show
+      within APP_STALE_MS and say "port down".
+
+REPRODUCE
+  . .venv/bin/activate
+  python tools/test_radar_view.py
+  python tools/radar_view.py --file docs/evidence/sim/s2_scenes/t1_b90_r50.txt --at 11800 \
+      --screenshot docs/evidence/s4/s4_t1_b90_r50_mid_arc.png
+  python tools/radar_view.py --file docs/evidence/sim/s2_scenes/t1_b15_r50.txt --at 8400 \
+      --screenshot docs/evidence/s4/s4_t1_b15_r50_arc_end.png
+  python tools/radar_view.py --file docs/evidence/sim/s2_scenes/t1_fault.txt --at 7500 \
+      --screenshot docs/evidence/s4/s4_t1_fault.png
+  python tools/radar_view.py --sim t1_b90_r50 --speed 4 --bench 10
+  python tools/bench_matplotlib.py --seconds 8

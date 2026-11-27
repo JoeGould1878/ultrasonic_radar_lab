@@ -1,0 +1,27 @@
+# S4 fps measurements, 2026-11-27T12:18:50+00:00
+# host: Model name: AMD Athlon Silver 3050U with Radeon Graphics, 2 threads, 3 GB RAM, screen 1366x768, session x11
+# Python 3.13.5, pygame 2.6.1 SDL 2.28.4 matplotlib 3.11.2, on mains power: 0
+$ python tools/radar_view.py --sim t1_b90_r50 --speed 4 --bench 10   (run 1, 1000x700)
+frames 2056  mean 4.82 ms (207.6 fps)  p95 8.41 ms (118.9 fps)  worst 41.10 ms  frames over 50 ms: 0
+$ python tools/radar_view.py --sim t1_b90_r50 --speed 4 --bench 10   (run 2, 1000x700)
+frames 1958  mean 5.07 ms (197.3 fps)  p95 7.76 ms (128.9 fps)  worst 16.38 ms  frames over 50 ms: 0
+$ python tools/radar_view.py --sim t1_b90_r50 --speed 4 --bench 10   (run 3, 1000x700)
+frames 2041  mean 4.87 ms (205.3 fps)  p95 7.45 ms (134.2 fps)  worst 14.82 ms  frames over 50 ms: 0
+$ python tools/radar_view.py --sim t1_noisy --speed 4 --bench 10 --size 1920x1080 --large   (run 1)
+frames 1622  mean 6.11 ms (163.6 fps)  p95 10.88 ms (91.9 fps)  worst 40.39 ms  frames over 50 ms: 0
+$ python tools/radar_view.py --sim t1_noisy --speed 4 --bench 10 --size 1920x1080 --large   (run 2)
+frames 1711  mean 5.80 ms (172.3 fps)  p95 8.84 ms (113.2 fps)  worst 16.26 ms  frames over 50 ms: 0
+$ python tools/radar_view.py --sim t1_noisy --speed 4 --bench 10 --size 1920x1080 --large   (run 3)
+frames 1749  mean 5.68 ms (176.2 fps)  p95 8.97 ms (111.5 fps)  worst 19.35 ms  frames over 50 ms: 0
+$ python tools/bench_matplotlib.py --seconds 8   (run 1)
+matplotlib 3.11.2, backend Agg, 1000x700 px, scene t1_noisy, 76 bins
+A full redraw : frames 226  mean 35.0 ms (28.6 fps)  p95 42.5 ms (23.5 fps)  worst 75.1 ms
+B update only : frames 440  mean 18.1 ms (55.2 fps)  p95 34.5 ms (29.0 fps)  worst 80.5 ms
+$ python tools/bench_matplotlib.py --seconds 8   (run 2)
+matplotlib 3.11.2, backend Agg, 1000x700 px, scene t1_noisy, 76 bins
+A full redraw : frames 116  mean 67.0 ms (14.9 fps)  p95 137.3 ms (7.3 fps)  worst 258.5 ms
+B update only : frames 372  mean 21.5 ms (46.6 fps)  p95 39.4 ms (25.4 fps)  worst 77.0 ms
+$ python tools/bench_matplotlib.py --seconds 8   (run 3)
+matplotlib 3.11.2, backend Agg, 1000x700 px, scene t1_noisy, 76 bins
+A full redraw : frames 169  mean 46.7 ms (21.4 fps)  p95 90.0 ms (11.1 fps)  worst 156.4 ms
+B update only : frames 468  mean 16.9 ms (59.3 fps)  p95 24.7 ms (40.5 fps)  worst 54.3 ms
