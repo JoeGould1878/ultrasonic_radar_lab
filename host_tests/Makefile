@@ -12,7 +12,7 @@ BUILD   := build
 INCS    := $(foreach c,scan_map sweep_plan target_track mode_fsm radar_gfx lock_loop,-I$(COMP)/$(c)/include)
 
 # PLAN.md tasks S2/S3/I1 add: scan_map sweep_plan target_track mode_fsm radar_gfx
-TESTS   :=
+TESTS   := scan_map
 
 .PHONY: all run clean check-headers
 all: check-headers run
