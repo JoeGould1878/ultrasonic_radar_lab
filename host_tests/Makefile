@@ -15,7 +15,7 @@ INCS    := $(foreach c,scan_map sweep_plan target_track mode_fsm radar_gfx lock_
 # PLAN.md tasks S2/S3/I1 add: scan_map sweep_plan target_track mode_fsm radar_gfx
 TESTS   := scan_map sweep_plan target_track mode_fsm lock_loop scenes
 
-.PHONY: all run clean check-headers
+.PHONY: all run clean check-headers shim
 all: check-headers run
 
 $(BUILD):
@@ -40,6 +40,12 @@ $(BUILD)/test_%: test_%.c $$(call srcs,$$*) test_util.h | $(BUILD)
 run: $(addprefix $(BUILD)/test_,$(TESTS))
 	@for t in $^; do echo "== $$t"; ./$$t || exit 1; done
 	@echo "All host tests passed ($(words $(TESTS)) suites)."
+
+# sim/lock_sim.py (S3) loads the real components through this shared library.
+SHIM_SRCS := lock_shim.c $(foreach c,scan_map sweep_plan target_track lock_loop,$(COMP)/$(c)/$(c).c)
+shim: $(BUILD)/liblock_shim.so
+$(BUILD)/liblock_shim.so: $(SHIM_SRCS) | $(BUILD)
+	$(CC) $(CFLAGS) -O2 -fPIC -shared $(INCS) $(SHIM_SRCS) -o $@ $(LDLIBS)
 
 clean:
 	rm -rf $(BUILD)
