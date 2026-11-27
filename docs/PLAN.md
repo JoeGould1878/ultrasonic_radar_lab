@@ -209,6 +209,47 @@ T,<t_ms>,<state>,<centre_deg>,<left_deg>,<right_deg>,<dist_cm>   state: SEARCH |
 
 Anything else (ESP-IDF log lines) is ignored by the viewer, so normal logging still works.
 
+## Display spec (PC view and web page)
+
+One spec for both displays (D-DISPLAY): `tools/radar_view.py` (S4, I6) and the ESP32 web page (X1) draw the same picture from the same serial lines. Built from the drawing rules in `components/radar_gfx/include/radar_gfx.h` and `main/display_task.h` (written for an on-device screen, now dropped), so those rules survive that code being removed. Everything here is PROPOSED until S4 and O2 test it; D-STATUS is still under "Options under consideration".
+
+**Input.** The `R`/`M`/`T` lines above, nothing else, so a recorded log or an S2 scene file draws exactly like the live device. Lines that don't parse are ignored (ESP-IDF log lines).
+
+**Numbers come from `main/app_config.h`**, read at start-up (as `sim/appcfg.py` does), not copied into the viewer: `APP_US_MAX_RANGE_CM` (150), `APP_SWEEP_MIN_DEG`/`APP_SWEEP_MAX_DEG` (15/165), `APP_FADE_SWEEPS` (3), `APP_EXPIRE_SWEEPS` (3), `APP_STALE_MS` (1500). The web page gets the same values from the ESP32 (built from the same header).
+
+**Geometry** (from `radar_gfx_fit` / `radar_gfx_to_xy`):
+- A half-disc with the sensor at bottom centre; 90° points straight up the screen. The max range (`APP_US_MAX_RANGE_CM`) fits the window with a margin and scales with the window size.
+- Which side 0° is on must match the bench tape marks (LAB_TESTS) and the servo mounting: fix it at B1 and note it here.
+- The scanned arc (15–165°) is drawn; outside it is greyed, so "not scanned" never looks like "empty".
+
+**Range rings and labels:** rings with cm labels (CONCEIVE section 2 "clear range rings with cm labels"), PROPOSED every 50 cm to 150 cm; bearing lines with degree labels at the arc ends and 90°.
+
+**Beam line:** a line at the angle of the latest `R` line, so the user can see where the sensor is pointing now.
+
+**Readings: one mark per bin, a different SHAPE per status, not just a colour** (`radar_gfx_mark`, D-STATUS; brief: "without relying solely on colour"; SC6):
+
+| Status (`R` line) | Mark | Notes |
+| --- | --- | --- |
+| OK | filled dot at (angle, dist_cm) | brightness from age, below |
+| NOECHO | nothing drawn at a range; the beam line shows the bin was measured | see the flag under "Open questions" |
+| FAIL | small cross | drawn on the outer ring (`dist_cm` is `-`, D-PROTO-NULL), never at 0 cm |
+| stale (point past expiry) | hollow ring + "STALE" text | per point; the banner below is for the whole display |
+
+**Fading (SC6 "points older than one pass visibly faded"; D-FADE):** each mark's brightness falls linearly with its age, from full when measured to zero at `APP_FADE_SWEEPS` passes (3). Age counts in passes, not frames, so the fade means "not re-measured" whatever the frame rate. A point re-measured in the middle of the arc is redrawn at 67 % brightness, at the ends at 33 % (S1). Points are removed after `APP_EXPIRE_SWEEPS` passes.
+
+**Banners (text + a shape, never colour alone):**
+- **STALE:** no `R` line for `APP_STALE_MS` (1.5 s) → a "STALE" banner across the picture, and everything drawn is dimmed (SC6, T-STALE). Also shown when the serial port or the web socket drops.
+- **FAULT:** `M` line with `fault` = 1 → a "SENSOR FAULT" banner (T-FAULT). Cleared by the next `M` line with `fault` = 0.
+- **PAUSED:** `M` line with `paused` = 1 → "PAUSED".
+
+**Status strip:** the mode name (SWEEP / LOCK / MANUAL from the `M` line), the live distance at the beam in large text (or "no echo" / "failed" in words), and the time since the last reading.
+
+**LOCK:** a box or bracket from `left_deg` to `right_deg` around `centre_deg` from the `T` line, labelled with the state (SEARCH / CAND / LOCK). A D-EDGE target (arc end) is drawn with a "low confidence" mark once the `T` line carries the flag (see Open questions).
+
+**Accessibility (CONCEIVE section 9):** every status has a shape and text as well as a colour; a large-text option; nothing relies on sound. Check: a greyscale screenshot still tells OK / NOECHO / FAIL apart (T-FAULT).
+
+**Latency (SC7: a reading on screen within 200 ms of the ping; T-LAT):** draw each `R` line on the next frame, and redraw at least 20 times a second (the old `APP_DISPLAY_FPS`), so drawing adds at most 50 ms. The rest of the 200 ms is for serial or Wi-Fi.
+
 ## Decision log
 
 Only decisions actually made go here, each with its reason/evidence. Everything still being weighed is in **Options under consideration** below and moves up when it is decided (by the team, from a test or a simulation).
@@ -247,6 +288,7 @@ Only decisions actually made go here, each with its reason/evidence. Everything 
 - [ ] Demo date (session 6)? Canvas reflection deadlines?
 - [ ] Can the lab PC run Python with pyserial for the viewer? Check in session 2. This is the D-DISPLAY risk; fallback: a Web Serial page in Chrome, no install.
 - [ ] Is a 3D printer / laser cutter available for the mount (D5)?
+- [ ] Display spec, NOECHO: `radar_gfx.h` draws nothing for NOECHO (beam line only). Once the beam has moved on, a NOECHO bin looks the same as a bin never measured, and CONCEIVE section 7 promises "no echo", not "nothing there". Should NOECHO bins get a faint mark at the max-range ring? Decide in S4, check in O2.
 - [ ] T line (decide in S4): add a field for the D-EDGE flag (low-confidence bearing)? And what goes in `centre_deg`, `left_deg`, `right_deg`, `dist_cm` while SEARCHING: `-` as in D-PROTO-NULL?
 
 ## Sources
