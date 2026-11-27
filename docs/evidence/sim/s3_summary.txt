@@ -1,0 +1,168 @@
+S3 lock-on simulation (sim/lock_sim.py). Real C components in the loop; S2 physics.
+Config (app_config.h): step 2 deg, arc 15-165, ping 60 ms, dist_tol 8 cm, min_bins 2, confirm 2, sector_half 15, lost_pings 6, resweep 10 s, bridge 0, gate = sector_half.
+Experiment controller with all switches off vs lock_loop: 4002 pings, 0 differences.
+
+C = Python on the S2 logs (host_tests/test_scenes, max age = ONE pass there; firmware uses pass + ping):
+  bridge 0: 190 of 190 passes match (154 with a cluster, 36 with none)
+  bridge 1: 190 of 190 passes match (154 with a cluster, 36 with none)
+  scenes: 35
+  ok (29057 checks)
+
+STATIC T1 in LOCK (10 runs x 30 s each; error = sector-pass centre vs truth)
+  case             bridge  lock<=2 passes worst passes err mean err max edge % losses
+  T1 15 deg 50 cm       0          10/10            2     4.03    7.00   95.3      0
+  T1 30 deg 50 cm       0          10/10            2     0.63    6.00    0.0      0
+  T1 60 deg 50 cm       0          10/10            2     0.69    6.00    0.0      0
+  T1 90 deg 50 cm       0          10/10            2     0.29    5.00    0.0      0
+  T1 120 deg 50 cm      0          10/10            2     0.61    5.00    0.0      0
+  T1 150 deg 50 cm      0          10/10            2     0.22    4.00    0.0      0
+  T1 165 deg 50 cm      0          10/10            2     3.93    7.00   97.4      0
+  T1 90 deg 100 cm      0          10/10            2     0.46    5.00    0.0      0
+  T1 90 deg 150 cm      0           6/10            6     2.95    6.00    0.0     11
+  T1 15 deg 50 cm       1          10/10            2     3.99    5.00   99.1      0
+  T1 30 deg 50 cm       1          10/10            2     0.06    1.00    0.0      0
+  T1 60 deg 50 cm       1          10/10            2     0.04    1.00    0.0      0
+  T1 90 deg 50 cm       1          10/10            2     0.02    1.00    0.0      0
+  T1 120 deg 50 cm      1          10/10            2     0.04    1.00    0.0      0
+  T1 150 deg 50 cm      1          10/10            2     0.02    1.00    0.0      0
+  T1 165 deg 50 cm      1          10/10            2     4.00    5.00   98.7      0
+  T1 90 deg 100 cm      1          10/10            2     0.05    1.00    0.0      0
+  T1 90 deg 150 cm      1           8/10            6     2.59    6.00    0.0      8
+
+BRIDGING in SWEEP (Python rule = C): nearest-cluster edge-midpoint error, T1 at 30-150 deg x 50/100/150 cm
+  bridge 0: mean 0.40 deg, 95th pct 3.0, worst 6.0, passes > 5 deg 5/600, passes with no cluster 0
+  bridge 1: mean 0.06 deg, 95th pct 1.0, worst 3.0, passes > 5 deg 0/600, passes with no cluster 0
+  two T3 dowels at 50 cm, % of 40 passes showing two objects:
+    gap (deg)    30    25    20  17.5    15  12.5    10   7.5     5
+    bridge 0    100   100   100    18    25    12    15     8     5
+    bridge 1    100   100   100     0     5     0     0     2     0
+
+SECTOR_HALF: centred, then the target jumps off-centre at 20 s (resweeps off, 10 runs)
+  half jump  kept  centred err mean/max centred edge % 1st pass err 1st pass edge % passes to <=2 deg
+    10    0  10/10       0.48 /  6.00            7.9         0.70            30.0                 2
+    10    5  10/10       0.61 /  6.00            8.7         0.80            50.0                 3
+    10   10  10/10       0.41 /  5.00            8.6         0.40            80.0                 1
+    10   14   4/10       0.61 /  6.00           11.6         0.38            37.5                 1
+    12    0  10/10       0.64 /  5.00            4.1         0.60             0.0                 2
+    12    5  10/10       0.28 /  6.00            2.8         0.00             0.0                 1
+    12   10  10/10       0.82 /  6.00            5.2         0.70            30.0                 3
+    12   14   5/10       0.86 /  6.00            7.2         1.30            30.0                 3
+    15    0  10/10       0.51 /  5.00            0.0         0.40             0.0                 3
+    15    5  10/10       0.54 /  6.00            0.0         0.40             0.0                 1
+    15   10   9/10       0.51 /  6.00            0.0         0.50            20.0                 2
+    15   14   3/10       0.87 /  6.00            0.0         0.40             0.0                 1
+    20    0  10/10       0.50 /  6.00            0.0         0.80             0.0                 2
+    20    5  10/10       0.60 /  6.00            0.0         1.10             0.0                 3
+    20   10  10/10       0.61 /  6.00            0.0         1.00             0.0                 2
+    20   14   4/10       0.33 /  5.00            0.0         0.50            10.0                 2
+
+REMOVAL and LOST_PINGS (removal: 10 runs; false losses: still T1, 5 runs x ~60 s locked)
+  lost_pings  3: back to full sweep worst 1355 ms, mean 380 ms (never: 0); false losses per run: normal 0.0, noisy 0.2
+  lost_pings  6: back to full sweep worst 1503 ms, mean 752 ms (never: 0); false losses per run: normal 0.0, noisy 0.2
+  lost_pings  9: back to full sweep worst 1648 ms, mean 1124 ms (never: 0); false losses per run: normal 0.0, noisy 0.0
+  lost_pings 12: back to full sweep worst 1648 ms, mean 1130 ms (never: 0); false losses per run: normal 0.0, noisy 0.0
+
+FALSE LOCKS, empty scene 2 min x 10 runs (lock events in total)
+                    min_bins 1  min_bins 2  min_bins 3
+  normal confirm 1           0           0           0
+  normal confirm 2           0           0           0
+  normal confirm 3           0           0           0
+  noisy  confirm 1         171           1           0
+  noisy  confirm 2          27           0           0
+  noisy  confirm 3           4           0           0
+
+FOLLOWING (resweeps off; 8 runs; tangential = along the 50 cm arc, 45-135 deg; S3-A1)
+  tangential 5 cm/s:
+    firmware               locked 100.0 %  losses/min  0.0  err mean/max  1.3/ 9.3  [no losses]
+    lost_pings 9           locked 100.0 %  losses/min  0.0  err mean/max  1.3/ 9.3  [no losses]
+    lost_pings 12          locked 100.0 %  losses/min  0.0  err mean/max  1.3/ 9.3  [no losses]
+    dist_tol 12            locked 100.0 %  losses/min  0.0  err mean/max  1.3/ 9.3  [no losses]
+    min_bins 1             locked 100.0 %  losses/min  0.0  err mean/max  1.4/ 9.3  [no losses]
+    sector_half 12         locked 100.0 %  losses/min  0.0  err mean/max  1.4/ 9.1  [no losses]
+    lost 9 + min_bins 1    locked 100.0 %  losses/min  0.0  err mean/max  1.4/ 9.3  [no losses]
+    lost 9 + half 12       locked 100.0 %  losses/min  0.0  err mean/max  1.4/ 9.1  [no losses]
+    EXP F1 edge recentre   locked  86.8 %  losses/min  0.6  err mean/max  1.7/ 7.3  [on_pass gate fail (sector): 2; on_ping misses (sector): 3]
+    EXP F2 lead            locked  98.2 %  losses/min  0.2  err mean/max  1.2/ 9.4  [on_pass gate fail (sector): 2]
+    EXP (e) jump-in + lost 9 locked 100.0 %  losses/min  0.0  err mean/max  1.2/ 9.1  [no losses]
+  tangential 10 cm/s:
+    firmware               locked   8.2 %  losses/min  3.0  err mean/max  nan/ nan  [on_ping misses (sector): 24]
+    lost_pings 9           locked  68.2 %  losses/min  1.5  err mean/max  3.1/11.9  [on_pass no cluster (sector): 9; on_pass gate fail (sector): 1; on_ping misses (sector): 2]
+    lost_pings 12          locked  68.2 %  losses/min  1.5  err mean/max  3.1/11.9  [on_pass no cluster (sector): 9; on_pass gate fail (sector): 1; on_ping misses (sector): 2]
+    dist_tol 12            locked   8.2 %  losses/min  3.0  err mean/max  nan/ nan  [on_ping misses (sector): 24]
+    min_bins 1             locked   7.8 %  losses/min  2.9  err mean/max  nan/ nan  [on_ping misses (sector): 23]
+    sector_half 12         locked   8.2 %  losses/min  3.0  err mean/max  nan/ nan  [on_ping misses (sector): 24]
+    lost 9 + min_bins 1    locked  80.4 %  losses/min  1.0  err mean/max  3.2/11.9  [on_pass no cluster (sector): 4; on_ping misses (sector): 3; on_pass gate fail (sector): 1]
+    lost 9 + half 12       locked  83.1 %  losses/min  0.6  err mean/max  3.5/ 8.9  [on_pass no cluster (sector): 5]
+    EXP F1 edge recentre   locked   8.2 %  losses/min  3.0  err mean/max  nan/ nan  [on_ping misses (sector): 24]
+    EXP F2 lead            locked   8.2 %  losses/min  3.0  err mean/max  nan/ nan  [on_ping misses (sector): 24]
+    EXP (e) jump-in + lost 9 locked  90.0 %  losses/min  0.5  err mean/max  3.0/11.5  [on_pass no cluster (sector): 4]
+  tangential 15 cm/s:
+    firmware               locked   8.2 %  losses/min  2.5  err mean/max  nan/ nan  [on_ping misses (sector): 20]
+    lost_pings 9           locked  23.7 %  losses/min  3.4  err mean/max  5.0/ 7.6  [on_pass no cluster (sector): 11; on_ping misses (sector): 16]
+    lost_pings 12          locked  25.4 %  losses/min  3.1  err mean/max  4.9/ 9.8  [on_pass no cluster (sector): 18; on_ping misses (sector): 7]
+    dist_tol 12            locked   8.2 %  losses/min  2.5  err mean/max  nan/ nan  [on_ping misses (sector): 20]
+    min_bins 1             locked   8.2 %  losses/min  2.5  err mean/max  nan/ nan  [on_ping misses (sector): 20]
+    sector_half 12         locked   7.7 %  losses/min  2.4  err mean/max  nan/ nan  [on_ping misses (sector): 19]
+    lost 9 + min_bins 1    locked  23.4 %  losses/min  3.5  err mean/max  5.1/ 7.6  [on_pass no cluster (sector): 10; on_ping misses (sector): 17; on_pass gate fail (sector): 1]
+    lost 9 + half 12       locked   8.5 %  losses/min  2.4  err mean/max  nan/ nan  [on_pass no cluster (sector): 17; on_ping misses (sector): 2]
+    EXP F1 edge recentre   locked   8.2 %  losses/min  2.5  err mean/max  nan/ nan  [on_ping misses (sector): 20]
+    EXP F2 lead            locked   8.2 %  losses/min  2.5  err mean/max  nan/ nan  [on_ping misses (sector): 20]
+    EXP (e) jump-in + lost 9 locked   6.2 %  losses/min  3.8  err mean/max  0.4/ 1.3  [on_pass no cluster (sector): 23; on_ping misses (sector): 7]
+  radial away 10 cm/s:
+    firmware               locked  26.1 %  losses/min  6.7  err mean/max  0.0/ 0.0  [on_ping misses (sector): 8]
+    lost_pings 9           locked 100.0 %  losses/min  0.0  err mean/max  0.4/ 6.0  [no losses]
+    lost_pings 12          locked 100.0 %  losses/min  0.0  err mean/max  0.4/ 6.0  [no losses]
+    dist_tol 12            locked 100.0 %  losses/min  0.0  err mean/max  0.4/ 6.0  [no losses]
+    min_bins 1             locked  26.1 %  losses/min  6.7  err mean/max  0.0/ 0.0  [on_ping misses (sector): 8]
+    sector_half 12         locked  26.0 %  losses/min  6.7  err mean/max  0.0/ 0.0  [on_ping misses (sector): 8]
+    lost 9 + min_bins 1    locked 100.0 %  losses/min  0.0  err mean/max  0.6/ 7.0  [no losses]
+    lost 9 + half 12       locked 100.0 %  losses/min  0.0  err mean/max  0.4/ 6.0  [no losses]
+    EXP F1 edge recentre   locked  26.1 %  losses/min  6.7  err mean/max  0.0/ 0.0  [on_ping misses (sector): 8]
+    EXP F2 lead            locked  26.1 %  losses/min  6.7  err mean/max  0.0/ 0.0  [on_ping misses (sector): 8]
+    EXP (e) jump-in + lost 9 locked 100.0 %  losses/min  0.0  err mean/max  0.3/ 6.0  [no losses]
+
+RESWEEP every 10 s (8 runs x 60 s). Still + closer object is the 'nearest cluster across the full arc'
+case, NOT a movement failure: it is listed apart from the moving cases. 'kept' = same object after the
+resweep; 'SWITCHED' = still LOCKED but silently on another object (counted as a failure).
+  lost_pings 6:
+    firmware
+      still                                            kept 24/24, SWITCHED object  0 (lost: ping 0, gate 0, no cluster 0)  locked 100.0 %
+      still + closer object at 140deg 30cm from 15 s   kept 11/19, SWITCHED object  0 (lost: ping 0, gate 8, no cluster 0)  locked  84.0 %
+      tangential 5 cm/s                                kept  1/ 9, SWITCHED object  0 (lost: ping 8, gate 0, no cluster 0)  locked  36.0 %
+      tangential 10 cm/s                               kept  0/ 0, SWITCHED object  0 (lost: ping 0, gate 0, no cluster 0)  locked   9.3 %
+    (c) no on_ping in resweep
+      still                                            kept 24/24, SWITCHED object  0 (lost: ping 0, gate 0, no cluster 0)  locked 100.0 %
+      still + closer object at 140deg 30cm from 15 s   kept 11/19, SWITCHED object  0 (lost: ping 0, gate 8, no cluster 0)  locked  84.0 %
+      tangential 5 cm/s                                kept  1/ 9, SWITCHED object  0 (lost: ping 0, gate 8, no cluster 0)  locked  37.6 %
+      tangential 10 cm/s                               kept  0/ 0, SWITCHED object  0 (lost: ping 0, gate 0, no cluster 0)  locked   9.3 %
+    (a) (c) + gate widened 10.9 deg/s
+      still                                            kept 24/24, SWITCHED object  0 (lost: ping 0, gate 0, no cluster 0)  locked 100.0 %
+      still + closer object at 140deg 30cm from 15 s   kept 16/24, SWITCHED object  8 (lost: ping 0, gate 0, no cluster 0)  locked 100.0 %
+      tangential 5 cm/s                                kept 10/10, SWITCHED object  0 (lost: ping 0, gate 0, no cluster 0)  locked  44.2 %
+      tangential 10 cm/s                               kept  0/ 0, SWITCHED object  0 (lost: ping 0, gate 0, no cluster 0)  locked   9.3 %
+    (b) (c) + nearest bearing
+      still                                            kept 24/24, SWITCHED object  0 (lost: ping 0, gate 0, no cluster 0)  locked 100.0 %
+      still + closer object at 140deg 30cm from 15 s   kept 24/24, SWITCHED object  0 (lost: ping 0, gate 0, no cluster 0)  locked 100.0 %
+      tangential 5 cm/s                                kept 10/10, SWITCHED object  0 (lost: ping 0, gate 0, no cluster 0)  locked  44.2 %
+      tangential 10 cm/s                               kept  0/ 0, SWITCHED object  0 (lost: ping 0, gate 0, no cluster 0)  locked   9.3 %
+  lost_pings 9:
+    firmware
+      still                                            kept 24/24, SWITCHED object  0 (lost: ping 0, gate 0, no cluster 0)  locked 100.0 %
+      still + closer object at 140deg 30cm from 15 s   kept 11/19, SWITCHED object  0 (lost: ping 0, gate 8, no cluster 0)  locked  84.0 %
+      tangential 5 cm/s                                kept  7/15, SWITCHED object  0 (lost: ping 5, gate 3, no cluster 0)  locked  58.4 %
+      tangential 10 cm/s                               kept  0/ 7, SWITCHED object  0 (lost: ping 0, gate 7, no cluster 0)  locked  29.6 %
+    (c) no on_ping in resweep
+      still                                            kept 24/24, SWITCHED object  0 (lost: ping 0, gate 0, no cluster 0)  locked 100.0 %
+      still + closer object at 140deg 30cm from 15 s   kept 11/19, SWITCHED object  0 (lost: ping 0, gate 8, no cluster 0)  locked  84.0 %
+      tangential 5 cm/s                                kept  7/15, SWITCHED object  0 (lost: ping 0, gate 8, no cluster 0)  locked  59.2 %
+      tangential 10 cm/s                               kept  0/ 7, SWITCHED object  0 (lost: ping 0, gate 7, no cluster 0)  locked  29.6 %
+    (a) (c) + gate widened 10.9 deg/s
+      still                                            kept 24/24, SWITCHED object  0 (lost: ping 0, gate 0, no cluster 0)  locked 100.0 %
+      still + closer object at 140deg 30cm from 15 s   kept 16/24, SWITCHED object  8 (lost: ping 0, gate 0, no cluster 0)  locked 100.0 %
+      tangential 5 cm/s                                kept 16/16, SWITCHED object  0 (lost: ping 0, gate 0, no cluster 0)  locked  66.3 %
+      tangential 10 cm/s                               kept  7/ 7, SWITCHED object  0 (lost: ping 0, gate 0, no cluster 0)  locked  32.3 %
+    (b) (c) + nearest bearing
+      still                                            kept 24/24, SWITCHED object  0 (lost: ping 0, gate 0, no cluster 0)  locked 100.0 %
+      still + closer object at 140deg 30cm from 15 s   kept 24/24, SWITCHED object  0 (lost: ping 0, gate 0, no cluster 0)  locked 100.0 %
+      tangential 5 cm/s                                kept 16/16, SWITCHED object  0 (lost: ping 0, gate 0, no cluster 0)  locked  66.3 %
+      tangential 10 cm/s                               kept  7/ 7, SWITCHED object  0 (lost: ping 0, gate 0, no cluster 0)  locked  32.3 %
